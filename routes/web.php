@@ -1,11 +1,14 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ContestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('contests', [ContestController::class, 'index'])->name('contests');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

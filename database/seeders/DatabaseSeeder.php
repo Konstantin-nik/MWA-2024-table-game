@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Contest;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Session;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,6 +20,6 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        Session::factory(50)->withTimestamps()->create();
+        Contest::factory(50)->withTimestamps()->create();
     }
 }

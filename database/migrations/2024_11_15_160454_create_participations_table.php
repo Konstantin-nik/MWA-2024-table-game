@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('user_id');
-            $table->foreignId('session_id');
+            $table->foreignId('contest_id');
             $table->integer('score');
             $table->integer('rank');
 

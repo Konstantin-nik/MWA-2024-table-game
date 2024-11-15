@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Session;
+use App\Models\Contest;
 use Illuminate\Http\Request;
 
-class SessionController extends Controller
+class ContestController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $session = Session::all();
+        $Contests = Contest::public()->toJoin();
+
+        return view("contests.index", compact("contests"));
     }
 
     /**
@@ -42,7 +44,7 @@ class SessionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Session $session)
+    public function edit(Contest $contest)
     {
         //
     }
@@ -50,7 +52,7 @@ class SessionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Session $session)
+    public function update(Request $request, Contest $contest)
     {
         //
     }
@@ -58,7 +60,7 @@ class SessionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Session $session)
+    public function destroy(Contest $contest)
     {
         //
     }

@@ -15,8 +15,8 @@ class Participation extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function session() 
+    public function contest() 
     {
-        return $this->belongsTo(Session::class);
+        return $this->belongsTo(Contest::class);
     }
 }

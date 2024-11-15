@@ -14,9 +14,9 @@ class Round extends Model
         'finished_at' => 'datetime',
     ];
 
-    public function session() 
+    public function contest() 
     {
-        return $this->belongsTo(Session::class);
+        return $this->belongsTo(Contest::class);
     }
 
     public function actions() 
