@@ -15,11 +15,13 @@ class Session extends Model
         'finished_at' => 'datetime',
     ];
 
-    public function user() {
+    public function user() 
+    {
         return $this->belongsToMany(User::class, "participations");
     }
 
-    public function rounds() {
+    public function rounds() 
+    {
         return $this->hasMany(Round::class);
     }
 
@@ -29,12 +31,13 @@ class Session extends Model
         return $query->where('public', '===', true);
     }
 
-    public function scopeFinished($query) {
+    public function scopeFinished($query) 
+    {
         return $query->whereNotNull('finished_at');
     }
 
-    public function scopeToJoin($query) {
-
+    public function scopeToJoin($query) 
+    {
         return $query->whereNull('started_at');
     }
 }

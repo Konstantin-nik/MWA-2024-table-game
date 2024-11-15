@@ -14,11 +14,13 @@ class Round extends Model
         'finished_at' => 'datetime',
     ];
 
-    public function session() {
+    public function session() 
+    {
         return $this->belongsTo(Session::class);
     }
 
-    public function actions() {
+    public function actions() 
+    {
         return $this->belongsToMany(Action::class,"action_round");
     }
 }
