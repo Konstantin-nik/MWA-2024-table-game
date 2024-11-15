@@ -13,4 +13,8 @@ class Round extends Model
     public function session() {
         return $this->belongsTo(Session::class);
     }
+
+    public function actions() {
+        return $this->belongsToMany(Action::class,"action_round");
+    }
 }

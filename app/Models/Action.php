@@ -9,4 +9,12 @@ class Action extends Model
 {
     /** @use HasFactory<\Database\Factories\ActionFactory> */
     use HasFactory;
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function rounds() {
+        return $this->belongsToMany(Round::class,  "action_round");
+    }
 }
