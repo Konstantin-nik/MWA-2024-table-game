@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('action_round', function (Blueprint $table) {
-            $table->foreignId('round_id');
             $table->foreignId('action_id');
+            $table->foreignId('round_id');
         });
     }
 
