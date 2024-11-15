@@ -9,4 +9,8 @@ class Round extends Model
 {
     /** @use HasFactory<\Database\Factories\RoundFactory> */
     use HasFactory;
+
+    public function session() {
+        return $this->belongsTo(Session::class);
+    }
 }
