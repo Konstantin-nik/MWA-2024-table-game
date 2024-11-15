@@ -38,7 +38,7 @@ class ContestFactory extends Factory
 
             return [
                 'started_at' => $startedAt,
-                'finished_at' => $startedAt ? fake()->dateTimeBetween($startedAt) : null,
+                'finished_at' => $startedAt ? fake()->optional()->dateTimeBetween($startedAt) : null,
             ];
         });
     }
