@@ -19,7 +19,7 @@ class ContestFactory extends Factory
         return [
             'name' => fake()->colorName,
             'size' => random_int(2, 10),
-            'public' => fake()->boolean(80),
+            'is_public' => fake()->boolean(80),
             'tocken' => fake()->word,
             'started_at' => null,
             'finished_at' => null,

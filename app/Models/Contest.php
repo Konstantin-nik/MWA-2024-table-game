@@ -13,8 +13,10 @@ class Contest extends Model
     protected $casts = [
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
+        'is_public' => 'boolean',
     ];
 
+    // Model Relations ------------------------------------------------------
     public function user() 
     {
         return $this->belongsToMany(User::class, "participations");
@@ -25,10 +27,10 @@ class Contest extends Model
         return $this->hasMany(Round::class);
     }
 
-    // Model scopes -------
+    // Model scopes ---------------------------------------------------------
     public function scopePublic($query) 
     {
-        return $query->where('public', '===', true);
+        return $query->where('is_public', '==', true);
     }
 
     public function scopeFinished($query) 

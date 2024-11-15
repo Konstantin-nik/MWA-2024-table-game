@@ -10,6 +10,7 @@ class Participation extends Model
     /** @use HasFactory<\Database\Factories\ParticipationFactory> */
     use HasFactory;
 
+    // Model Relations ------------------------------------------------------
     public function user() 
     {
         return $this->belongsTo(User::class);

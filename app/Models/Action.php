@@ -10,6 +10,7 @@ class Action extends Model
     /** @use HasFactory<\Database\Factories\ActionFactory> */
     use HasFactory;
 
+    // Model Relations ------------------------------------------------------
     public function user() 
     {
         return $this->belongsTo(User::class);

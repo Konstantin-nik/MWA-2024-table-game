@@ -14,6 +14,7 @@ class Round extends Model
         'finished_at' => 'datetime',
     ];
 
+    // Model Relations ------------------------------------------------------
     public function contest() 
     {
         return $this->belongsTo(Contest::class);

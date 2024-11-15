@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->string('name');
             $table->integer('size');
-            $table->boolean('public')->default(true);
+            $table->boolean('is_public')->default(true);
             $table->string('tocken');
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
