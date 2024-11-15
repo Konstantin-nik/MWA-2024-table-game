@@ -10,6 +10,10 @@ class Round extends Model
     /** @use HasFactory<\Database\Factories\RoundFactory> */
     use HasFactory;
 
+    protected $casts = [
+        'finished_at' => 'datetime',
+    ];
+
     public function session() {
         return $this->belongsTo(Session::class);
     }

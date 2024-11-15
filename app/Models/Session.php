@@ -10,6 +10,11 @@ class Session extends Model
     /** @use HasFactory<\Database\Factories\SessionFactory> */
     use HasFactory;
 
+    protected $casts = [
+        'started_at' => 'datetime',
+        'finished_at' => 'datetime',
+    ];
+
     public function user() {
         return $this->belongsToMany(User::class, "participations");
     }
