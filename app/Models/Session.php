@@ -14,7 +14,7 @@ class Session extends Model
         return $this->belongsToMany(User::class, "participations");
     }
 
-    public function round() {
+    public function rounds() {
         return $this->hasMany(Round::class);
     }
 }
