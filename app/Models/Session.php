@@ -9,4 +9,12 @@ class Session extends Model
 {
     /** @use HasFactory<\Database\Factories\SessionFactory> */
     use HasFactory;
+
+    public function user() {
+        return $this->belongsToMany(User::class, "participations");
+    }
+
+    public function round() {
+        return $this->hasMany(Round::class);
+    }
 }

@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('sessions', function (Blueprint $table) {
             $table->id();
+
+            $table->string('name');
+            $table->integer('size');
+            $table->boolean('public')->default(true);
+            $table->string('tocken');
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('finished_at')->nullable();
+
             $table->timestamps();
         });
     }

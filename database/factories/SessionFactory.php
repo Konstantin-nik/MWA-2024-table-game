@@ -17,7 +17,29 @@ class SessionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->colorName,
+            'size' => random_int(2, 10),
+            'public' => fake()->boolean(80),
+            'tocken' => fake()->word,
+            'started_at' => null,
+            'finished_at' => null,
         ];
+    }
+
+    /**
+     * State for sessions with a start and finish time.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function withTimestamps(): Factory
+    {
+        return $this->state(function () {
+            $startedAt = fake()->optional()->dateTime;
+
+            return [
+                'started_at' => $startedAt,
+                'finished_at' => $startedAt ? fake()->dateTimeBetween($startedAt) : null,
+            ];
+        });
     }
 }
