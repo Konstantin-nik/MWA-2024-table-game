@@ -12,7 +12,7 @@ class ContestController extends Controller
      */
     public function index()
     {
-        $Contests = Contest::public()->toJoin();
+        $contests = Contest::public()->toJoin()->get();
 
         return view("contests.index", compact("contests"));
     }
