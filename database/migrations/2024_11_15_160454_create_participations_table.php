@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('participations', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('user_id');
+            $table->foreignId('session_id');
+            $table->integer('score');
+            $table->integer('rank');
+
             $table->timestamps();
         });
     }
