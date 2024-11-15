@@ -22,4 +22,19 @@ class Session extends Model
     public function rounds() {
         return $this->hasMany(Round::class);
     }
+
+    // Model scopes -------
+    public function scopePublic($query) 
+    {
+        return $query->where('public', '===', true);
+    }
+
+    public function scopeFinished($query) {
+        return $query->whereNotNull('finished_at');
+    }
+
+    public function scopeToJoin($query) {
+
+        return $query->whereNull('started_at');
+    }
 }
