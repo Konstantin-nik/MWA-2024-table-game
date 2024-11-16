@@ -1,10 +1,10 @@
 <div>
-    @foreach ($contests as $contest)
+    @foreach ($rooms as $room)
     <dev class="mt-2">
-        <h3>{{ $contest->name }} room</h3>
-        {{ count($contest->users) }}
+        <h3>{{ $room->name }} room</h3>
+        {{ count($room->users) }}
         /
-        {{ $contest->size }} Users 
+        {{ $room->size }} Users 
     </dev>
 
     @endforeach

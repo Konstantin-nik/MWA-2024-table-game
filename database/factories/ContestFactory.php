@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contest>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Room>
  */
-class ContestFactory extends Factory
+class RoomFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -27,7 +27,7 @@ class ContestFactory extends Factory
     }
 
     /**
-     * State for contests with a start and finish time.
+     * State for rooms with a start and finish time.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */

@@ -15,9 +15,9 @@ class Round extends Model
     ];
 
     // Model Relations ------------------------------------------------------
-    public function contest() 
+    public function room() 
     {
-        return $this->belongsTo(Contest::class);
+        return $this->belongsTo(Room::class);
     }
 
     public function actions() 

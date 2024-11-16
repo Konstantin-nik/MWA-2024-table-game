@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contest;
+use App\Models\Room;
 use Illuminate\Http\Request;
 
-class ContestController extends Controller
+class RoomController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $contests = Contest::public()->toJoin()->get();
+        $rooms = Room::public()->toJoin()->get();
 
-        return view("contests.index", compact("contests"));
+        return view("rooms.index", compact("rooms"));
     }
 
     /**
@@ -44,7 +44,7 @@ class ContestController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Contest $contest)
+    public function edit(Room $room)
     {
         //
     }
@@ -52,7 +52,7 @@ class ContestController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Contest $contest)
+    public function update(Request $request, Room $room)
     {
         //
     }
@@ -60,7 +60,7 @@ class ContestController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Contest $contest)
+    public function destroy(Room $room)
     {
         //
     }

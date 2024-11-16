@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('rounds', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('contest_id');
+            $table->foreignId('room_id');
             $table->timestamp('finished_at')->nullable();
 
             $table->timestamps();
