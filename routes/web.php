@@ -8,7 +8,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('rooms', [RoomController::class, 'index'])->name('rooms');
+Route::get('rooms', [RoomController::class, 'index'])->name('rooms.index');
+
+Route::get('rooms.joins', [RoomController::class, 'index'])->name('rooms.join');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
