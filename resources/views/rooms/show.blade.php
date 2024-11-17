@@ -4,10 +4,10 @@
         <div class="flex items-center justify-between border-b pb-4 mb-6">
             <h1 class="text-3xl font-bold text-gray-800">{{ $room->name }} Room</h1>
             <div>
-                @if ($room->started_at)
-                    <span class="text-sm bg-green-100 text-green-700 font-medium px-3 py-1 rounded">Game Started</span>
-                @elseif ($room->finished_at)
+                @if ($room->finished_at)
                     <span class="text-sm bg-red-100 text-red-700 font-medium px-3 py-1 rounded">Game Finished</span>
+                @elseif ($room->started_at)
+                    <span class="text-sm bg-green-100 text-green-700 font-medium px-3 py-1 rounded">Game Started</span>
                 @else
                     <span class="text-sm bg-yellow-100 text-yellow-700 font-medium px-3 py-1 rounded">Open to Join</span>
                 @endif
@@ -79,7 +79,7 @@
                         Join Room
                     </button>
                 </form>
-            @elseif ($room->finished_at)
+            @elseif ($room->started_at)
                 <a href="{{ route('rooms.index') }}" class="text-blue-500 hover:underline">
                     Back to Rooms List
                 </a>

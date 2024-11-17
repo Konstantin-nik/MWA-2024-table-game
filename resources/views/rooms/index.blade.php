@@ -21,13 +21,12 @@
                     </div>
                     
                     <div class="flex items-center space-x-2 text-sm text-gray-600">
-                        @if ($room->started_at)
+                        @if ($room->finished_at)
+                            <span class="text-red-500 font-semibold">Game Finished</span>
+                        @elseif ($room->started_at)
                             <span class="text-green-500 font-semibold">Game Started</span>
                         @else
                             <span class="text-yellow-500 font-semibold">Open to Join</span>
-                        @endif
-                        @if ($room->finished_at)
-                            <span class="text-red-500 font-semibold">Game Finished</span>
                         @endif
                     </div>
                     {{-- <div class="text-center">
