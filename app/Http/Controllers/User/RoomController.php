@@ -34,7 +34,7 @@ class RoomController extends Controller
     {
         $request->validate([
             "name"=> ["string", "min:4", "max:25"],
-            "capacity"=>["integer", "min:2", "max:5"],
+            "capacity"=>["integer", "min:2", "max:8"],
         ]);
 
         $room = Room::create([
