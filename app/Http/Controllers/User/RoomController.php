@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use App\Models\Room;
 use Illuminate\Http\Request;
 
@@ -12,9 +13,9 @@ class RoomController extends Controller
      */
     public function index()
     {
-        $rooms = Room::public()->toJoin()->get();
+        $rooms = Room::all();
 
-        return view("rooms.index", compact("rooms"));
+        return view("user.rooms.index", compact("rooms"));
     }
 
     /**
@@ -36,17 +37,15 @@ class RoomController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show(string $id)
     {
-        $room = Room::where("id", $id)->first();
-
-        return view("rooms.show", compact("room"));
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Room $room)
+    public function edit(string $id)
     {
         //
     }
@@ -54,7 +53,7 @@ class RoomController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Room $room)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -62,7 +61,7 @@ class RoomController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Room $room)
+    public function destroy(string $id)
     {
         //
     }
