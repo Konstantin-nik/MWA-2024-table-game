@@ -80,7 +80,7 @@
                     </button>
                 </form>
             @elseif ($room->started_at)
-                <a href="{{ route('rooms.index') }}" class="text-blue-500 hover:underline">
+                <a href="{{ route('user.rooms.index') }}" class="text-blue-500 hover:underline">
                     Back to Rooms List
                 </a>
             @endif
