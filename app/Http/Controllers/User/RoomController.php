@@ -44,7 +44,7 @@ class RoomController extends Controller
             "invitation_token"=> Str::random(10),
         ]);
 
-        return redirect()->route("user.rooms.show", $room)->with("success","Room Created");
+        return redirect()->route("user.rooms.show", $room);
     }
 
     /**
@@ -62,7 +62,9 @@ class RoomController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $room = Room::find($id);
+
+        return view("user.rooms.edit", compact("room"));
     }
 
     /**
@@ -70,7 +72,23 @@ class RoomController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            "name"=> ["string", "min:4", "max:25"],
+            "capacity"=>["integer", "min:2", "max:8"],
+        ]);
+
+        $room = Room::find($id);
+
+        $room->update([
+            "name"=> $request->name,
+            "capacity"=> $request->capacity,
+            "is_public"=> $request->has('is_public'),
+            "invitation_token"=> Str::random(10),
+        ]);
+
+        session()->flash('success',"Room Edited");
+
+        return redirect()->route("user.rooms.show", $room);
     }
 
     /**

@@ -1,5 +1,12 @@
 <x-main-layout>
-    <div class="container mx-auto px-4 py-6">
+    <div class="container max-w-3xl mx-auto px-4 py-6">
+        <!-- Success Message -->
+        @if(session('success'))
+            <div class="bg-green-100 shadow-md border-green-500 text-green-700 p-4 mb-6 rounded-lg">
+                <p class="font-semibold">{{ session('success') }}</p>
+            </div>
+        @endif
+
         <!-- Room Title and Status -->
         <div class="flex items-center justify-between border-b pb-4 mb-6">
             <h1 class="text-3xl font-bold text-gray-800">{{ $room->name }} Room</h1>
@@ -73,12 +80,20 @@
         <!-- Actions -->
         <div class="mt-6">
             @if (!$room->started_at && !$room->finished_at)
-                <form method="POST" action="{{ route('rooms.show', $room->id) }}">
-                    @csrf
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded">
-                        Join Room
-                    </button>
-                </form>
+                <div class="flex items-center justify-start">
+                    <form method="POST" action="{{ route('user.rooms.show', $room) }}">
+                        @csrf
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded">
+                            Join Room
+                        </button>
+                    </form>
+                    <form method="GET" action="{{ route('user.rooms.edit', $room) }}">
+                        @csrf
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded ml-5">
+                            Edit Room
+                        </button>
+                    </form>
+                </div>
             @elseif ($room->started_at)
                 <a href="{{ route('user.rooms.index') }}" class="text-blue-500 hover:underline">
                     Back to Rooms List
