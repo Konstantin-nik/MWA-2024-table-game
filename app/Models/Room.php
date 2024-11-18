@@ -29,6 +29,11 @@ class Room extends Model
         return $this->hasMany(Round::class);
     }
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     // Model scopes ---------------------------------------------------------
     public function scopePublic($query) 
     {
