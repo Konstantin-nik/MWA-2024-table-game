@@ -39,7 +39,9 @@ class RoomController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $room = Room::find($id);
+
+        return view("user.rooms.show", compact("room"));
     }
 
     /**
