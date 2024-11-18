@@ -40,7 +40,7 @@ class RoomController extends Controller
         $room = Room::create([
             "name"=> $request->name,
             "capacity"=> $request->capacity,
-            "is_public"=> $request->is_public,
+            "is_public"=> $request->has('is_public'),
             "invitation_token"=> Str::random(10),
         ]);
 
