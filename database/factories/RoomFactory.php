@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Room>
@@ -18,9 +19,9 @@ class RoomFactory extends Factory
     {
         return [
             'name' => fake()->colorName,
-            'size' => random_int(2, 10),
+            'capacity' => random_int(2, 10),
             'is_public' => fake()->boolean(80),
-            'tocken' => fake()->word,
+            'invitation_token' => Str::random(10),
             'started_at' => null,
             'finished_at' => null,
         ];

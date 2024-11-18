@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
 
             $table->string('name');
-            $table->integer('size');
+            $table->integer('capacity');
             $table->boolean('is_public')->default(true);
-            $table->string('tocken');
+            $table->string('invitation_token');
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
 

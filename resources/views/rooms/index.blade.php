@@ -13,7 +13,7 @@
                             Players: 
                             <span class="font-bold text-gray-800">{{ count($room->users) }}</span>
                             /
-                            <span class="font-bold text-gray-800">{{ $room->size }}</span>
+                            <span class="font-bold text-gray-800">{{ $room->capacity }}</span>
                         </span>
                         <span class="bg-blue-100 text-blue-600 text-xs font-medium py-1 px-2 rounded">
                             {{ $room->is_public ? 'Public' : 'Private' }}

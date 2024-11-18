@@ -13,7 +13,6 @@ class Room extends Model
     protected $casts = [
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
-        // 'is_public' => 'boolean',
     ];
 
     // Model Relations ------------------------------------------------------

@@ -20,7 +20,7 @@
                 <div>
                     <p class="text-gray-600">
                         <span class="font-medium">Room Size:</span> 
-                        {{ $room->size }} players
+                        {{ $room->capacity }} players
                     </p>
                     <p class="text-gray-600">
                         <span class="font-medium">Current Players:</span> 
