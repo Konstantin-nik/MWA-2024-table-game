@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Str;
 
 class RoomController extends Controller
 {
@@ -23,7 +24,7 @@ class RoomController extends Controller
      */
     public function create()
     {
-        //
+        return view("user.rooms.create");
     }
 
     /**
@@ -31,7 +32,19 @@ class RoomController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            "name"=> ["string", "min:4", "max:25"],
+            "capacity"=>["integer", "min:2", "max:5"],
+        ]);
+
+        $room = Room::create([
+            "name"=> $request->name,
+            "capacity"=> $request->capacity,
+            "is_public"=> $request->is_public,
+            "invitation_token"=> Str::random(10),
+        ]);
+
+        return redirect()->route("user.rooms.show", $room)->with("success","Room Created");
     }
 
     /**

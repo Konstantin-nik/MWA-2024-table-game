@@ -10,6 +10,9 @@ class Room extends Model
     /** @use HasFactory<\Database\Factories\RoomFactory> */
     use HasFactory;
 
+
+    protected $guarded = [];
+
     protected $casts = [
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
