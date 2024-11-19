@@ -14,7 +14,7 @@ Route::get('rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::get('rooms/{id}', [RoomController::class, 'show'])->name('rooms.show');
 
 // Private Routes
-Route::name('user.')->group(function () {
+Route::name('user.')->middleware('auth')->group(function () {
     Route::resource('user/rooms', \App\Http\Controllers\User\RoomController::class);
 });
 
