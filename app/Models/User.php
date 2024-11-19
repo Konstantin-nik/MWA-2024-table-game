@@ -57,7 +57,7 @@ class User extends Authenticatable
         return $this->hasMany(Action::class);
     }
 
-    public function createdRooms()
+    public function ownedRooms()
     {
         return $this->hasMany(Room::class);
     }
