@@ -39,6 +39,7 @@ class RoomController extends Controller
 
         $room = Room::create([
             "name"=> $request->name,
+            "user_id"=> auth()->user()->id,
             "capacity"=> $request->capacity,
             "is_public"=> $request->has('is_public'),
             "invitation_token"=> Str::random(10),

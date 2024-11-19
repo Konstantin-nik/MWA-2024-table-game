@@ -18,6 +18,7 @@ class RoomFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => $this->faker->numberBetween(1,10),
             'name' => fake()->colorName,
             'capacity' => random_int(2, 10),
             'is_public' => fake()->boolean(80),

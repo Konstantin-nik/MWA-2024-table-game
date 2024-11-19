@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user_id')->nullable();
+            $table->foreignId('user_id');
             $table->string('name');
             $table->integer('capacity');
             $table->boolean('is_public')->default(true);
