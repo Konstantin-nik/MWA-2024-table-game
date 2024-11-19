@@ -9,7 +9,17 @@
 
         <!-- Room Title and Status -->
         <div class="flex items-center justify-between border-b pb-4 mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">{{ $room->name }} Room</h1>
+            <div class="flex items-end space-x-4">
+                <h1 class="text-3xl font-bold text-gray-800">{{ $room->name }} Room</h1>
+                @if (auth()->user()->id == $room->user_id)
+                    <form method="GET" action="{{ route('user.rooms.edit', $room) }}">
+                        @csrf
+                        <button type="submit" class="text-blue-500 hover:text-blue-600 font-small text-2xl">
+                            Edit
+                        </button>
+                    </form>
+                @endif
+            </div>
             <div>
                 @if ($room->finished_at)
                     <span class="text-sm bg-red-100 text-red-700 font-medium px-3 py-1 rounded">Game Finished</span>
@@ -81,18 +91,12 @@
         <div class="mt-6">
             @if (!$room->started_at && !$room->finished_at)
                 <div class="flex items-center justify-start">
-                    <form method="POST" action="{{ route('user.rooms.show', $room) }}">
+                    <!-- <form method="POST" action="{{ route('user.rooms.show', $room) }}">
                         @csrf
                         <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded">
                             Join Room
                         </button>
-                    </form>
-                    <form method="GET" action="{{ route('user.rooms.edit', $room) }}">
-                        @csrf
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded ml-5">
-                            Edit Room
-                        </button>
-                    </form>
+                    </form> -->
                 </div>
             @elseif ($room->started_at)
                 <a href="{{ route('user.rooms.index') }}" class="text-blue-500 hover:underline">

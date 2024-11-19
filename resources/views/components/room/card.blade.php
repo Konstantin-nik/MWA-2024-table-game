@@ -9,19 +9,16 @@
                 /
                 <span class="font-bold text-gray-800">{{ $room->capacity }}</span>
             </span>
-            <span class="bg-blue-100 text-blue-600 text-xs font-medium py-1 px-2 rounded">
+            <span class="bg-green-100 text-green-600 text-xs font-medium py-1 px-2 rounded">
                 {{ $room->is_public ? 'Public' : 'Private' }}
             </span>
         </div>
         
-        <div class="flex items-center space-x-2 text-sm text-gray-600">
-            @if ($room->finished_at)
-                <span class="text-red-500 font-semibold">Game Finished</span>
-            @elseif ($room->started_at)
-                <span class="text-green-500 font-semibold">Game Started</span>
-            @else
-                <span class="text-yellow-500 font-semibold">Open to Join</span>
-            @endif
-        </div>
+        <!-- Add the white "Join" button -->
+        <button 
+            class="w-full bg-white text-gray-700 font-medium py-2 px-4 rounded border border-gray-300 hover:bg-gray-100 hover:shadow transition duration-200"
+        >
+            Join
+        </button>
     </div>
 </a>
