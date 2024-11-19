@@ -12,27 +12,37 @@
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @else
-        <!-- Fallback for when Vite isn't used (e.g., in production without Vite) -->
         <link href="{{ mix('css/app.css') }}" rel="stylesheet">
         <script src="{{ mix('js/app.js') }}" defer></script>
     @endif
 </head>
-<body class="flex flex-col min-h-screen bg-gray-100 text-gray-800 font-sans">
+<body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
+
   <!-- Header -->
-  {{-- <header class="bg-white shadow-sm sticky top-0 z-10">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-      <h1 class="text-xl sm:text-2xl font-bold text-gray-900">My Blog</h1>
-      <nav class="hidden md:flex space-x-8">
-        <a href="{{ route('home') }}" class="text-gray-600 hover:text-blue-600 transition-colors">Home</a>
-        <a href="{{ route('articles.index') }}" class="text-gray-600 hover:text-blue-600 transition-colors">Articles</a>
+  <header class="bg-white shadow">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap justify-between items-center">
+      <!-- Title -->
+      <a href="{{ route('welcome') }}" class="text-2xl font-bold text-gray-700 hover:text-blue-500 transition-colors">
+        TableGame
+      </a>
+
+      <!-- Navigation -->
+      <nav class="flex flex-wrap items-center space-x-4 mt-2 md:mt-0">
+        <form action="{{ route('user.rooms.index') }}" method="POST" class="flex items-center space-x-2">
+          @csrf
+          <input 
+            type="text" 
+            name="token"
+            placeholder="Enter Room Token" 
+            class="px-4 py-2 border border-gray-300 rounded shadow text-gray-700"
+          />
+          <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded shadow">
+            Join
+          </button>
+        </form>
       </nav>
-      <button class="md:hidden text-gray-600 focus:outline-none">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
     </div>
-  </header> --}}
+  </header>
 
   <!-- Main Content -->
   <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -40,16 +50,16 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-gray-900 text-gray-400 py-6 mt-12">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+  <footer class="bg-gray-100 text-gray-600 py-6 border-t">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center space-y-4 md:space-y-0">
       <p class="text-sm text-center md:text-left">© 2024 Table Game. All rights reserved.</p>
       <div class="flex space-x-4">
-        <a href="#" class="hover:text-white transition-colors">Twitter</a>
-        <a href="#" class="hover:text-white transition-colors">GitHub</a>
-        <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
+        <a href="#" class="hover:text-blue-500 transition-colors">Twitter</a>
+        <a href="#" class="hover:text-blue-500 transition-colors">GitHub</a>
+        <a href="#" class="hover:text-blue-500 transition-colors">LinkedIn</a>
       </div>
     </div>
   </footer>
-</body>
 
+</body>
 </html>
