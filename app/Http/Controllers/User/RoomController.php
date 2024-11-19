@@ -14,7 +14,7 @@ class RoomController extends Controller
      */
     public function index()
     {
-        $rooms = Room::all();
+        $rooms = Room::public()->toJoin()->get();
 
         return view("user.rooms.index", compact("rooms"));
     }
