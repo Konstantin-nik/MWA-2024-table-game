@@ -13,6 +13,7 @@ class Cancel extends Component
      */
     public function __construct(
         public ?string $label,
+        public string $redirectTo,
     ) {}
 
     /**

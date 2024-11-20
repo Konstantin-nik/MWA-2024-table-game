@@ -17,7 +17,7 @@
             <!-- Submit Button -->
             <div class="flex items-center justify-between">
                 <x-form.submit label="Save Changes"/>
-                <x-form.cancel/>
+                <x-form.cancel redirectTo="{{ route('user.rooms.show', $room) }}"/>
             </div>
         </form>
     </div>

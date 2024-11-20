@@ -16,7 +16,7 @@
             <!-- Submit Button -->
             <div class="flex items-center justify-between">
                 <x-form.submit label="Create Room"/>
-                <x-form.cancel/>
+                <x-form.cancel redirectTo="{{ route('user.rooms.index') }}"/>
             </div>
         </form>
     </div>
