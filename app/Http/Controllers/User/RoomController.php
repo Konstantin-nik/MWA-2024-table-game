@@ -16,7 +16,7 @@ class RoomController extends Controller
     {
         $rooms = Room::public()->toJoin()->get();
 
-        return view("user.rooms.index", compact("rooms"));
+        return view('user.rooms.index', compact('rooms'));
     }
 
     /**
@@ -24,7 +24,7 @@ class RoomController extends Controller
      */
     public function create()
     {
-        return view("user.rooms.create");
+        return view('user.rooms.create');
     }
 
     /**
@@ -33,19 +33,19 @@ class RoomController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            "name"=> ["string", "min:4", "max:25"],
-            "capacity"=>["integer", "min:2", "max:8"],
+            'name' => ['string', 'min:4', 'max:25'],
+            'capacity' => ['integer', 'min:2', 'max:8'],
         ]);
 
         $room = Room::create([
-            "name"=> $request->name,
-            "owner_id"=> auth()->user()->id,
-            "capacity"=> $request->capacity,
-            "is_public"=> $request->has('is_public'),
-            "invitation_token"=> Str::random(10),
+            'name' => $request->name,
+            'owner_id' => auth()->user()->id,
+            'capacity' => $request->capacity,
+            'is_public' => $request->has('is_public'),
+            'invitation_token' => Str::random(10),
         ]);
 
-        return redirect()->route("user.rooms.show", $room);
+        return redirect()->route('user.rooms.show', $room);
     }
 
     /**
@@ -55,7 +55,7 @@ class RoomController extends Controller
     {
         $room = Room::find($id);
 
-        return view("user.rooms.show", compact("room"));
+        return view('user.rooms.show', compact('room'));
     }
 
     /**
@@ -64,10 +64,10 @@ class RoomController extends Controller
     public function edit(string $id)
     {
         $room = Room::find($id);
-        
+
         $this->isAuthorized($room);
 
-        return view("user.rooms.edit", compact("room"));
+        return view('user.rooms.edit', compact('room'));
     }
 
     /**
@@ -79,22 +79,22 @@ class RoomController extends Controller
         $this->isAuthorized($room);
 
         $request->validate([
-            "name"=> ["string", "min:4", "max:25"],
-            "capacity"=>["integer", "min:2", "max:8"],
+            'name' => ['string', 'min:4', 'max:25'],
+            'capacity' => ['integer', 'min:2', 'max:8'],
         ]);
 
         $room = Room::find($id);
 
         $room->update([
-            "name"=> $request->name,
-            "capacity"=> $request->capacity,
-            "is_public"=> $request->has('is_public'),
-            "invitation_token"=> Str::random(10),
+            'name' => $request->name,
+            'capacity' => $request->capacity,
+            'is_public' => $request->has('is_public'),
+            'invitation_token' => Str::random(10),
         ]);
 
-        session()->flash('success',"Room Edited");
+        session()->flash('success', 'Room Edited');
 
-        return redirect()->route("user.rooms.show", $room);
+        return redirect()->route('user.rooms.show', $room);
     }
 
     /**
@@ -108,9 +108,8 @@ class RoomController extends Controller
     private function isAuthorized(Room $room)
     {
         $user = auth()->user();
-        if (!($user->id == $room->owner_id)) {
+        if (! ($user->id == $room->owner_id)) {
             abort(401);
         }
     }
-
 }

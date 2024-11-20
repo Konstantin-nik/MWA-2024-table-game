@@ -11,13 +11,13 @@ class Action extends Model
     use HasFactory;
 
     // Model Relations ------------------------------------------------------
-    public function user() 
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function rounds() 
+    public function rounds()
     {
-        return $this->belongsToMany(Round::class,  "action_round");
+        return $this->belongsToMany(Round::class, 'action_round');
     }
 }

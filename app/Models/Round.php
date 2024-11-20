@@ -15,13 +15,13 @@ class Round extends Model
     ];
 
     // Model Relations ------------------------------------------------------
-    public function room() 
+    public function room()
     {
         return $this->belongsTo(Room::class);
     }
 
-    public function actions() 
+    public function actions()
     {
-        return $this->belongsToMany(Action::class,"action_round");
+        return $this->belongsToMany(Action::class, 'action_round');
     }
 }

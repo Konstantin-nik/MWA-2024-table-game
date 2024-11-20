@@ -18,7 +18,7 @@ class RoomFactory extends Factory
     public function definition(): array
     {
         return [
-            'owner_id' => $this->faker->numberBetween(1,10),
+            'owner_id' => $this->faker->numberBetween(1, 10),
             'name' => fake()->colorName,
             'capacity' => random_int(2, 10),
             'is_public' => fake()->boolean(80),
@@ -30,8 +30,6 @@ class RoomFactory extends Factory
 
     /**
      * State for rooms with a start and finish time.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     public function withTimestamps(): Factory
     {

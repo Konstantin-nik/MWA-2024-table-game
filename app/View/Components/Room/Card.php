@@ -9,7 +9,9 @@ use Illuminate\View\Component;
 class Card extends Component
 {
     public $room;
+
     public $auth;
+
     /**
      * Create a new component instance.
      */

@@ -14,7 +14,7 @@ class RoomController extends Controller
     {
         $rooms = Room::public()->toJoin()->get();
 
-        return view("rooms.index", compact("rooms"));
+        return view('rooms.index', compact('rooms'));
     }
 
     /**
@@ -38,9 +38,9 @@ class RoomController extends Controller
      */
     public function show(int $id)
     {
-        $room = Room::where("id", $id)->first();
+        $room = Room::where('id', $id)->first();
 
-        return view("rooms.show", compact("room"));
+        return view('rooms.show', compact('room'));
     }
 
     /**

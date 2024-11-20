@@ -10,7 +10,6 @@ class Room extends Model
     /** @use HasFactory<\Database\Factories\RoomFactory> */
     use HasFactory;
 
-
     protected $guarded = [];
 
     protected $casts = [
@@ -19,33 +18,33 @@ class Room extends Model
     ];
 
     // Model Relations ------------------------------------------------------
-    public function users() 
+    public function users()
     {
-        return $this->belongsToMany(User::class, "participations");
+        return $this->belongsToMany(User::class, 'participations');
     }
 
-    public function rounds() 
+    public function rounds()
     {
         return $this->hasMany(Round::class);
     }
 
     public function createdBy()
     {
-        return $this->belongsTo(User::class, "owner_id");
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     // Model scopes ---------------------------------------------------------
-    public function scopePublic($query) 
+    public function scopePublic($query)
     {
-        return $query->where("is_public", true);
+        return $query->where('is_public', true);
     }
 
-    public function scopeFinished($query) 
+    public function scopeFinished($query)
     {
         return $query->whereNotNull('finished_at');
     }
 
-    public function scopeToJoin($query) 
+    public function scopeToJoin($query)
     {
         return $query->whereNull('started_at');
     }

@@ -52,7 +52,7 @@ class User extends Authenticatable
         return $this->hasMany(Participation::class);
     }
 
-    public function actions() 
+    public function actions()
     {
         return $this->hasMany(Action::class);
     }
