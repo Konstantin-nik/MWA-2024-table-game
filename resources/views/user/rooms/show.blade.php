@@ -76,33 +76,28 @@
                                 <p class="text-gray-800 font-medium">{{ $user->name }}</p>
                                 <p class="text-sm text-gray-500">{{ $user->email }}</p>
                             </div>
-                            <div>
-                                <span class="text-sm text-gray-400">{{ $user->pivot->joined_at->format('M d, Y H:i') }}</span>
-                            </div>
                         </li>
                     @endforeach
                 </ul>
             @else
                 <p class="text-gray-500">No players have joined this room yet.</p>
             @endif
+            @if (!$room->started_at && !$room->finished_at)
+                <div class="mt-6">
+                    <form method="GET" action="{{ route('user.rooms.show', $room) }}">
+                        <button class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">
+                            Join
+                        </button>
+                    </form>
+                </div>  
+            @endif
         </div>
 
         <!-- Actions -->
         <div class="mt-6">
-            @if (!$room->started_at && !$room->finished_at)
-                <div class="flex items-center justify-start">
-                    <!-- <form method="POST" action="{{ route('user.rooms.show', $room) }}">
-                        @csrf
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded">
-                            Join Room
-                        </button>
-                    </form> -->
-                </div>
-            @elseif ($room->started_at)
-                <a href="{{ route('user.rooms.index') }}" class="text-blue-500 hover:underline">
-                    Back to Rooms List
-                </a>
-            @endif
+            <a href="{{ route('user.rooms.index') }}" class="text-blue-500 hover:underline">
+                Back to Rooms List
+            </a>
         </div>
     </div>
 </x-main-layout>
