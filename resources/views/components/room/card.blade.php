@@ -15,10 +15,15 @@
         </div>
         
         <!-- Add the white "Join" button -->
-        <button 
-            class="w-full bg-white text-gray-700 font-medium py-2 px-4 rounded border border-gray-300 hover:bg-gray-100 hover:shadow transition duration-200"
-        >
-            Join
-        </button>
+        @if ($room->isOpenToJoin() && auth()->user()->isNotInRoom() && $room->isNotFull())
+        <form method="POST" action="{{ route('user.rooms.join', $room) }}">
+            @csrf
+            <button 
+                class="w-full bg-white text-gray-700 font-medium py-2 px-4 rounded border border-gray-300 hover:bg-gray-100 hover:shadow transition duration-200"
+            >
+                Join
+            </button>
+        </form>
+        @endif
     </div>
 </a>

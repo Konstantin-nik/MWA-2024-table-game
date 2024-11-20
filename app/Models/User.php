@@ -61,4 +61,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Room::class, 'owner_id');
     }
+
+    // Model Functions ------------------------------------------------------
+    public function isInRoom() 
+    {
+        return $this->participations()->whereNot('finished_at')->get()->isNotEmpty();
+    }
+
+    public function isNotInRoom() 
+    {
+        return !$this->isInRoom();
+    }
+
+    public function canJoinRoom(Room $room)
+    {
+        return $room->isOpenToJoin() && $this->isNotInRoom() && $room->isNotFull();
+    }
 }

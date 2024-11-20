@@ -100,9 +100,10 @@
             @else
                 <p class="text-gray-500">No players have joined this room yet.</p>
             @endif
-            @if (!$room->started_at && !$room->finished_at)
+            @if (auth()->user()->canJoinRoom($room))
                 <div class="mt-6">
-                    <form method="GET" action="{{ route('user.rooms.show', $room) }}">
+                    <form method="POST" action="{{ route('user.rooms.join', $room) }}">
+                        @csrf
                         <button class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">
                             Join
                         </button>

@@ -15,10 +15,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(10)->create();
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
 
         Room::factory(20)->withTimestamps()->create();
 
@@ -27,5 +23,10 @@ class DatabaseSeeder extends Seeder
 
             $room->users()->attach($list_of_users);
         }
+
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
     }
 }

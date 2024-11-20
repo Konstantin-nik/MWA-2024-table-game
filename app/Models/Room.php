@@ -15,9 +15,10 @@ class Room extends Model
     protected $casts = [
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
+        'is_public' => 'boolean',
     ];
 
-    // Model Relations ------------------------------------------------------
+    // Model Relations --------------------------------------------------------
     public function users()
     {
         return $this->belongsToMany(User::class, 'participations');
@@ -33,7 +34,7 @@ class Room extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    // Model scopes ---------------------------------------------------------
+    // Model scopes -----------------------------------------------------------
     public function scopePublic($query)
     {
         return $query->where('is_public', true);
@@ -48,4 +49,21 @@ class Room extends Model
     {
         return $query->whereNull('started_at');
     }
+
+    // Model functions --------------------------------------------------------
+    public function isFull()
+    {
+        return $this->capacity <= count($this->users);
+    }
+
+    public function isNotFull()
+    {
+        return !$this->isFull();
+    }
+
+    public function isOpenToJoin()
+    {
+        return !$this->started_at && !$this->finished_at && $this->is_public;
+    }
+
 }
