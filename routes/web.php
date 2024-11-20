@@ -17,7 +17,7 @@ Route::get('/', function () {
 // Private Routes
 Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('user/rooms', \App\Http\Controllers\User\RoomController::class);
-    Route::post('user/rooms/{id}/join', [RoomJoinController::class,'join'])->name('rooms.join');
+    Route::post('user/rooms/{id}/join', [RoomJoinController::class, 'join'])->name('rooms.join');
 });
 
 Route::get('/dashboard', function () {

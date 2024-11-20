@@ -13,14 +13,14 @@ class RoomJoinController extends Controller
         $this->isAuthorizedToJoin();
         $user = auth()->user();
         $room = Room::findOrFail($id);
-        
+
         if ($user->canJoinRoom($room) || $room->invitation_token == $request->invitation_token) {
             $room->users()->attach(auth()->user());
         } else {
             abort(401);
         }
 
-        return redirect()->route("user.rooms.show", $id);
+        return redirect()->route('user.rooms.show', $id);
     }
 
     private function isAuthorizedToJoin()

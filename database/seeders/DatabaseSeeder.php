@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
 
         Room::factory(20)->withTimestamps()->create();
 
-        foreach(Room::all() as $room) {
-            $list_of_users = User::inRandomOrder()->take(random_int(0,$room->capacity))->get();
+        foreach (Room::all() as $room) {
+            $list_of_users = User::inRandomOrder()->take(random_int(0, $room->capacity))->get();
 
             $room->users()->attach($list_of_users);
         }

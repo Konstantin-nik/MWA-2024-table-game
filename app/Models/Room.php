@@ -58,12 +58,11 @@ class Room extends Model
 
     public function isNotFull()
     {
-        return !$this->isFull();
+        return ! $this->isFull();
     }
 
     public function isOpenToJoin()
     {
-        return !$this->started_at && !$this->finished_at && $this->is_public;
+        return ! $this->started_at && ! $this->finished_at && $this->is_public;
     }
-
 }
