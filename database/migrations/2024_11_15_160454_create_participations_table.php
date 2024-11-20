@@ -16,8 +16,8 @@ return new class extends Migration
 
             $table->foreignId('user_id');
             $table->foreignId('room_id');
-            $table->integer('score');
-            $table->integer('rank');
+            $table->integer('score')->nullable();
+            $table->integer('rank')->nullable();
 
             $table->timestamps();
         });

@@ -16,8 +16,7 @@ class Text extends Component
         public ?string $label,
         public ?string $value = null,
         public ?string $placeholder = null,
-    ) 
-    {
+    ) {
         $this->label = $label ?? ucfirst($name);
     }
 

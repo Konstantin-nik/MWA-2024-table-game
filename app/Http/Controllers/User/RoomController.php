@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Participation;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Str;
@@ -45,6 +46,11 @@ class RoomController extends Controller
             'invitation_token' => Str::random(10),
         ]);
 
+        Participation::create([
+            'user_id' => auth()->user()->id,
+            'room_id' => $room->id,
+        ]);
+
         return redirect()->route('user.rooms.show', $room);
     }
 
@@ -78,7 +84,7 @@ class RoomController extends Controller
             'name' => ['string', 'min:4', 'max:25'],
             'capacity' => ['integer', 'min:2', 'max:8'],
         ]);
-        
+
         $room = Room::findOrFail($id);
         $this->isAuthorized($room);
 
