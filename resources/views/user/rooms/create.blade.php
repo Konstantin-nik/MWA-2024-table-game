@@ -8,33 +8,10 @@
             <x-form.text name="name" label="Room Name" placeholder="Enter room name"/>
 
             <!-- Capacity -->
-            <div class="mb-4">
-                <label for="capacity" class="block text-gray-700 text-sm font-bold mb-2">Capacity</label>
-                <input 
-                    type="number" 
-                    name="capacity" 
-                    id="capacity" 
-                    placeholder="Enter capacity" 
-                    value="{{ old('capacity') }}" 
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('capacity') border-red-500 @enderror">
-                @error('capacity')
-                    <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+            <x-form.number name="capacity" placeholder="Enter capacity"/>
 
             <!-- Public or Private -->
-            <div class="mb-4">
-                <label for="is_public" class="block text-gray-700 text-sm font-bold mb-2">Visibility</label>
-                <div class="flex items-center">
-                    <input 
-                        type="checkbox" 
-                        name="is_public" 
-                        id="is_public" 
-                        value={{ old('is_public', true) ? '1' : '0' }}
-                        class="mr-2 leading-tight">
-                    <label for="is_public" class="text-gray-600">Make this room public</label>
-                </div>
-            </div>
+            <x-form.checkbox name="is_public" label="Visibility" placeholder="Make this room public" />
 
             <!-- Submit Button -->
             <div class="flex items-center justify-between">

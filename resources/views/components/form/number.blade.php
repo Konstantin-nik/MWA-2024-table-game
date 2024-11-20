@@ -1,7 +1,7 @@
 <div class="mb-4">
     @include('components.form.label')
     <input 
-        type="text" 
+        type="number" 
         name="{{ $name }}" 
         id="{{ $name }}" 
         placeholder="{{ $placeholder }}" 
