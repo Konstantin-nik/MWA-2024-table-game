@@ -9,9 +9,9 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Route::get('rooms', [RoomController::class, 'index'])->name('rooms.index');
+// Route::get('rooms', [RoomController::class, 'index'])->name('rooms.index');
 
-Route::get('rooms/{id}', [RoomController::class, 'show'])->name('rooms.show');
+// Route::get('rooms/{id}', [RoomController::class, 'show'])->name('rooms.show');
 
 // Private Routes
 Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
