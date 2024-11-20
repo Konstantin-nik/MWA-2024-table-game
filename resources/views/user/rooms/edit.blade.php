@@ -16,14 +16,8 @@
 
             <!-- Submit Button -->
             <div class="flex items-center justify-between">
-                <button type="submit"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Save Changes
-                </button>
-                <a href="{{ route('user.rooms.index') }}" 
-                    class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
-                    Cancel
-                </a>
+                <x-form.submit label="Save Changes"/>
+                <x-form.cancel/>
             </div>
         </form>
     </div>
