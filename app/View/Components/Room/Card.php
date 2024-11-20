@@ -15,10 +15,9 @@ class Card extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct($room, $auth = false)
+    public function __construct($room)
     {
         $this->room = $room;
-        $this->auth = $auth;
     }
 
     /**
