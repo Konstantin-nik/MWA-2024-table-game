@@ -9,16 +9,6 @@ use Str;
 
 class RoomController extends Controller
 {
-    public function isAuthorized(Room $room)
-    {
-        $user = $room->user;
-        if ($user->hasRole("admin")) {
-
-        } else if ($user->id == $room->owner_id) {
-            return true;
-        }
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -74,6 +64,8 @@ class RoomController extends Controller
     public function edit(string $id)
     {
         $room = Room::find($id);
+        
+        $this->isAuthorized($room);
 
         return view("user.rooms.edit", compact("room"));
     }
@@ -83,6 +75,9 @@ class RoomController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $room = Room::find($id);
+        $this->isAuthorized($room);
+
         $request->validate([
             "name"=> ["string", "min:4", "max:25"],
             "capacity"=>["integer", "min:2", "max:8"],
@@ -109,4 +104,13 @@ class RoomController extends Controller
     {
         //
     }
+
+    private function isAuthorized(Room $room)
+    {
+        $user = auth()->user();
+        if (!($user->id == $room->owner_id)) {
+            abort(401);
+        }
+    }
+
 }
