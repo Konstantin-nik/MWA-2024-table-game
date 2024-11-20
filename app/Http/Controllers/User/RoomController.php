@@ -9,6 +9,16 @@ use Str;
 
 class RoomController extends Controller
 {
+    public function isAuthorized(Room $room)
+    {
+        $user = $room->user;
+        if ($user->hasRole("admin")) {
+
+        } else if ($user->id == $room->owner_id) {
+            return true;
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -39,7 +49,7 @@ class RoomController extends Controller
 
         $room = Room::create([
             "name"=> $request->name,
-            "user_id"=> auth()->user()->id,
+            "owner_id"=> auth()->user()->id,
             "capacity"=> $request->capacity,
             "is_public"=> $request->has('is_public'),
             "invitation_token"=> Str::random(10),

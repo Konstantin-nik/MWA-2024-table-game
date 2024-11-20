@@ -11,7 +11,7 @@
         <div class="flex items-center justify-between border-b pb-4 mb-6">
             <div class="flex items-end space-x-4">
                 <h1 class="text-3xl font-bold text-gray-800">{{ $room->name }} Room</h1>
-                @if (auth()->user()->id == $room->user_id)
+                @if (auth()->user()->id == $room->owner_id)
                     <form method="GET" action="{{ route('user.rooms.edit', $room) }}">
                         @csrf
                         <button type="submit" class="text-blue-500 hover:text-blue-600 font-small text-2xl">
