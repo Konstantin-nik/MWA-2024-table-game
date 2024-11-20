@@ -53,7 +53,7 @@ class RoomController extends Controller
      */
     public function show(string $id)
     {
-        $room = Room::find($id);
+        $room = Room::findOrFail($id);
 
         return view('user.rooms.show', compact('room'));
     }
@@ -63,8 +63,7 @@ class RoomController extends Controller
      */
     public function edit(string $id)
     {
-        $room = Room::find($id);
-
+        $room = Room::findOrFail($id);
         $this->isAuthorized($room);
 
         return view('user.rooms.edit', compact('room'));
@@ -75,15 +74,13 @@ class RoomController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $room = Room::find($id);
-        $this->isAuthorized($room);
-
         $request->validate([
             'name' => ['string', 'min:4', 'max:25'],
             'capacity' => ['integer', 'min:2', 'max:8'],
         ]);
-
-        $room = Room::find($id);
+        
+        $room = Room::findOrFail($id);
+        $this->isAuthorized($room);
 
         $room->update([
             'name' => $request->name,
