@@ -99,7 +99,8 @@ class RoomController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $room = Room::findOrFail($id);
+        $this->isAuthorized($room);
     }
 
     private function isAuthorized(Room $room)
