@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Str;
 
 class Room extends Model
 {
@@ -48,6 +49,16 @@ class Room extends Model
     public function scopeToJoin($query)
     {
         return $query->whereNull('started_at');
+    }
+
+    // Model static functions -------------------------------------------------
+    public static function generateUniqueInvitationToken()
+    {
+        do {
+            $token = Str::random(10);
+        } while (Room::toJoin()->where('invitation_token', $token)->exists());
+    
+        return $token;
     }
 
     // Model functions --------------------------------------------------------

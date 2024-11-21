@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Room;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Str;
 
@@ -22,7 +23,7 @@ class RoomFactory extends Factory
             'name' => fake()->colorName,
             'capacity' => random_int(2, 10),
             'is_public' => fake()->boolean(80),
-            'invitation_token' => Str::random(10),
+            'invitation_token' => Room::generateUniqueInvitationToken(),
             'started_at' => null,
             'finished_at' => null,
         ];
