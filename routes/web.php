@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\User\ParticipationController;
 use App\Http\Controllers\User\RoomJoinController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,7 @@ Route::get('/', function () {
 Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('user/rooms', \App\Http\Controllers\User\RoomController::class);
     Route::post('user/rooms/{id}/join', [RoomJoinController::class, 'join'])->name('rooms.join');
+    Route::get('user/participations', [ParticipationController::class, 'index'])->name('participations');
 });
 
 Route::get('/dashboard', function () {
