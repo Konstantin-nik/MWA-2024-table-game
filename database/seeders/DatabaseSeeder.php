@@ -6,7 +6,6 @@ use App\Models\Participation;
 use App\Models\Room;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -45,7 +44,7 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user->id,
             'room_id' => $room->id,
             'score' => 80,
-            'rank' => 1
+            'rank' => 1,
         ]);
     }
 }

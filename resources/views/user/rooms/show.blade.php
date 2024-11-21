@@ -101,23 +101,9 @@
                 <p class="text-gray-500">No players have joined this room yet.</p>
             @endif
             @if (auth()->user()->canJoinRoom($room))
-                <div class="mt-6">
-                    <form method="POST" action="{{ route('user.rooms.join', $room) }}">
-                        @csrf
-                        <button class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">
-                            Join
-                        </button>
-                    </form>
-                </div>
+                <x-form.one-button-form label="Join" redirectTo="{{ route('user.rooms.join', $room) }}" />
             @elseif (auth()->user()->isInRoom($room))
-                <div class="mt-6">
-                    <form method="POST" action="{{ route('user.rooms.join', $room) }}">
-                        @csrf
-                        <button class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">
-                            Leave Room
-                        </button>
-                    </form>
-                </div>
+                <x-form.one-button-form label="Leave Room" redirectTo="{{ route('user.rooms.join', $room) }}" />
             @endif
         </div>
 

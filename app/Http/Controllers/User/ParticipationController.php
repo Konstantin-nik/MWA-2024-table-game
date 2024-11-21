@@ -16,7 +16,7 @@ class ParticipationController extends Controller
 
         $participations = $user->participations()->get();
 
-        return view("participations.index", compact("participations"));
+        return view('participations.index', compact('participations'));
     }
 
     /**
