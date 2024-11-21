@@ -19,6 +19,7 @@ Route::get('/', function () {
 Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('user/rooms', \App\Http\Controllers\User\RoomController::class);
     Route::post('user/rooms/{id}/join', [RoomJoinController::class, 'join'])->name('rooms.join');
+    Route::post('user/rooms/{id}/leave', [RoomJoinController::class, 'leave'])->name('rooms.leave');
     Route::get('user/participations', [ParticipationController::class, 'index'])->name('participations');
 });
 

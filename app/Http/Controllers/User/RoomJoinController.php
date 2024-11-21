@@ -23,6 +23,18 @@ class RoomJoinController extends Controller
         return redirect()->route('user.rooms.show', $id);
     }
 
+    public function leave(string $id, Request $request)
+    {
+        $user = auth()->user();
+        $room = Room::findOrFail($id);
+
+        if ($user->isInRoom($room)) {
+            $room->users()->detach($user);
+        }
+
+        return redirect()->route('user.rooms.show', $id);
+    }
+
     private function isAuthorizedToJoin()
     {
         $user = auth()->user();
