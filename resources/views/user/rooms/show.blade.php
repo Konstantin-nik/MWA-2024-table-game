@@ -34,7 +34,7 @@
                 </div>
                 <!-- Copied Message -->
                 <div id="copiedMessage" 
-                    class="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-green-100 text-green-800 text-s font-medimum px-6 py-1 rounded shadow-md hidden">
+                    class="fixed left-1/2 transform -translate-x-1/2 -translate-y-full bg-green-100 text-green-800 text-s font-medimum px-6 py-1 rounded shadow-md hidden">
                     Copied!
                 </div>
             </div>
