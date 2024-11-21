@@ -68,18 +68,18 @@ class User extends Authenticatable
     }
 
     // Model Functions ------------------------------------------------------
-    public function isInRoom()
+    public function isInAnyRoom()
     {
         return $this->rooms()->whereNull('finished_at')->get()->isNotEmpty();
     }
 
-    public function isNotInRoom()
+    public function isNotInAnyRoom()
     {
-        return ! $this->isInRoom();
+        return ! $this->isInAnyRoom();
     }
 
     public function canJoinRoom(Room $room)
     {
-        return $room->isOpenToJoin() && $this->isNotInRoom() && $room->isNotFull();
+        return $room->isOpenToJoin() && $this->isNotInAnyRoom() && $room->isNotFull();
     }
 }

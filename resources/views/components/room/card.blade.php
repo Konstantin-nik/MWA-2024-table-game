@@ -24,7 +24,7 @@
                 Join
             </button>
         </form>
-        @elseif (auth()->user()->isNotInRoom() && $room->isFull())
+        @elseif (auth()->user()->isNotInAnyRoom() && $room->isFull())
             <button 
                 class="w-full bg-red-100 text-gray-700 font-medium py-2 px-4 rounded border border-gray-300 transition duration-200"
             >

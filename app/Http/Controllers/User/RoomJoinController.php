@@ -26,7 +26,7 @@ class RoomJoinController extends Controller
     private function isAuthorizedToJoin()
     {
         $user = auth()->user();
-        if ($user->isInRoom()) {
+        if ($user->isInAnyRoom()) {
             abort(401);
         }
     }
