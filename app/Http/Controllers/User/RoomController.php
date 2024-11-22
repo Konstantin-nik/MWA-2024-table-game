@@ -46,10 +46,12 @@ class RoomController extends Controller
             'invitation_token' => Room::generateUniqueInvitationToken(),
         ]);
 
-        Participation::create([
-            'user_id' => auth()->user()->id,
-            'room_id' => $room->id,
-        ]);
+        if (auth()->user()->canJoinRoom($room)) {
+            Participation::create([
+                'user_id' => auth()->user()->id,
+                'room_id' => $room->id,
+            ]);
+        }
 
         return redirect()->route('user.rooms.show', $room);
     }

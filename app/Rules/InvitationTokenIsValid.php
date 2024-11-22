@@ -19,6 +19,8 @@ class InvitationTokenIsValid implements ValidationRule
             $fail(__('The provided invitation token is invalid.'));
         } elseif ($room->isFull()) {
             $fail(__('The room is full.'));
+        } elseif (auth()->user()->isInAnyRoom()) {
+            $fail(__('You are already in the room.'));
         }
     }
 }

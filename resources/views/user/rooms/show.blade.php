@@ -109,7 +109,7 @@
 
         <!-- Actions -->
         <div class="mt-6">
-            <a href="{{ route('user.rooms.index') }}" class="text-blue-500 hover:underline">
+            <a href="{{ url()->previous() }}" class="text-blue-500 hover:underline">
                 Back to Rooms List
             </a>
         </div>
