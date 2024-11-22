@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Room;
+use App\Rules\InvitationTokenIsValid;
 use Illuminate\Http\Request;
 
 class RoomJoinController extends Controller
@@ -25,6 +26,12 @@ class RoomJoinController extends Controller
 
     public function joinByToken(Request $request)
     {
+        $request->validate([
+            'invitation_token' => ['required', new InvitationTokenIsValid],
+        ], [
+            'invitation_token.required' => 'The invitation token is required.',
+        ]);
+
         $this->isAuthorizedToJoin();
         $user = auth()->user();
         $room = Room::toJoin()->where('invitation_token', $request->invitation_token)->firstOrFail();

@@ -21,7 +21,7 @@
   <!-- Header -->
   <header class="bg-white shadow">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap justify-between items-center">
-      <!-- Title and Text-Button -->
+      <!-- Title and Text-Buttons -->
       <div class="flex items-center space-x-6">
         <!-- Title -->
         <a href="{{ route('user.rooms.index') }}" class="text-2xl font-bold text-gray-700 hover:text-blue-500 transition-colors">
@@ -31,26 +31,15 @@
         <a href="{{ route('user.participations') }}" class="text-xl font-medium text-gray-700 hover:text-blue-500 transition-colors">
           Participations
         </a>
+        <!-- MyRooms Button -->
+        <a href="{{ route('user.participations') }}" class="text-xl font-medium text-gray-700 hover:text-blue-500 transition-colors">
+          My Rooms
+        </a>
       </div>
 
       <!-- Navigation -->
       <nav class="flex flex-wrap items-center space-x-4 mt-2 md:mt-0">
-          <form action="{{ route('user.rooms.token.join') }}" method="POST" class="flex items-center space-x-2">
-              @csrf
-              <input 
-                  type="text" 
-                  name="invitation_token"
-                  placeholder="Enter Room Token" 
-                  class="px-4 py-2 border border-gray-300 rounded-lg shadow-md text-gray-700 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
-              />
-              <button type="submit" 
-                      class="inline-flex items-center bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-medium px-5 py-2 rounded-lg shadow-lg transition-transform transform hover:scale-105">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                  Join
-              </button>
-          </form>
+          @include('components.form.join-by-token-form')
       </nav>
     </div>
   </header>
