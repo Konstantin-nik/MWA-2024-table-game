@@ -32,7 +32,7 @@
           Participations
         </a>
         <!-- MyRooms Button -->
-        <a href="{{ route('user.participations') }}" class="text-xl font-medium text-gray-700 hover:text-blue-500 transition-colors">
+        <a href="{{ route('user.owned_rooms') }}" class="text-xl font-medium text-gray-700 hover:text-blue-500 transition-colors">
           My Rooms
         </a>
       </div>

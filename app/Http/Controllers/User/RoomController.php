@@ -109,6 +109,17 @@ class RoomController extends Controller
         $this->isAuthorized($room);
     }
 
+    /**
+     * Display a listing of owned rooms. 
+     */
+    public function ownedRooms() 
+    {
+        $user = auth()->user();
+        $rooms = $user->ownedRooms()->get();
+
+        return view('user.rooms.owned_rooms', compact('rooms'));
+    }
+
     private function isAuthorized(Room $room)
     {
         $user = auth()->user();

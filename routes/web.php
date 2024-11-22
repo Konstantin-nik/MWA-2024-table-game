@@ -22,6 +22,7 @@ Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::post('user/rooms/join', [RoomJoinController::class, 'joinByToken'])->name('rooms.token.join');
     Route::post('user/rooms/{id}/leave', [RoomJoinController::class, 'leave'])->name('rooms.leave');
     Route::get('user/participations', [ParticipationController::class, 'index'])->name('participations');
+    Route::get('user/owned_rooms', [\App\Http\Controllers\User\RoomController::class, 'ownedRooms'])->name('owned_rooms');
 });
 
 Route::get('/dashboard', function () {
