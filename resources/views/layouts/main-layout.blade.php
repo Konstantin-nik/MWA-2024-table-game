@@ -21,10 +21,17 @@
   <!-- Header -->
   <header class="bg-white shadow">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap justify-between items-center">
-      <!-- Title -->
-      <a href="{{ route('welcome') }}" class="text-2xl font-bold text-gray-700 hover:text-blue-500 transition-colors">
-        TableGame
-      </a>
+      <!-- Title and Text-Button -->
+      <div class="flex items-center space-x-6">
+        <!-- Title -->
+        <a href="{{ route('user.rooms.index') }}" class="text-2xl font-bold text-gray-700 hover:text-blue-500 transition-colors">
+          TableGame
+        </a>
+        <!-- Participation Button -->
+        <a href="{{ route('user.participations') }}" class="text-xl font-medium text-gray-700 hover:text-blue-500 transition-colors">
+          Participations
+        </a>
+      </div>
 
       <!-- Navigation -->
       <nav class="flex flex-wrap items-center space-x-4 mt-2 md:mt-0">
