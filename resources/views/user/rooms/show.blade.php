@@ -1,11 +1,7 @@
 <x-main-layout>
     <div class="container max-w-3xl mx-auto px-4 py-6">
         <!-- Success Message -->
-        @if(session('success'))
-            <div class="bg-green-100 shadow-md border-green-500 text-green-700 p-4 mb-6 rounded-lg">
-                <p class="font-semibold">{{ session('success') }}</p>
-            </div>
-        @endif
+        @include("components.success-message")
 
         <!-- Room Title and Status -->
         <div class="flex items-center justify-between border-b pb-4 mb-6">

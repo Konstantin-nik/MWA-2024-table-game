@@ -53,6 +53,8 @@ class RoomController extends Controller
             ]);
         }
 
+        session()->flash('success', 'Room Created');
+
         return redirect()->route('user.rooms.show', $room);
     }
 
@@ -125,7 +127,7 @@ class RoomController extends Controller
     private function isAuthorized(Room $room)
     {
         $user = auth()->user();
-        if (! ($user->id == $room->owner_id)) {
+        if (! ($user->isRoomOwner($room))) {
             abort(401);
         }
     }
