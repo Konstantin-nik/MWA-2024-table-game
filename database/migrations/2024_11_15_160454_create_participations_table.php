@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('user_id');
-            $table->foreignId('room_id');
+            $table->foreignId('room_id')->constrained('rooms')->cascadeOnDelete();
             $table->integer('score')->nullable();
             $table->integer('rank')->nullable();
 

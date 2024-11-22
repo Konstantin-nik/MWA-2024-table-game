@@ -7,11 +7,24 @@
         <div class="flex items-center justify-between border-b pb-4 mb-6">
             <div class="flex items-end space-x-4">
                 <h1 class="text-3xl font-bold text-gray-800">{{ $room->name }} Room</h1>
-                @if (auth()->user()->id == $room->owner_id)
+
+                <!-- Edit Button -->
+                @if (auth()->user()->canEditRoom($room))
                     <form method="GET" action="{{ route('user.rooms.edit', $room) }}">
                         @csrf
                         <button type="submit" class="text-blue-500 hover:text-blue-600 font-small text-2xl">
                             Edit
+                        </button>
+                    </form>
+                @endif
+
+                <!-- Delete Button -->
+                @if (auth()->user()->canDeleteRoom($room))
+                    <form method="POST" action="{{ route('user.rooms.destroy', $room) }}" onsubmit="return confirm('Are you sure you want to delete this room?');">
+                        @csrf
+                        @method('delete')
+                        <button type="submit" class="text-red-500 hover:text-red-600 font-small text-2xl">
+                            Delete
                         </button>
                     </form>
                 @endif
@@ -30,7 +43,7 @@
                 </div>
                 <!-- Copied Message -->
                 <div id="copiedMessage" 
-                    class="fixed left-1/2 transform -translate-x-1/2 -translate-y-full bg-green-100 text-green-800 text-s font-medimum px-6 py-1 rounded shadow-md hidden">
+                    class="fixed left-1/2 transform -translate-x-1/2 -translate-y-full bg-green-100 text-green-800 text-s px-6 py-1 rounded shadow-md hidden">
                     Copied!
                 </div>
             </div>

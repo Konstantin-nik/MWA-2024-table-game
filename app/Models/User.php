@@ -83,6 +83,11 @@ class User extends Authenticatable
         return ! $this->isInAnyRoom();
     }
 
+    public function isInRoom(Room $room)
+    {
+        return $room->users->contains($this);
+    }
+
     public function canJoinRoom(Room $room)
     {
         
@@ -94,8 +99,13 @@ class User extends Authenticatable
         return $room->isOpenToLeave() && $this->isInRoom($room);
     }
 
-    public function isInRoom(Room $room)
+    public function canEditRoom(Room $room)
     {
-        return $room->users->contains($this);
+        return $this->isRoomOwner($room) && $room->canBeEdited();
+    }
+
+    public function canDeleteRoom(Room $room)
+    {
+        return $this->isRoomOwner($room) && $room->canBeDeleted();
     }
 }

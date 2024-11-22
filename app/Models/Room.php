@@ -81,4 +81,14 @@ class Room extends Model
     {
         return ! $this->started_at && ! $this->finished_at;
     }
+
+    public function canBeDeleted()
+    {
+        return ! $this->started_at && ! $this->finished_at;
+    }
+
+    public function canBeEdited()
+    {
+        return ! $this->started_at && ! $this->finished_at;
+    }
 }

@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        $room = Room::create([
+        Room::create([
             'owner_id' => $user->id,
             'name' => 'Old Room',
             'capacity' => 3,
@@ -46,8 +46,6 @@ class DatabaseSeeder extends Seeder
             'capacity' => 3,
             'is_public' => true,
             'invitation_token' => 'Y3kbJsi3',
-            'started_at' => now()->addDays(-2),
-            'finished_at' => now()->addDays(-2),
         ]);
 
         Participation::create([

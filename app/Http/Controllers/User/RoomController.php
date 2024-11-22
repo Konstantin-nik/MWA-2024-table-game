@@ -74,7 +74,7 @@ class RoomController extends Controller
     public function edit(string $id)
     {
         $room = Room::findOrFail($id);
-        $this->isAuthorized($room);
+        $this->isAuthorizedToEdit($room);
 
         return view('user.rooms.edit', compact('room'));
     }
@@ -90,7 +90,7 @@ class RoomController extends Controller
         ]);
 
         $room = Room::findOrFail($id);
-        $this->isAuthorized($room);
+        $this->isAuthorizedToEdit($room);
 
         $room->update([
             'name' => $request->name,
@@ -110,7 +110,11 @@ class RoomController extends Controller
     public function destroy(string $id)
     {
         $room = Room::findOrFail($id);
-        $this->isAuthorized($room);
+        $this->isAuthorizedToDelete($room);
+        $room->delete();
+
+        session()->flash('success','Room was Deleted!');
+        return redirect()->route('user.rooms.index');
     }
 
     /**
@@ -124,10 +128,20 @@ class RoomController extends Controller
         return view('user.rooms.owned_rooms', compact('rooms'));
     }
 
-    private function isAuthorized(Room $room)
+
+    // Authorization functions
+    private function isAuthorizedToEdit(Room $room)
     {
         $user = auth()->user();
-        if (! ($user->isRoomOwner($room))) {
+        if (! ($user->canEditRoom($room))) {
+            abort(401);
+        }
+    }
+
+    private function isAuthorizedToDelete(Room $room)
+    {
+        $user = auth()->user();
+        if (! ($user->canDeleteRoom($room))) {
             abort(401);
         }
     }
