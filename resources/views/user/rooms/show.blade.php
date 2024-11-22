@@ -102,7 +102,7 @@
             @endif
             @if (auth()->user()->canJoinRoom($room))
                 <x-form.one-button-form label="Join" redirectTo="{{ route('user.rooms.join', $room) }}" />
-            @elseif (auth()->user()->isInRoom($room))
+            @elseif (auth()->user()->canLeaveRoom($room))
                 <x-form.one-button-form label="Leave Room" redirectTo="{{ route('user.rooms.leave', $room) }}" />
             @endif
         </div>

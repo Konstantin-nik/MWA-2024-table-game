@@ -76,4 +76,9 @@ class Room extends Model
     {
         return ! $this->started_at && ! $this->finished_at && $this->is_public;
     }
+
+    public function isOpenToLeave()
+    {
+        return ! $this->started_at && ! $this->finished_at;
+    }
 }

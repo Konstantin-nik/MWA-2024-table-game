@@ -110,9 +110,9 @@ class RoomController extends Controller
     }
 
     /**
-     * Display a listing of owned rooms. 
+     * Display a listing of owned rooms.
      */
-    public function ownedRooms() 
+    public function ownedRooms()
     {
         $user = auth()->user();
         $rooms = $user->ownedRooms()->get();

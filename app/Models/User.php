@@ -83,6 +83,11 @@ class User extends Authenticatable
         return $room->isOpenToJoin() && $this->isNotInAnyRoom() && $room->isNotFull();
     }
 
+    public function canLeaveRoom(Room $room)
+    {
+        return $room->isOpenToLeave() && $this->isInRoom($room);
+    }
+
     public function isInRoom(Room $room)
     {
         return $room->users->contains($this);

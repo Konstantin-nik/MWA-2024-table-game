@@ -15,7 +15,7 @@ class RoomJoinController extends Controller
         $user = auth()->user();
         $room = Room::findOrFail($id);
 
-        if ($user->canJoinRoom($room) || $room->invitation_token == $request->invitation_token) {
+        if ($user->canJoinRoom($room)) {
             $room->users()->attach(auth()->user());
         } else {
             abort(401);
@@ -33,7 +33,6 @@ class RoomJoinController extends Controller
         ]);
 
         $this->isAuthorizedToJoin();
-        $user = auth()->user();
         $room = Room::toJoin()->where('invitation_token', $request->invitation_token)->firstOrFail();
 
         $room->users()->attach(auth()->user());
@@ -44,9 +43,9 @@ class RoomJoinController extends Controller
     public function leave(string $id, Request $request)
     {
         $user = auth()->user();
-        $room = Room::findOrFail($id);
+        $room = Room::toJoin()->findOrFail($id);
 
-        if ($user->isInRoom($room)) {
+        if ($user->canLeaveRoom($room)) {
             $room->users()->detach($user);
         }
 

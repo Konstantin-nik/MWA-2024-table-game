@@ -2,12 +2,10 @@
 
 namespace App\View\Components;
 
-use App\Models\Room;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class TiledRoomsLayout extends Component
 {
@@ -17,7 +15,7 @@ class TiledRoomsLayout extends Component
     public function __construct(
         public string $title,
         public Collection $rooms,
-        public bool $showcreate=false,
+        public bool $showcreate = false,
     ) {}
 
     /**

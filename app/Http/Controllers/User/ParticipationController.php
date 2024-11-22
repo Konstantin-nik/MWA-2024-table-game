@@ -15,7 +15,7 @@ class ParticipationController extends Controller
         $user = auth()->user();
 
         $participations = $user->participations()->get();
-        $rooms = $participations->map(fn($participation) => $participation->room);
+        $rooms = $participations->map(fn ($participation) => $participation->room);
 
         return view('participations.index', compact('rooms'));
     }
