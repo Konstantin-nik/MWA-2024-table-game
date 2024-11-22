@@ -57,7 +57,7 @@ class Room extends Model
         do {
             $token = Str::random(10);
         } while (Room::toJoin()->where('invitation_token', $token)->exists());
-    
+
         return $token;
     }
 

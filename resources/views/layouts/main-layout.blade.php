@@ -28,11 +28,11 @@
 
       <!-- Navigation -->
       <nav class="flex flex-wrap items-center space-x-4 mt-2 md:mt-0">
-        <form action="{{ route('user.rooms.index') }}" method="POST" class="flex items-center space-x-2">
+        <form action="{{ route('user.rooms.token.join') }}" method="POST" class="flex items-center space-x-2">
           @csrf
           <input 
             type="text" 
-            name="token"
+            name="invitation_token"
             placeholder="Enter Room Token" 
             class="px-4 py-2 border border-gray-300 rounded shadow text-gray-700"
           />

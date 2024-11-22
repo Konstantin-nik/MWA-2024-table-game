@@ -23,6 +23,17 @@ class RoomJoinController extends Controller
         return redirect()->route('user.rooms.show', $id);
     }
 
+    public function joinByToken(Request $request)
+    {
+        $this->isAuthorizedToJoin();
+        $user = auth()->user();
+        $room = Room::toJoin()->where('invitation_token', $request->invitation_token)->firstOrFail();
+
+        $room->users()->attach(auth()->user());
+
+        return redirect()->route('user.rooms.show', $room->id);
+    }
+
     public function leave(string $id, Request $request)
     {
         $user = auth()->user();
