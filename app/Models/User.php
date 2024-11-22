@@ -68,6 +68,11 @@ class User extends Authenticatable
     }
 
     // Model Functions ------------------------------------------------------
+    public function isRoomOwner(Room $room)
+    {
+        return $room->owner_id == $this->id;
+    }
+
     public function isInAnyRoom()
     {
         return $this->rooms()->whereNull('finished_at')->get()->isNotEmpty();
@@ -81,7 +86,7 @@ class User extends Authenticatable
     public function canJoinRoom(Room $room)
     {
         
-        return ($this->isRoomCreator($room) || $room->isOpenToJoin()) && $this->isNotInAnyRoom() && $room->isNotFull();
+        return ($this->isRoomOwner($room) || $room->isOpenToJoin()) && $this->isNotInAnyRoom() && $room->isNotFull();
     }
 
     public function canLeaveRoom(Room $room)
@@ -92,10 +97,5 @@ class User extends Authenticatable
     public function isInRoom(Room $room)
     {
         return $room->users->contains($this);
-    }
-
-    public function isRoomCreator(Room $room)
-    {
-        return $this->ownedRooms()->get()->contains($room);
     }
 }
