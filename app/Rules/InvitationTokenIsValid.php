@@ -13,9 +13,12 @@ class InvitationTokenIsValid implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        $room = Room::toJoin()->where('invitation_token', $value)->first();
         // Check if the token exists in a Room that can be joined
-        if (! Room::toJoin()->where('invitation_token', $value)->exists()) {
+        if (! $room) {
             $fail(__('The provided invitation token is invalid.'));
+        } elseif ($room->isFull()) {
+            $fail(__('The room is full.'));
         }
     }
 }
