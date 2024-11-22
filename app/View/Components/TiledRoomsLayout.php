@@ -15,7 +15,8 @@ class TiledRoomsLayout extends Component
     public function __construct(
         public string $title,
         public Collection $rooms,
-        public bool $showcreate = false,
+        public ?string $emptyStateMessage,
+        public bool $showCreate = false,
     ) {}
 
     /**

@@ -128,8 +128,7 @@ class RoomController extends Controller
         return view('user.rooms.owned_rooms', compact('rooms'));
     }
 
-
-    // Authorization functions
+    // Authorization functions ------------------------------------------------
     private function isAuthorizedToEdit(Room $room)
     {
         $user = auth()->user();
