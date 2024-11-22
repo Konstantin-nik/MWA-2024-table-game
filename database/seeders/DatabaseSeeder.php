@@ -31,8 +31,18 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $room = Room::create([
-            'owner_id' => 3,
+            'owner_id' => $user->id,
             'name' => 'Old Room',
+            'capacity' => 3,
+            'is_public' => true,
+            'invitation_token' => 'Y3kbJsi3',
+            'started_at' => now()->addDays(-2),
+            'finished_at' => now()->addDays(-2),
+        ]);
+
+        $room = Room::create([
+            'owner_id' => $user->id,
+            'name' => 'Old Room 2',
             'capacity' => 3,
             'is_public' => true,
             'invitation_token' => 'Y3kbJsi3',
