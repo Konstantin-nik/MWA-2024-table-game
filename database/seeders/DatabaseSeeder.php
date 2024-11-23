@@ -46,6 +46,7 @@ class DatabaseSeeder extends Seeder
             'capacity' => 3,
             'is_public' => true,
             'invitation_token' => 'Y3kbJsi3',
+            'started_at' => now()->addDays(-3),
         ]);
 
         Participation::create([

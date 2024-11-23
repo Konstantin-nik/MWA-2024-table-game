@@ -124,7 +124,7 @@ class RoomController extends Controller
     public function ownedRooms()
     {
         $user = auth()->user();
-        $rooms = $user->ownedRooms()->get();
+        $rooms = $user->ownedRooms()->orderBy('started_at')->get();
 
         return view('user.rooms.owned_rooms', compact('rooms'));
     }
