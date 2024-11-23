@@ -96,7 +96,6 @@ class RoomController extends Controller
             'name' => $request->name,
             'capacity' => $request->capacity,
             'is_public' => $request->has('is_public'),
-            'invitation_token' => Str::random(10),
         ]);
 
         session()->flash('success', 'Room Edited');
