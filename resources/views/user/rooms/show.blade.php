@@ -59,38 +59,7 @@
         </div>
 
         <!-- Room Details -->
-        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <p class="text-gray-600">
-                        <span class="font-medium">Room Size:</span> 
-                        {{ $room->capacity }} players
-                    </p>
-                    <p class="text-gray-600">
-                        <span class="font-medium">Current Players:</span> 
-                        {{ $room->users()->count() }}
-                    </p>
-                    <p class="text-gray-600">
-                        <span class="font-medium">Type:</span> 
-                        {{ $room->is_public ? 'Public' : 'Private' }}
-                    </p>
-                </div>
-                <div>
-                    @if ($room->started_at)
-                        <p class="text-gray-600">
-                            <span class="font-medium">Started At:</span> 
-                            {{ $room->started_at->format('M d, Y H:i') }}
-                        </p>
-                    @endif
-                    @if ($room->finished_at)
-                        <p class="text-gray-600">
-                            <span class="font-medium">Finished At:</span> 
-                            {{ $room->finished_at->format('M d, Y H:i') }}
-                        </p>
-                    @endif
-                </div>
-            </div>
-        </div>
+        <x-room.details :room="$room" />
 
         <div class="bg-white shadow-md rounded-lg p-6">
             <!-- Players List -->
