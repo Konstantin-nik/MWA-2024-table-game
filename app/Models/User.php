@@ -107,4 +107,9 @@ class User extends Authenticatable
     {
         return $this->isRoomOwner($room) && $room->canBeDeleted();
     }
+
+    public function canStartRoom(Room $room)
+    {
+        return $this->isRoomOwner($room) && $room->canBeStarted();
+    }
 }

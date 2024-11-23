@@ -68,7 +68,7 @@
                     </p>
                     <p class="text-gray-600">
                         <span class="font-medium">Current Players:</span> 
-                        {{ count($room->users) }}
+                        {{ $room->users()->count() }}
                     </p>
                     <p class="text-gray-600">
                         <span class="font-medium">Type:</span> 
@@ -92,23 +92,12 @@
             </div>
         </div>
 
-        <!-- Players List -->
         <div class="bg-white shadow-md rounded-lg p-6">
+            <!-- Players List -->
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Players</h2>
-            @if (count($room->users) > 0)
-                <ul class="divide-y divide-gray-200">
-                    @foreach ($room->users as $user)
-                        <li class="py-3 flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-800 font-medium">{{ $user->name }}</p>
-                                <p class="text-sm text-gray-500">{{ $user->email }}</p>
-                            </div>
-                        </li>
-                    @endforeach
-                </ul>
-            @else
-                <p class="text-gray-500">No players have joined this room yet.</p>
-            @endif
+            <x-user.player-list :users="$room->users" />
+
+            <!-- Join/Leave button -->
             @if (auth()->user()->canJoinRoom($room))
                 <x-form.one-button-form label="Join" redirectTo="{{ route('user.rooms.join', $room) }}" />
             @elseif (auth()->user()->canLeaveRoom($room))

@@ -121,4 +121,9 @@ class Room extends Model
     {
         return $this->isNotStartedOrFinished();
     }
+
+    public function canBeStarted()
+    {
+        return $this->isNotStartedOrFinished() && $this->users()->count() >= 2;
+    }
 }
