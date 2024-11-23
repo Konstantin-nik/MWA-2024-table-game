@@ -85,7 +85,7 @@ class User extends Authenticatable
 
     public function isInRoom(Room $room)
     {
-        return $room->users->contains($this);
+        return $room->hasUser($this);
     }
 
     public function canJoinRoom(Room $room)

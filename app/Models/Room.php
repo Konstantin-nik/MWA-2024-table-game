@@ -64,7 +64,7 @@ class Room extends Model
     // Model functions --------------------------------------------------------
     public function isFull()
     {
-        return $this->capacity <= count($this->users);
+        return $this->capacity <= $this->users()->count();
     }
 
     public function isNotFull()
@@ -125,5 +125,10 @@ class Room extends Model
     public function canBeStarted()
     {
         return $this->isNotStartedOrFinished() && $this->users()->count() >= 2;
+    }
+
+    public function hasUser(User $user)
+    {
+        return $this->users()->where('user_id', $user->id)->exists();
     }
 }
