@@ -72,9 +72,29 @@ class Room extends Model
         return ! $this->isFull();
     }
 
+    public function isFinished()
+    {
+        return $this->finished_at;
+    }
+
+    public function isNotFinished()
+    {
+        return ! $this->isFinished();
+    }
+
+    public function isStarted()
+    {
+        return $this->started_at;
+    }
+
+    public function isNotStarted()
+    {
+        return ! $this->isStarted();
+    }
+
     public function isStartedOrFinished()
     {
-        return $this->started_at || $this->finished_at;
+        return $this->isStarted() || $this->isFinished();
     }
 
     public function isNotStartedOrFinished()

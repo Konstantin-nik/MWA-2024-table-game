@@ -14,7 +14,7 @@
             </span>
         </div>
         
-        <!-- Add the white "Join" button -->
+        <!-- Buttons -->
         @if (auth()->user()->canJoinRoom($room))
         <form method="POST" action="{{ route('user.rooms.join', $room) }}">
             @csrf
@@ -24,11 +24,35 @@
                 Join
             </button>
         </form>
-        @elseif (auth()->user()->isNotInAnyRoom() && $room->isFull())
+        @elseif ($room->isFinished())
+            <button 
+                class="w-full bg-red-100 text-gray-700 font-medium py-2 px-4 rounded border border-gray-300 transition duration-200"
+            >
+                Game Finished
+            </button>
+        @elseif ($room->isStarted() && $room->isNotFinished())
+            <button 
+                class="w-full bg-yellow-100 text-gray-700 font-medium py-2 px-4 rounded border border-gray-300 transition duration-200"
+            >
+                Game Started
+            </button>
+        @elseif (auth()->user()->isInRoom($room))
+            <button 
+                class="w-full bg-green-100 text-gray-700 font-medium py-2 px-4 rounded border border-gray-300 transition duration-200"
+            >
+                You are in this room
+            </button>
+        @elseif ($room->isNotStartedOrFinished() && $room->isFull())
             <button 
                 class="w-full bg-red-100 text-gray-700 font-medium py-2 px-4 rounded border border-gray-300 transition duration-200"
             >
                 Full
+            </button>
+        @else
+            <button 
+                class="w-full bg-gray-100 text-gray-700 font-medium py-2 px-4 rounded border border-gray-300 transition duration-200"
+            >
+                Can't Join
             </button>
         @endif
     </div>
