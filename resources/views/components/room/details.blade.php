@@ -1,4 +1,4 @@
-<div class="bg-white shadow-md rounded-lg p-6 mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
         <x-room.detail label="Room Size:" :value="$room->capacity . ' players'" />
         <x-room.detail label="Current Players:" :value="$room->users()->count()" />

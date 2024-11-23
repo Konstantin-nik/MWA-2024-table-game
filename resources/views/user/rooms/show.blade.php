@@ -59,9 +59,11 @@
         </div>
 
         <!-- Room Details -->
-        <x-room.details :room="$room" />
+        <x-panel>
+            <x-room.details :room="$room" />
+        </x-panel>
 
-        <div class="bg-white shadow-md rounded-lg p-6">
+        <x-panel>
             <!-- Players List -->
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Players</h2>
             <x-user.player-list :users="$room->users" />
@@ -72,10 +74,10 @@
             @elseif (auth()->user()->canLeaveRoom($room))
                 <x-form.one-button-form label="Leave Room" redirectTo="{{ route('user.rooms.leave', $room) }}" />
             @endif
-        </div>
+        </x-panel>
 
         <!-- Actions -->
-        <div class="mt-6">
+        <div>
             <a href="{{ route('user.rooms.index') }}" class="text-blue-500 hover:underline">
                 Back to Rooms List
             </a>
