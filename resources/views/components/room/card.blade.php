@@ -9,9 +9,15 @@
                 /
                 <span class="font-bold text-gray-800">{{ $room->capacity }}</span>
             </span>
-            <span class="bg-green-100 text-green-600 text-xs font-medium py-1 px-2 rounded">
-                {{ $room->is_public ? 'Public' : 'Private' }}
-            </span>
+            @if ($room->is_public)
+                <span class="bg-green-100 text-green-600 text-xs font-medium py-1 px-2 rounded">
+                    Public
+                </span>
+            @else 
+                <span class="bg-yellow-100 text-yellow-600 text-xs font-medium py-1 px-2 rounded">
+                    Private
+                </span>
+            @endif
         </div>
         
         <!-- Buttons -->
