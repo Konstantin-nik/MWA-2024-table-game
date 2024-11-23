@@ -72,23 +72,33 @@ class Room extends Model
         return ! $this->isFull();
     }
 
+    public function isStartedOrFinished()
+    {
+        return $this->started_at || $this->finished_at;
+    }
+
+    public function isNotStartedOrFinished()
+    {
+        return ! $this->isStartedOrFinished();
+    }
+
     public function isOpenToJoin()
     {
-        return ! $this->started_at && ! $this->finished_at && $this->is_public;
+        return $this->isNotStartedOrFinished();
     }
 
     public function isOpenToLeave()
     {
-        return ! $this->started_at && ! $this->finished_at;
+        return $this->isNotStartedOrFinished();
     }
 
     public function canBeDeleted()
     {
-        return ! $this->started_at && ! $this->finished_at;
+        return $this->isNotStartedOrFinished();
     }
 
     public function canBeEdited()
     {
-        return ! $this->started_at && ! $this->finished_at;
+        return $this->isNotStartedOrFinished();
     }
 }

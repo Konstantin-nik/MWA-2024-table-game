@@ -90,8 +90,7 @@ class User extends Authenticatable
 
     public function canJoinRoom(Room $room)
     {
-        
-        return ($this->isRoomOwner($room) || $room->isOpenToJoin()) && $this->isNotInAnyRoom() && $room->isNotFull();
+        return ($this->isRoomOwner($room) || $room->is_public) && $room->isOpenToJoin() && $this->isNotInAnyRoom() && $room->isNotFull();
     }
 
     public function canLeaveRoom(Room $room)

@@ -113,7 +113,8 @@ class RoomController extends Controller
         $this->isAuthorizedToDelete($room);
         $room->delete();
 
-        session()->flash('success','Room was Deleted!');
+        session()->flash('success', 'Room was Deleted!');
+
         return redirect()->route('user.rooms.index');
     }
 
