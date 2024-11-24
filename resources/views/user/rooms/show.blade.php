@@ -29,7 +29,7 @@
                     </form>
                 @endif
 
-                <!-- Copy Token Field -->
+                <!-- Token Field -->
                 <div 
                     id="tokenField" 
                     class="ml-4 flex items-center bg-gray-100 text-gray-800 px-4 py-1 rounded-md text-sm cursor-pointer shadow-sm hover:bg-gray-200"
@@ -42,10 +42,7 @@
                     </svg>
                 </div>
                 <!-- Copied Message -->
-                <div id="copiedMessage" 
-                    class="fixed left-1/2 transform -translate-x-1/2 -translate-y-full bg-green-100 text-green-800 text-s px-6 py-1 rounded shadow-md hidden">
-                    Copied!
-                </div>
+                <x-copied-message :value="$room->invitation_token"/>
             </div>
             <div>
                 @if ($room->finished_at)
@@ -83,42 +80,5 @@
             </a>
         </div>
     </div>
-    <script>
-        function copyToken() {
-            const token = "{{ $room->invitation_token }}";
-            const copiedMessage = document.getElementById('copiedMessage');
-
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(token).then(() => {
-                    copiedMessage.classList.remove('hidden');
-                    setTimeout(() => {
-                        copiedMessage.classList.add('hidden');
-                    }, 1000);
-                }).catch(err => {
-                    console.error('Failed to copy token:', err);
-                });
-            } else {
-                const textArea = document.createElement('textarea');
-                textArea.value = token;
-                textArea.style.position = 'fixed'; // Avoid scrolling to the bottom
-                textArea.style.left = '-9999px'; // Move off-screen
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    const successful = document.execCommand('copy');
-                    if (successful) {
-                        copiedMessage.classList.remove('hidden');
-                        setTimeout(() => {
-                            copiedMessage.classList.add('hidden');
-                        }, 1000);
-                    }
-                } catch (err) {
-                    console.error('Fallback: Unable to copy token:', err);
-                }
-                document.body.removeChild(textArea);
-            }
-        }
-    </script>
 
 </x-main-layout>
