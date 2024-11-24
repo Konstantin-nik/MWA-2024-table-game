@@ -74,10 +74,17 @@
         </x-panel>
 
         <!-- Actions -->
-        <div>
+        <div class="flex items-center justify-between">
             <a href="{{ route('user.rooms.index') }}" class="text-blue-500 hover:underline">
                 Back to Rooms List
             </a>
+
+            @if (auth()->user()->canStartRoom($room))
+                <form action="{{ route('user.rooms.start', $room) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-primary text-blue-500 hover:underline">Start Game</button>
+                </form>
+            @endif
         </div>
     </div>
 

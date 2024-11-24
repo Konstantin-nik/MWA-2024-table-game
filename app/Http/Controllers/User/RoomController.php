@@ -128,6 +128,21 @@ class RoomController extends Controller
         return view('user.rooms.owned_rooms', compact('rooms'));
     }
 
+    /**
+     * Start Game for this room.
+     */
+    public function start(string $id)
+    {
+        $room = Room::findOrFail($id);
+        $this->isAuthorizedToStart( $room);
+        
+        $room->update([
+            'started_at' => now(),
+        ]);
+
+        return redirect()->route('rooms.show', $room)->with('success', 'Game started successfully!');
+    }
+
     // Authorization functions ------------------------------------------------
     private function isAuthorizedToEdit(Room $room)
     {
@@ -141,6 +156,14 @@ class RoomController extends Controller
     {
         $user = auth()->user();
         if (! ($user->canDeleteRoom($room))) {
+            abort(401);
+        }
+    }
+
+    private function isAuthorizedToStart(Room $room)
+    {
+        $user = auth()->user();
+        if (! ($user->canStartRoom($room))) {
             abort(401);
         }
     }

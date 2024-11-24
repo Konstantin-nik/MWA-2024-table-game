@@ -11,10 +11,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-// Route::get('rooms', [RoomController::class, 'index'])->name('rooms.index');
-
-// Route::get('rooms/{id}', [RoomController::class, 'show'])->name('rooms.show');
-
 // Private Routes
 Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('user/rooms', \App\Http\Controllers\User\RoomController::class);
@@ -23,6 +19,7 @@ Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::post('user/rooms/{id}/leave', [RoomJoinController::class, 'leave'])->name('rooms.leave');
     Route::get('user/participations', [ParticipationController::class, 'index'])->name('participations');
     Route::get('user/owned_rooms', [\App\Http\Controllers\User\RoomController::class, 'ownedRooms'])->name('owned_rooms');
+    Route::post('user/rooms/{id}/start', [RoomController::class, 'start'])->name('rooms.start');
 });
 
 Route::get('/dashboard', function () {
