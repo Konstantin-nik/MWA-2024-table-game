@@ -19,7 +19,8 @@ Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::post('user/rooms/{id}/leave', [RoomJoinController::class, 'leave'])->name('rooms.leave');
     Route::get('user/participations', [ParticipationController::class, 'index'])->name('participations');
     Route::get('user/owned_rooms', [\App\Http\Controllers\User\RoomController::class, 'ownedRooms'])->name('owned_rooms');
-    Route::post('user/rooms/{id}/start', [RoomController::class, 'start'])->name('rooms.start');
+    Route::post('user/rooms/{id}/start', [\App\Http\Controllers\User\RoomController::class, 'start'])->name('rooms.start');
+    Route::get('user/game', function () { return view('user.game'); })->name('game');
 });
 
 Route::get('/dashboard', function () {

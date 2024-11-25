@@ -140,7 +140,7 @@ class RoomController extends Controller
             'started_at' => now(),
         ]);
 
-        return redirect()->route('rooms.show', $room)->with('success', 'Game started successfully!');
+        return redirect()->route('user.game')->with('success', 'Game started successfully!');
     }
 
     // Authorization functions ------------------------------------------------
