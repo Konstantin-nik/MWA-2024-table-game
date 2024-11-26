@@ -35,6 +35,10 @@
         <a href="{{ route('user.owned_rooms') }}" class="text-xl font-medium text-gray-700 hover:text-blue-500 transition-colors">
           My Rooms
         </a>
+        <!-- CurrentGame Button -->
+        <a href="{{ route('user.game') }}" class="text-xl font-medium text-gray-700 hover:text-blue-500 transition-colors">
+          Current Game
+        </a>
       </div>
 
       <!-- Navigation -->

@@ -68,6 +68,17 @@ class User extends Authenticatable
     }
 
     // Model Functions ------------------------------------------------------
+
+    /**
+     * Return room player currently if it's started and not finished.
+     * 
+     * @return Room|null
+     */
+    public function getCurrentGame()
+    {
+        return $this->rooms()->whereNotNull('started_at')->whereNull('finished_at')->first();
+    }
+
     public function isRoomOwner(Room $room)
     {
         return $room->owner_id == $this->id;
