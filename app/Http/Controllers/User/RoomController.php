@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Participation;
 use App\Models\Room;
 use Illuminate\Http\Request;
-use Str;
 
 class RoomController extends Controller
 {
@@ -16,6 +15,8 @@ class RoomController extends Controller
     public function index()
     {
         $rooms = Room::public()->toJoin()->get();
+
+        $rooms->loadCount('users');
 
         return view('user.rooms.index', compact('rooms'));
     }
@@ -125,6 +126,8 @@ class RoomController extends Controller
         $user = auth()->user();
         $rooms = $user->ownedRooms()->orderBy('started_at')->get();
 
+        $rooms->loadCount('users');
+
         return view('user.rooms.owned_rooms', compact('rooms'));
     }
 
@@ -134,8 +137,8 @@ class RoomController extends Controller
     public function start(string $id)
     {
         $room = Room::findOrFail($id);
-        $this->isAuthorizedToStart( $room);
-        
+        $this->isAuthorizedToStart($room);
+
         $room->update([
             'started_at' => now(),
         ]);

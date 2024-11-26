@@ -75,7 +75,7 @@ class User extends Authenticatable
 
     public function isInAnyRoom()
     {
-        return $this->rooms()->whereNull('finished_at')->get()->isNotEmpty();
+        return $this->rooms()->whereNull('finished_at')->exists();
     }
 
     public function isNotInAnyRoom()

@@ -64,7 +64,11 @@ class Room extends Model
     // Model functions --------------------------------------------------------
     public function isFull()
     {
-        return $this->capacity <= $this->users()->count();
+        if ($this->users_count !== null) {
+            return $this->capacity <= $this->users_count;
+        } else {
+            return $this->capacity <= $this->users()->count();
+        }
     }
 
     public function isNotFull()

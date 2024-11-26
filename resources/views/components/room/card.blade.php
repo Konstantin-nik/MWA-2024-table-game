@@ -5,7 +5,7 @@
         <div class="flex items-center justify-between text-gray-500 text-sm mb-4">
             <span>
                 Players: 
-                <span class="font-bold text-gray-800">{{ $room->users()->count() }}</span>
+                <span class="font-bold text-gray-800">{{ $room->users_count }}</span>
                 /
                 <span class="font-bold text-gray-800">{{ $room->capacity }}</span>
             </span>

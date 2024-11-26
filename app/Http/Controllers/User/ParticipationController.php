@@ -13,9 +13,10 @@ class ParticipationController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $user->load('rooms');
 
-        $participations = $user->participations()->get();
-        $rooms = $participations->map(fn ($participation) => $participation->room)->sortBy('started_at');
+        $rooms = $user->rooms()->orderBy('started_at')->get();
+        $rooms->loadCount('users');
 
         return view('participations.index', compact('rooms'));
     }
