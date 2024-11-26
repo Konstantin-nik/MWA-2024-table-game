@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('houses', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('board_id')->constrained()->cascadeOnDelete();
+            $table->integer('row_index'); // Row index: 0, 1, or 2
+            $table->integer('position'); // Position in row: 0 to N
+            $table->integer('number')->nullable(); // Assigned number
+            $table->boolean('has_pool')->default(false); // Whether the house has a pool
+
             $table->timestamps();
         });
     }

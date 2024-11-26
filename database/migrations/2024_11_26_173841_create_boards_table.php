@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('boards', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('participation_id')->constrained()->cascadeOnDelete();
+
             $table->timestamps();
         });
     }
