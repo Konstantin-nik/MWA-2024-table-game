@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RoomController;
+use App\Http\Controllers\User\GameController;
 use App\Http\Controllers\User\ParticipationController;
 use App\Http\Controllers\User\RoomJoinController;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +20,7 @@ Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('user/participations', [ParticipationController::class, 'index'])->name('participations');
     Route::get('user/owned_rooms', [\App\Http\Controllers\User\RoomController::class, 'ownedRooms'])->name('owned_rooms');
     Route::post('user/rooms/{id}/start', [\App\Http\Controllers\User\RoomController::class, 'start'])->name('rooms.start');
-    Route::get('user/game', function () { return view('user.game'); })->name('game');
+    Route::get('user/game/{id}', [GameController::class, 'show'])->name('game');
 });
 
 Route::get('/dashboard', function () {
