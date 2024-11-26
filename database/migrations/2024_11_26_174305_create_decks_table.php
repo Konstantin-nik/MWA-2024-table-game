@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('decks', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('room_id')->constrained()->cascadeOnDelete();
+            $table->integer('deck_index'); // Index for main decks: 0, 1, or 2        
+
             $table->timestamps();
         });
     }

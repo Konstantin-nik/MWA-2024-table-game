@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('deck_id')->constrained()->cascadeOnDelete();
+            $table->integer('number'); // 1-15 (House Number)
+            $table->string('action'); // One of 6 actions
+            $table->integer('position')->nullable(); // Position in deck (for order tracking)
+
+            $table->boolean('is_drawn')->default(false);
             $table->timestamps();
         });
     }
