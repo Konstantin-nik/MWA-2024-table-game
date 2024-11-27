@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Board;
 use App\Models\Deck;
 use App\Models\Participation;
 use App\Models\Room;
@@ -142,6 +143,10 @@ class RoomController extends Controller
         $this->isAuthorizedToStart($room);
         DB::transaction(function () use ($room) {
             Deck::createDecksForRoom($room->id);
+
+            foreach ($room->participations as $participation) {
+                Board::initializeBoard($participation);
+            }
 
             $room->update([
                 'started_at' => now(),

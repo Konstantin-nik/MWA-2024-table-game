@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('houses', function (Blueprint $table) {
+        Schema::create('rows', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('row_id')->constrained()->cascadeOnDelete();
-            $table->integer('position'); // Position in row: 0 to N
-            $table->boolean('has_pool')->default(false);
-            $table->integer('number')->nullable();
+            $table->foreignId('board_id')->constrained()->cascadeOnDelete();
+            $table->integer('index'); // Row index (0, 1, 2)
 
             $table->timestamps();
         });
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('houses');
+        Schema::dropIfExists('rows');
     }
 };

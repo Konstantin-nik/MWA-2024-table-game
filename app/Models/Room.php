@@ -35,6 +35,11 @@ class Room extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    public function participations()
+    {
+        return $this->hasMany(Participation::class);
+    }
+
     // Model scopes -----------------------------------------------------------
     public function scopePublic($query)
     {
