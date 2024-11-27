@@ -28,7 +28,7 @@ class Deck extends Model
         foreach ($cardChunks as $index => $chunk) {
             $deck = Deck::create([
                 'room_id' => $room_id,
-                'deck_index' => $index,
+                'deck_index' => $index + 1,
             ]);
 
             foreach ($chunk as $cardData) {
