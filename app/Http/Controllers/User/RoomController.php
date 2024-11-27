@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Deck;
 use App\Models\Participation;
 use App\Models\Room;
 use Illuminate\Http\Request;
@@ -138,6 +139,8 @@ class RoomController extends Controller
     {
         $room = Room::findOrFail($id);
         $this->isAuthorizedToStart($room);
+
+        Deck::createDecksForRoom($id);
 
         $room->update([
             'started_at' => now(),
