@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Deck;
 use App\Models\Participation;
 use App\Models\Room;
+use DB;
 use Illuminate\Http\Request;
 
 class RoomController extends Controller
@@ -139,12 +140,13 @@ class RoomController extends Controller
     {
         $room = Room::findOrFail($id);
         $this->isAuthorizedToStart($room);
+        DB::transaction(function () use ($room) {
+            Deck::createDecksForRoom($room->id);
 
-        Deck::createDecksForRoom($id);
-
-        $room->update([
-            'started_at' => now(),
-        ]);
+            $room->update([
+                'started_at' => now(),
+            ]);
+        });
 
         return redirect()->route('user.game', $room)->with('success', 'Game started successfully!');
     }
