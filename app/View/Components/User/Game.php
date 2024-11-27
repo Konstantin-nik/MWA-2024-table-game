@@ -2,6 +2,7 @@
 
 namespace App\View\Components\User;
 
+use App\Models\Participation;
 use App\Models\Room;
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -12,7 +13,7 @@ class Game extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct(public Room $room)
+    public function __construct(public Participation $participation)
     {
         //
     }
