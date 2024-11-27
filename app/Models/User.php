@@ -71,7 +71,7 @@ class User extends Authenticatable
 
     /**
      * Return room player currently if it's started and not finished.
-     * 
+     *
      * @return Room|null
      */
     public function getCurrentGame()

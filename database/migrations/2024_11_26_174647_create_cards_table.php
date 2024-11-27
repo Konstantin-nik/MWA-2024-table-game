@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('action'); // One of 6 actions
             $table->integer('position')->nullable(); // Position in deck (for order tracking)
 
-            $table->boolean('is_drawn')->default(false);
+            $table->boolean('is_drawn')->default(false); // Whether the card is drawn
             $table->timestamps();
         });
     }
