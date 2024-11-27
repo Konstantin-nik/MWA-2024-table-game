@@ -35,6 +35,5 @@ class Deck extends Model
                 Card::create(array_merge($cardData, ['deck_id' => $deck->id]));
             }
         }
-        dd($cardChunks);
     }
 }
