@@ -113,9 +113,8 @@
 
             isSelectableHouse(house) {
                 if (!this.selectedAction) return false;
-                console.log(this.selectedHouses);
+                if (this.selectedHouses.includes(house.id)) return true;
 
-                // Example house selection logic
                 switch (this.selectedAction) {
                     case "1": // Fence
                         if (this.selectedHouses.length > 0)
@@ -160,27 +159,30 @@
             },
 
             selectHouse(houseId, house) {
-                if (!this.isSelectableHouse(house)) {
-                    console.log(`House ${houseId} is not selectable.`);
-                    return;
-                }
+                if (this.selectedHouses.includes(houseId)) {
+                    this.selectedHouses = this.selectedHouses.filter(id => id !== houseId);
+                    console.log(`Unselected House: ${houseId}`);
+                } else {
+                    if (!this.isSelectableHouse(house)) {
+                        console.log(`House ${houseId} is not selectable.`);
+                        return;
+                    }
 
-                if (this.selectedAction === 6 && this.selectedHouses.length >= 2) {
-                    console.log("Cannot select more than 2 houses for Bis.");
-                    return;
-                }
+                    if (this.selectedAction === 6 && this.selectedHouses.length >= 2) {
+                        console.log("Cannot select more than 2 houses for Bis.");
+                        return;
+                    }
 
-                this.selectedHouses.push(houseId);
-                console.log(`Selected Houses: ${this.selectedHouses}`);
+                    this.selectedHouses.push(houseId);
+                    console.log(`Selected Houses: ${this.selectedHouses}`);
+                }
             },
 
             get canEndMove() {
-                // Ensure valid conditions to enable "End Move"
                 return this.selectedHouses.length > 0 && this.selectedAction !== null;
             },
 
             endMove() {
-                // Submit the selected move
                 fetch('{{ route('user.game.action') }}', {
                     method: 'POST',
                     headers: {
