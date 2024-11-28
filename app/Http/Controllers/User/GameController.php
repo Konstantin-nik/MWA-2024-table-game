@@ -13,7 +13,7 @@ class GameController extends Controller
         $room = auth()->user()->getCurrentGame();
 
         if ($room) {
-            $participation = $room->participations()->where("user_id", auth()->user()->id)->first();
+            $participation = $room->participations()->where('user_id', auth()->user()->id)->first();
             $board = Board::with(['rows.houses'])->where('participation_id', $participation->id)->first();
             $decks = Deck::with('cards')->where('room_id', $room->id)->get();
 

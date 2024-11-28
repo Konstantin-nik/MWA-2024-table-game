@@ -9,6 +9,7 @@ use Illuminate\View\Component;
 class ActionCard extends Component
 {
     public $type;
+
     public $content;
 
     public static $actionMap = [
@@ -19,6 +20,7 @@ class ActionCard extends Component
         5 => 'Agent action',
         6 => 'Bis action',
     ];
+
     /**
      * Create a new component instance.
      */
