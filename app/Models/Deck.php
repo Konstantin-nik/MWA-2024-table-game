@@ -17,6 +17,11 @@ class Deck extends Model
         return $this->hasMany(Card::class);
     }
 
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
+
     // Model static functions -------------------------------------------------
     public static function createDecksForRoom($room_id)
     {

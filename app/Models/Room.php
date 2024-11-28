@@ -40,6 +40,11 @@ class Room extends Model
         return $this->hasMany(Participation::class);
     }
 
+    public function decks()
+    {
+        return $this->hasMany(Deck::class);
+    }
+
     // Model scopes -----------------------------------------------------------
     public function scopePublic($query)
     {
