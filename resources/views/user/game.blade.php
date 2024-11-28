@@ -8,17 +8,24 @@
             <p class="text-lg text-gray-600 font-medium">You are not in a Game</p>
         </div>
     @else
-        <div class="w-full max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <div 
+            x-data="gameLogic({{ json_encode($cardPairs) }})" 
+            class="w-full max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md"
+        >
             <h1 class="text-2xl font-bold mb-4">Card & House Game</h1>
 
             <!-- Decks Section -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                @foreach ($cardPairs as $pair)
+                @foreach ($cardPairs as $index => $pair)
                     <!-- Card Pair -->
-                    <div class="flex flex-col items-center space-y-2 p-4 bg-blue-100 rounded shadow text-center">
+                    <div 
+                        class="flex flex-col items-center space-y-2 p-4 bg-blue-100 rounded shadow text-center cursor-pointer"
+                        :class="{ 'ring ring-blue-500': selectedPairIndex === {{ $index }} }"
+                        @click="selectPair({{ $index }})"
+                    >
                         <!-- Card Above (Number Card) -->
                         <x-action-card type="number" :content="$pair['numberCard']" />
-                        
+
                         <!-- Card Below (Action Card) -->
                         <x-action-card type="action" :content="$pair['actionCard']" />
                     </div>
@@ -31,7 +38,14 @@
                 @foreach ($board->rows as $row)
                     <div class="flex items-end gap-2 mb-4 justify-end ml-auto">
                         @foreach ($row->houses as $house)
-                            <div class="flex flex-col items-center">
+                            <div 
+                                class="flex flex-col items-center"
+                                :class="{
+                                    'bg-blue-300': isSelectedHouse({{ $house->id }}),
+                                    'cursor-not-allowed opacity-50': !isSelectableHouse({{ $house }})
+                                }"
+                                @click="selectHouse({{ $house->id }}, {{ $house }})"
+                            >
                                 <!-- Pool Above the House -->
                                 @if ($house->has_pool)
                                     <div class="mb-1 w-12 h-5 pb-2 bg-blue-500 rounded"></div>
@@ -48,6 +62,148 @@
             @else
                 <p class="text-gray-600">No board found for your participation.</p>
             @endif
+
+            <!-- Buttons -->
+            <div class="flex justify-end mt-4 space-x-4">
+                <button 
+                    class="px-4 py-2 bg-green-500 text-white rounded shadow" 
+                    @click="endMove"
+                    :disabled="!canEndMove"
+                >
+                    End Move
+                </button>
+                <button 
+                    class="px-4 py-2 bg-red-500 text-white rounded shadow" 
+                    @click="cancelMove"
+                >
+                    Cancel
+                </button>
+            </div>
         </div>
     @endif
 </x-main-layout>
+
+<script>
+    function gameLogic(cardPairs) {
+        return {
+            selectedPairIndex: null,
+            selectedAction: null,
+            selectedNumber: null,
+            selectedHouses: [],
+            cardPairs,
+
+            selectPair(index) {
+                this.selectedPairIndex = index;
+                const pair = this.cardPairs[index];
+                this.selectedAction = pair.actionCard; 
+                this.selectedNumber = pair.numberCard;
+                this.selectedHouses = [];
+
+                console.log(`Selected Pair: ${index}, Action: ${this.selectedAction}, Number: ${this.selectedNumber}`);
+            },
+
+            isSelectableHouse(house) {
+                if (!this.selectedAction) return false;
+                console.log(this.selectedHouses);
+
+                // Example house selection logic
+                switch (this.selectedAction) {
+                    case "1": // Fence
+                        if (this.selectedHouses.length > 0)
+                            return false;
+
+                        return true; 
+                    case "2": // Estate
+                        if (this.selectedHouses.length > 0)
+                            return false;
+
+                        return true;
+                    case "3": // Landscape
+                        if (this.selectedHouses.length > 0)
+                            return false;
+
+                        return true;
+                    case "4": // Pool
+                        if (this.selectedHouses.length > 0)
+                            return false;
+
+                        if (! house.has_pool)
+                            return false; 
+                        
+                        return true
+                    case "5": // Agency
+                        if (this.selectedHouses.length > 0)
+                            return false;
+
+                        return true;
+                    case "6": // Bis
+                        if (this.selectedHouses.length > 0)
+                            return false;
+
+                        return true; // Replace with logic for selecting two houses
+                    default:
+                        return false;
+                }
+            },
+
+            isSelectedHouse(houseId) {
+                return this.selectedHouses.includes(houseId);
+            },
+
+            selectHouse(houseId, house) {
+                if (!this.isSelectableHouse(house)) {
+                    console.log(`House ${houseId} is not selectable.`);
+                    return;
+                }
+
+                if (this.selectedAction === 6 && this.selectedHouses.length >= 2) {
+                    console.log("Cannot select more than 2 houses for Bis.");
+                    return;
+                }
+
+                this.selectedHouses.push(houseId);
+                console.log(`Selected Houses: ${this.selectedHouses}`);
+            },
+
+            get canEndMove() {
+                // Ensure valid conditions to enable "End Move"
+                return this.selectedHouses.length > 0 && this.selectedAction !== null;
+            },
+
+            endMove() {
+                // Submit the selected move
+                fetch('{{ route('user.game.action') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({
+                        selectedPairIndex: this.selectedPairIndex,
+                        selectedHouses: this.selectedHouses,
+                        action: this.selectedAction,
+                        number: this.selectedNumber,
+                    }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log('Move completed:', data);
+                        alert('Move completed!');
+                        location.reload();
+                    })
+                    .catch((err) => {
+                        console.error('Error submitting move:', err);
+                        alert('An error occurred!');
+                    });
+            },
+
+            cancelMove() {
+                this.selectedPairIndex = null;
+                this.selectedAction = null;
+                this.selectedNumber = null;
+                this.selectedHouses = [];
+                console.log('Move cancelled.');
+            },
+        };
+    }
+</script>

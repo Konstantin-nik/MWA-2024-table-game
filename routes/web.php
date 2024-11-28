@@ -21,6 +21,7 @@ Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('user/owned_rooms', [\App\Http\Controllers\User\RoomController::class, 'ownedRooms'])->name('owned_rooms');
     Route::post('user/rooms/{id}/start', [\App\Http\Controllers\User\RoomController::class, 'start'])->name('rooms.start');
     Route::get('user/game', [GameController::class, 'show'])->name('game');
+    Route::post('user/game/action', [GameController::class, 'action'])->name('game.action');
 });
 
 Route::get('/dashboard', function () {
