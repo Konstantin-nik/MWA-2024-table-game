@@ -11,6 +11,7 @@ class Card extends Model
         'action',
         'is_drawn',
         'deck_id',
+        'position',
     ];
 
     // Model Relations ------------------------------------------------------

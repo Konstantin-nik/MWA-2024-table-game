@@ -36,8 +36,11 @@ class Deck extends Model
                 'index' => $index,
             ]);
 
-            foreach ($chunk as $cardData) {
-                Card::create(array_merge($cardData, ['deck_id' => $deck->id]));
+            foreach ($chunk->values() as $index2 => $cardData) {
+                Card::create(array_merge($cardData, [
+                    'deck_id' => $deck->id, 
+                    'position'=> $index2
+                ]));
             }
         }
     }
