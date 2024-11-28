@@ -38,24 +38,33 @@
                 @foreach ($board->rows as $row)
                     <div class="flex items-end gap-2 mb-4 justify-end ml-auto">
                         @foreach ($row->houses as $house)
-                            <div 
-                                class="flex flex-col items-center"
-                                :class="{
-                                    'bg-blue-300': isSelectedHouse({{ $house->id }}),
-                                    'cursor-not-allowed opacity-50': !isSelectableHouse({{ $house }})
-                                }"
-                                @click="selectHouse({{ $house->id }}, {{ $house }})"
-                            >
-                                <!-- Pool Above the House -->
-                                @if ($house->has_pool)
-                                    <div class="mb-1 w-12 h-5 pb-2 bg-blue-500 rounded"></div>
-                                @endif
+                        <div 
+                            class="flex flex-col items-center"
+                            :class="{
+                                'cursor-not-allowed opacity-50': !isSelectableHouse({{ $house }})
+                            }"
+                            @click="selectHouse({{ $house->id }}, {{ $house }})"
+                        >
+                            <!-- Pool Above the House -->
+                            @if ($house->has_pool)
+                                <div 
+                                    class="mb-1 w-12 h-5 pb-2 bg-blue-500 rounded"
+                                    :class="{
+                                        'border-4 border-black': isSelectedHouse({{ $house->id }}) && selectedAction === '4',
+                                    }"
+                                ></div>
+                            @endif
 
-                                <!-- House Below -->
-                                <div class="flex items-center justify-center w-16 h-16 rounded border border-gray-400 bg-gray-200 text-lg font-bold">
-                                    <span>{{ $house->number }}</span>
-                                </div>
+                            <!-- House Below -->
+                            <div 
+                                class="flex items-center justify-center w-16 h-16 rounded border border-gray-400 bg-gray-200 text-lg font-bold"
+                                :class="{
+                                    'border-4 border-black': isSelectedHouse({{ $house->id }}),
+                                }"
+                            >
+                                <span>{{ $house->number }}</span>
                             </div>
+                        </div>
                         @endforeach
                     </div>
                 @endforeach
