@@ -196,17 +196,7 @@
                         action: this.selectedAction,
                         number: this.selectedNumber,
                     }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        console.log('Move completed:', data);
-                        alert('Move completed!');
-                        location.reload();
-                    })
-                    .catch((err) => {
-                        console.error('Error submitting move:', err);
-                        alert('An error occurred!');
-                    });
+                });
             },
 
             cancelMove() {
