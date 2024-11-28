@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Row extends Model
 {
-    protected $fillable = ['board_id', 'index'];
+    protected $guarded = [];
 
     // Model Relations --------------------------------------------------------
     public function board()
@@ -17,5 +17,10 @@ class Row extends Model
     public function houses()
     {
         return $this->hasMany(House::class);
+    }
+
+    public function fences()
+    {
+        return $this->hasMany(Fence::class);
     }
 }
