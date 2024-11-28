@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class House extends Model
 {
-    protected $fillable = ['row_id', 'has_pool', 'position', 'number'];
+    protected $guarded = [];
 
     // Model Relations --------------------------------------------------------
     public function row()

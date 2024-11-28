@@ -10,6 +10,8 @@ class Action extends Model
     /** @use HasFactory<\Database\Factories\ActionFactory> */
     use HasFactory;
 
+    protected $guarded = [];
+
     // Model Relations ------------------------------------------------------
     public function participation()
     {

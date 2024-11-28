@@ -10,6 +10,8 @@ class Round extends Model
     /** @use HasFactory<\Database\Factories\RoundFactory> */
     use HasFactory;
 
+    protected $guarded = [];
+
     protected $casts = [
         'finished_at' => 'datetime',
     ];
