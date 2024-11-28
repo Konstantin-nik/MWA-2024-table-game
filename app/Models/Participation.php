@@ -27,4 +27,9 @@ class Participation extends Model
     {
         return $this->hasMany(Action::class);
     }
+
+    public function board()
+    {
+        return $this->hasOne(Board::class);
+    }
 }

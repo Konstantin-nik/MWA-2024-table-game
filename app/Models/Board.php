@@ -14,6 +14,11 @@ class Board extends Model
         return $this->hasMany(Row::class);
     }
 
+    public function participation()
+    {
+        return $this->belongsTo(Participation::class);
+    }
+
     // Model static functions -------------------------------------------------
     public static function initializeBoard(Participation $participation)
     {

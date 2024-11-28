@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('row_id')->constrained()->cascadeOnDelete();
             $table->integer('position'); // Position in row: 0 to N
             $table->boolean('has_pool')->default(false);
+            $table->boolean('pool_constructed')->default(false);
             $table->integer('number')->nullable();
 
             $table->timestamps();
