@@ -57,11 +57,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Room::class, 'participations');
     }
 
-    public function actions()
-    {
-        return $this->hasMany(Action::class);
-    }
-
     public function ownedRooms()
     {
         return $this->hasMany(Room::class, 'owner_id');

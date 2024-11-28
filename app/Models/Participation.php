@@ -22,4 +22,9 @@ class Participation extends Model
     {
         return $this->belongsTo(Room::class);
     }
+
+    public function actions()
+    {
+        return $this->hasMany(Action::class);
+    }
 }

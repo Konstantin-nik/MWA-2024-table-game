@@ -11,9 +11,9 @@ class Action extends Model
     use HasFactory;
 
     // Model Relations ------------------------------------------------------
-    public function user()
+    public function participation()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Participation::class);
     }
 
     public function rounds()

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('round_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('participation_id')->constrained()->cascadeOnDelete();
             $table->integer('chosen_deck'); // Deck index: 0, 1, or 2
             $table->string('chosen_action'); // The action chosen
             $table->integer('chosen_number'); // The house number chosen
