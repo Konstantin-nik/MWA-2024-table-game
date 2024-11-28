@@ -73,21 +73,28 @@
             @endif
 
             <!-- Buttons -->
-            <div class="flex justify-end mt-4 space-x-4">
-                <button 
-                    class="px-4 py-2 bg-green-500 text-white rounded shadow" 
-                    @click="endMove"
-                    :disabled="!canEndMove"
-                >
-                    End Move
-                </button>
-                <button 
-                    class="px-4 py-2 bg-red-500 text-white rounded shadow" 
-                    @click="cancelMove"
-                >
-                    Cancel
-                </button>
-            </div>
+            <form action="{{ route('user.game.action') }}" method="POST" id="end_turn_form">
+                @csrf
+                <textarea name="game_data" id="game_data" hidden></textarea>
+                <div class="flex justify-end mt-4 space-x-4">
+                    <button 
+                        id="end_turn_button"
+                        type="button"
+                        class="px-4 py-2 bg-green-500 text-white rounded shadow" 
+                        @click="prepareEndTurn"
+                        :disabled="!canEndTurn"
+                    >
+                        End Turn
+                    </button>
+                    <button 
+                        type="button"
+                        class="px-4 py-2 bg-red-500 text-white rounded shadow" 
+                        @click="cancelTurn"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
         </div>
     @endif
 </x-main-layout>
@@ -179,32 +186,27 @@
                 }
             },
 
-            get canEndMove() {
+            get canEndTurn() {
                 return this.selectedHouses.length > 0 && this.selectedAction !== null;
             },
 
-            endMove() {
-                fetch('{{ route('user.game.action') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                    body: JSON.stringify({
-                        selectedPairIndex: this.selectedPairIndex,
-                        selectedHouses: this.selectedHouses,
-                        action: this.selectedAction,
-                        number: this.selectedNumber,
-                    }),
-                });
+            prepareEndTurn() {
+                const gameData = {
+                    selectedPairIndex: this.selectedPairIndex,
+                    selectedHouses: this.selectedHouses,
+                    action: this.selectedAction,
+                    number: this.selectedNumber,
+                };
+                document.getElementById('game_data').value = JSON.stringify(gameData);
+                document.getElementById('end_turn_form').submit();
             },
 
-            cancelMove() {
+            cancelTurn() {
                 this.selectedPairIndex = null;
                 this.selectedAction = null;
                 this.selectedNumber = null;
                 this.selectedHouses = [];
-                console.log('Move cancelled.');
+                console.log('Turn cancelled.');
             },
         };
     }

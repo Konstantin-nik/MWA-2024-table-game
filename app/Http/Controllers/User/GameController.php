@@ -9,6 +9,7 @@ use App\Models\House;
 use App\Models\Room;
 use App\Models\Round;
 use Illuminate\Http\Request;
+use Validator;
 
 class GameController extends Controller
 {
@@ -47,15 +48,15 @@ class GameController extends Controller
 
     public function action(Request $request)
     {
-        $request->validate([
+        $gameData = json_decode($request->input('game_data'), true);
+
+        $validatedData = Validator::make($gameData, [
             'selectedPairIndex' => 'required|integer|min:0|max:2',
             'selectedHouses' => 'required|array|min:1|max:2',
             'selectedHouses.*' => 'integer|exists:houses,id',
             'action' => 'required|integer',
             'number' => 'required|integer',
-        ]);
-
-        // dd($request);
+        ])->validate();
 
         $user = auth()->user();
         $room = $user->getCurrentGame();
@@ -78,24 +79,24 @@ class GameController extends Controller
             abort(403, 'You have already taken your turn for this round.');
         }
 
-        $isValidMove = true;
-        if (! $isValidMove) {
-            abort(400, 'Invalid move.');
+        $isValidTurn = true;
+        if (! $isValidTurn) {
+            abort(400, 'Invalid turn.');
         }
 
         $action = $currentRound->actions()->create([
             'round_id' => $currentRound->id,
             'participation_id' => $participation->id,
-            'chosen_deck' => $request->selectedPairIndex,  // Probably here will be issue, check show method and pass deck index to view
-            'chosen_action' => $request->action,
-            'chosen_number' => $request->number,
+            'chosen_deck' => $validatedData['selectedPairIndex'],  // Probably here will be issue, check show method and pass deck index to view
+            'chosen_action' => $validatedData['action'],
+            'chosen_number' => $validatedData['number'],
             'action_details' => json_encode([
-                'houses' => $request->selectedHouses,
+                'houses' => $validatedData['selectedHouses'],
             ]),
         ]);
 
-        $house = House::findOrFail($request->selectedHouses[0]);
-        $house->update(['number' => $request->number]);
+        $house = House::findOrFail($validatedData['selectedHouses'][0]);
+        $house->update(['number' => $validatedData['number']]);
 
         // Check if all participants have taken their actions for the round
         $totalParticipations = $room->participations()->count();
@@ -106,7 +107,7 @@ class GameController extends Controller
             $this->endRound($currentRound, $room);
         }
 
-        return redirect()->route('user.game')->with('success', 'Move done successfully.');
+        return redirect()->route('user.game')->with('success', 'Turn done successfully.');
     }
 
     private function endRound(Round $round, Room $room)
