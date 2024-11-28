@@ -10,7 +10,7 @@
     @else
         <div 
             x-data="gameLogic({{ json_encode($cardPairs) }})" 
-            class="w-full max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md"
+            class="w-full max-w-6xl mx-auto p-6 bg-white shadow-md rounded-md"
         >
             <h1 class="text-2xl font-bold mb-4">Card & House Game</h1>
 
@@ -36,8 +36,9 @@
             <h2 class="text-xl font-semibold mb-4">Your Board</h2>
             @if ($board)
                 @foreach ($board->rows as $row)
-                    <div class="flex items-end gap-2 mb-4 justify-end ml-auto">
-                        @foreach ($row->houses as $house)
+                    <div class="flex items-end gap-2 mb-4 cursor-pointer justify-end ml-auto">
+                        @foreach ($row->houses as $index => $house)
+                        <!-- House -->
                         <div 
                             class="flex flex-col items-center"
                             :class="{
@@ -65,6 +66,20 @@
                                 <span>{{ $house->number }}</span>
                             </div>
                         </div>
+                        <!-- Fence -->
+                        @if ($index < count($row->houses) - 1)
+                            @php
+                                $fenceExists = $row->fences->contains('position', $index);
+                            @endphp
+                            <div 
+                                class="fence w-2 h-16 cursor-pointer" 
+                                :class="{
+                                    'bg-gray-500': {{ $fenceExists ? 'true' : 'false'}},
+                                    'bg-gray-200': {{ $fenceExists ? 'false' : 'true'}},
+                                }"
+                                @click="placeFence({{ $row->id }}, {{ $index }})"
+                            ></div>
+                        @endif
                         @endforeach
                     </div>
                 @endforeach
@@ -184,6 +199,19 @@
                     this.selectedHouses.push(houseId);
                     console.log(`Selected Houses: ${this.selectedHouses}`);
                 }
+            },
+
+            placeFence(rowId, position) {
+                if (this.selectedAction !== "1") {
+                    console.log("You must select the 'Fence' action first.");
+                    return;
+                }
+
+                // Add or remove the fence logic here
+                console.log(`Placing fence in row ${rowId}, position ${position}.`);
+
+                // Add to game data for the server
+                this.selectedHouses = [{ rowId, position }];
             },
 
             get canEndTurn() {
