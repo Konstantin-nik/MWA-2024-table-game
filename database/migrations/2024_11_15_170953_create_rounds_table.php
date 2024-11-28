@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('room_id');
-            $table->timestamp('finished_at')->nullable();
+            $table->integer('index');
 
+            $table->timestamp('finished_at')->nullable();
             $table->timestamps();
         });
     }
