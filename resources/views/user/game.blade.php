@@ -113,6 +113,7 @@
 
             isSelectableHouse(house) {
                 if (!this.selectedAction) return false;
+                if (house.number !== null) return false;
                 if (this.selectedHouses.includes(house.id)) return true;
 
                 switch (this.selectedAction) {
