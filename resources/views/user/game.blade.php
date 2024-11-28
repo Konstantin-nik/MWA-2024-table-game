@@ -13,10 +13,14 @@
 
             <!-- Decks Section -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                @foreach ($decks as $deck)
-                    <div class="p-4 bg-blue-100 rounded shadow text-center">
-                        <h3 class="font-bold text-lg">Deck {{ $loop->iteration }}</h3>
-                        <p class="text-sm text-gray-600">Total Cards: {{ $deck->cards->count() }}</p>
+                @foreach ($cardPairs as $pair)
+                    <!-- Card Pair -->
+                    <div class="flex flex-col items-center space-y-2 p-4 bg-blue-100 rounded shadow text-center">
+                        <!-- Card Above (Number Card) -->
+                        <x-action-card type="number" :content="$pair['numberCard']" />
+                        
+                        <!-- Card Below (Action Card) -->
+                        <x-action-card type="action" :content="$pair['actionCard']" />
                     </div>
                 @endforeach
             </div>
