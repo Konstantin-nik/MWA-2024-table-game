@@ -88,17 +88,6 @@ class GameController extends Controller
         }
 
         DB::transaction(function () use ($room, $currentRound, $participation, $validatedData, $gameData) {
-            $action = $currentRound->actions()->create([
-                'round_id' => $currentRound->id,
-                'participation_id' => $participation->id,
-                'chosen_deck' => $validatedData['selectedPairIndex'],  // Probably here will be issue, check show method and pass deck index to view
-                'chosen_action' => $validatedData['action'],
-                'chosen_number' => $validatedData['number'],
-                'action_details' => json_encode([
-                    'houses' => $validatedData['selectedHouses'],
-                ]),
-            ]);
-
             $house = House::findOrFail($validatedData['selectedHouses'][0]);
 
             if ($house->number) {
@@ -106,8 +95,8 @@ class GameController extends Controller
             }
             $house->update(['number' => $validatedData['number']]);
 
-            if ($gameData['fenceId']) {
-                $fence = Fence::findOrFail($gameData['fenceId']);
+            if ($validatedData['fenceId']) {
+                $fence = Fence::findOrFail($validatedData['fenceId']);
 
                 if ($fence->is_constructed) {
                     abort(400, 'This fence has already been constructed.');
@@ -123,6 +112,18 @@ class GameController extends Controller
             if (true) {
                 $this->endRound($currentRound, $room);
             }
+
+            $currentRound->actions()->create([
+                'round_id' => $currentRound->id,
+                'participation_id' => $participation->id,
+                'chosen_deck' => $validatedData['selectedPairIndex'],  // Probably here will be issue, check show method and pass deck index to view
+                'chosen_action' => $validatedData['action'],
+                'chosen_number' => $validatedData['number'],
+                'action_details' => json_encode([
+                    'houses' => $validatedData['selectedHouses'],
+                    'fence' => $validatedData['fenceId'],
+                ]),
+            ]);
         });
 
         return redirect()->route('user.game')->with('success', 'Turn done successfully.');
