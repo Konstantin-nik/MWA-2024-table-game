@@ -56,6 +56,7 @@
                             @foreach ($row->houses as $index => $house)
                             <!-- House -->
                             <div 
+                                x-ref="house_{{ $house->id }}" 
                                 class="flex flex-col items-center"
                                 :class="{
                                     'cursor-not-allowed opacity-50': !isSelectableHouse({{ $house }})
@@ -105,6 +106,35 @@
                         <hr class="border-gray-300 mb-4">
                     @endif
                 @endforeach
+                <!-- Agency Number Selection Mini-Field -->
+                <div 
+                    x-show="selectAgency" 
+                    x-transition
+                    class="absolute flex justify-center items-center z-50"
+                    :style="{ top: miniFieldPosition.top + 'px', left: miniFieldPosition.left + 'px' }"
+                    @click.away="selectAgency = false"
+                >
+                    <div class="bg-white p-4 rounded shadow-lg">
+                        <h3 class="text-lg font-bold mb-4">Select Number</h3>
+                        <div class="flex gap-4">
+                            <button type="button" @click="selectAgencyNumber(-2)" class="px-4 py-2 bg-blue-500 text-white rounded">
+                                -2
+                            </button>
+                            <button type="button" @click="selectAgencyNumber(-1)" class="px-4 py-2 bg-blue-500 text-white rounded">
+                                -1
+                            </button>
+                            <button type="button" @click="selectAgencyNumber()" class="px-4 py-2 bg-blue-500 text-white rounded">
+                                0
+                            </button>
+                            <button type="button" @click="selectAgencyNumber(1)" class="px-4 py-2 bg-blue-500 text-white rounded">
+                                +1
+                            </button>
+                            <button type="button" @click="selectAgencyNumber(2)" class="px-4 py-2 bg-blue-500 text-white rounded">
+                                +2
+                            </button>
+                        </div>
+                    </div>
+                </div>
             @else
                 <p class="text-gray-600">No board found for your participation.</p>
             @endif
@@ -143,7 +173,9 @@
             selectedAction: null,
             selectedNumber: null,
             selectedFenceId: null,
+            selectAgency: false,
             selectedHouses: [],
+            miniFieldPosition: { top: 0, left: 0 },
             cardPairs,
 
             selectPair(index) {
@@ -152,6 +184,7 @@
                 this.selectedAction = pair.actionCard; 
                 this.selectedNumber = pair.numberCard;
                 this.selectedFenceId = null;
+                this.selectAgency = false;
                 this.selectedHouses = [];
 
                 console.log(`Selected Pair: ${index}, Action: ${this.selectedAction}, Number: ${this.selectedNumber}`);
@@ -209,20 +242,31 @@
                 if (this.selectedHouses.includes(house.id)) {
                     this.selectedHouses = this.selectedHouses.filter(id => id !== house.id);
                     console.log(`Unselected House: ${house.id}`);
-                } else {
-                    if (!this.isSelectableHouse(house)) {
-                        console.log(`House ${house.id} is not selectable.`);
-                        return;
-                    }
+                    return;
+                }
 
-                    if (this.selectedAction === 6 && this.selectedHouses.length >= 2) {
-                        console.log("Cannot select more than 2 houses for Bis.");
-                        return;
-                    }
+                if (!this.isSelectableHouse(house)) {
+                    console.log(`House ${house.id} is not selectable.`);
+                    return;
+                }
+
+                if (this.selectedAction == 5) {
+                    const houseElement = this.$refs[`house_${house.id}`];
+                    const rect = houseElement.getBoundingClientRect();
+                    console.log(rect);
+                    this.miniFieldPosition = {
+                        top: rect.top + window.scrollY + houseElement.offsetHeight + 10,
+                        left: rect.left - rect.width / 2 + window.scrollX - 75
+                    };
 
                     this.selectedHouses.push(house.id);
-                    console.log(`Selected Houses: ${this.selectedHouses}`);
+                    this.selectAgency = true;
+                    console.log(`House ${house.id} selected for Agency. Please select a number.`);
+                    return;
                 }
+
+                this.selectedHouses.push(house.id);
+                console.log(`Selected Houses: ${this.selectedHouses}`);
             },
 
             isSelectableFence(fence) {
@@ -263,6 +307,17 @@
                 return this.selectedHouses.length > 0 && this.selectedAction !== null;
             },
 
+            selectAgencyNumber(number) {
+                if (!this.selectedHouses.length) {
+                    console.log("No house selected.");
+                    return;
+                }
+
+                this.selectedNumber += number;
+                this.selectAgency = false;
+                console.log(`Selected number: ${this.selectedNumber}`);
+            },
+
             prepareEndTurn() {
                 const gameData = {
                     selectedPairIndex: this.selectedPairIndex,
@@ -280,6 +335,7 @@
                 this.selectedAction = null;
                 this.selectedNumber = null;
                 this.selectedFenceId = null;
+                this.selectAgency = false;
                 this.selectedHouses = [];
                 console.log('Turn cancelled.');
             },

@@ -123,7 +123,7 @@ class GameController extends Controller
 
                 $house->update(['is_pool_constructed' => true]);
             } elseif ($validatedData['action'] == 5) { // Agency
-
+                
             } elseif ($validatedData['action'] == 6) { // Bis
                 if (count($validatedData['selectedHouses']) != 2) {
                     abort(403, 'Wrong number of houses selected');
