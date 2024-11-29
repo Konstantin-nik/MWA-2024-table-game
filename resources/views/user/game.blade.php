@@ -19,7 +19,7 @@
                 @foreach ($cardPairs as $index => $pair)
                     <!-- Card Pair -->
                     <div 
-                        class="flex flex-col items-center space-y-2 p-4 bg-blue-100 rounded shadow text-center cursor-pointer"
+                        class="flex flex-row items-center justify-center text-center space-x-5 p-4 bg-blue-100 rounded shadow cursor-pointer"
                         :class="{ 'ring ring-blue-500': selectedPairIndex === {{ $index }} }"
                         @click="selectPair({{ $index }})"
                     >
@@ -35,55 +35,75 @@
             <!-- Boards Section -->
             <h2 class="text-xl font-semibold mb-4">Your Board</h2>
             @if ($board)
-                @foreach ($board->rows as $row)
-                    <div class="flex items-end gap-2 mb-4 cursor-pointer justify-end ml-auto">
-                        @foreach ($row->houses as $index => $house)
-                        <!-- House -->
-                        <div 
-                            class="flex flex-col items-center"
-                            :class="{
-                                'cursor-not-allowed opacity-50': !isSelectableHouse({{ $house }})
-                            }"
-                            @click="selectHouse({{ $house }})"
-                        >
-                            <!-- Pool Above the House -->
-                            @if ($house->has_pool)
+                @foreach ($board->rows as $rowIndex => $row)
+                    <!-- Row Wrapper -->
+                    <div class="mb-2 p-2">
+                        <!-- Landscape Values -->
+                        <div class="pb-1 landscape-values flex flex-row gap-2 mb-2 justify-end ml-auto">
+                            @foreach ($row->landscape_values as $index => $value)
                                 <div 
-                                    class="mb-1 w-12 h-5 pb-2 bg-blue-500 rounded"
+                                    class="px-2 py-1 bg-green-100 text-sm rounded border"
                                     :class="{
-                                        'border-4 border-black': isSelectedHouse({{ $house->id }}) && selectedAction === '4',
-                                        'border-4 border-black': {{ $house->is_pool_constructed ? 'true' : 'false' }},
+                                        'border-blue-500 ring ring-blue-300': {{ $row->current_landscape_index }} === {{ $index }}
                                     }"
+                                >
+                                    {{ $value }}
+                                </div>
+                            @endforeach
+                        </div>
+                        <!-- Houses and Fences -->
+                        <div class="flex items-end gap-2 mb-4 cursor-pointer justify-end ml-auto">
+                            @foreach ($row->houses as $index => $house)
+                            <!-- House -->
+                            <div 
+                                class="flex flex-col items-center"
+                                :class="{
+                                    'cursor-not-allowed opacity-50': !isSelectableHouse({{ $house }})
+                                }"
+                                @click="selectHouse({{ $house }})"
+                            >
+                                <!-- Pool Above the House -->
+                                @if ($house->has_pool)
+                                    <div 
+                                        class="mb-1 w-12 h-5 pb-2 bg-blue-500 rounded"
+                                        :class="{
+                                            'border-4 border-black': isSelectedHouse({{ $house->id }}) && selectedAction === '4',
+                                            'border-4 border-black': {{ $house->is_pool_constructed ? 'true' : 'false' }},
+                                        }"
+                                    ></div>
+                                @endif
+
+                                <!-- House Below -->
+                                <div 
+                                    class="flex items-center justify-center w-16 h-16 rounded border border-gray-400 bg-gray-200 text-lg font-bold"
+                                    :class="{
+                                        'border-4 border-black': isSelectedHouse({{ $house->id }}),
+                                    }"
+                                >
+                                    <span>{{ $house->number }}</span>
+                                </div>
+                            </div>
+                            <!-- Fence -->
+                            @if ($index < count($row->houses) - 1)
+                                @php
+                                    $fence = $row->fences->firstWhere('position', $index);
+                                @endphp
+                                <div 
+                                    class="fence w-2 h-16 cursor-pointer" 
+                                    :class="{
+                                        'border-4 border-black': isSelectedFence({{ $fence->id }}),
+                                        'bg-gray-500': {{ $fence->is_constructed ? 'true' : 'false'}},
+                                        'bg-gray-200': {{ $fence->is_constructed ? 'false' : 'true'}},
+                                    }"
+                                    @click="selectFence({{ $fence }})"
                                 ></div>
                             @endif
-
-                            <!-- House Below -->
-                            <div 
-                                class="flex items-center justify-center w-16 h-16 rounded border border-gray-400 bg-gray-200 text-lg font-bold"
-                                :class="{
-                                    'border-4 border-black': isSelectedHouse({{ $house->id }}),
-                                }"
-                            >
-                                <span>{{ $house->number }}</span>
-                            </div>
+                            @endforeach
                         </div>
-                        <!-- Fence -->
-                        @if ($index < count($row->houses) - 1)
-                            @php
-                                $fence = $row->fences->firstWhere('position', $index);
-                            @endphp
-                            <div 
-                                class="fence w-2 h-16 cursor-pointer" 
-                                :class="{
-                                    'border-4 border-black': isSelectedFence({{ $fence->id }}),
-                                    'bg-gray-500': {{ $fence->is_constructed ? 'true' : 'false'}},
-                                    'bg-gray-200': {{ $fence->is_constructed ? 'false' : 'true'}},
-                                }"
-                                @click="selectFence({{ $fence }})"
-                            ></div>
-                        @endif
-                        @endforeach
-                    </div>
+                    </div> 
+                    @if ($rowIndex < count($board->rows) - 1)
+                        <hr class="border-gray-300 mb-4">
+                    @endif
                 @endforeach
             @else
                 <p class="text-gray-600">No board found for your participation.</p>

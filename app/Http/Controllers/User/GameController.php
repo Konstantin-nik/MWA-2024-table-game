@@ -9,6 +9,7 @@ use App\Models\Fence;
 use App\Models\House;
 use App\Models\Room;
 use App\Models\Round;
+use App\Models\Row;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
@@ -97,7 +98,7 @@ class GameController extends Controller
 
             $house->update(['number' => $validatedData['number']]);
 
-            if ($validatedData['action'] == 1) { // Fence 
+            if ($validatedData['action'] == 1) { // Fence
                 if (! $validatedData['fenceId']) {
                     abort(403, 'No fence selected');
                 }
@@ -110,7 +111,11 @@ class GameController extends Controller
             } elseif ($validatedData['action'] == 2) { // Estate
 
             } elseif ($validatedData['action'] == 3) { // Landscape
-
+                $row = Row::findOrFail($house->row_id);
+                $currentIndex = $row->current_landscape_index;
+                if ($currentIndex < count($row->landscape_values) - 1) {
+                    $row->update(['current_landscape_index' => $currentIndex + 1]);
+                }
             } elseif ($validatedData['action'] == 4) { // Pool
                 if (! $house->has_pool) {
                     abort(403, 'This house have no pool');

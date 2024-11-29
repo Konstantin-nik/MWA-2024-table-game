@@ -17,6 +17,9 @@ return new class extends Migration
             $table->foreignId('board_id')->constrained()->cascadeOnDelete();
             $table->integer('index'); // Row index (0, 1, 2)
 
+            $table->json('landscape_values');
+            $table->integer('current_landscape_index')->default(0);
+
             $table->timestamps();
         });
     }

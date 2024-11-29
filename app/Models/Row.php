@@ -8,6 +8,10 @@ class Row extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'landscape_values' => 'array',
+    ];
+
     // Model Relations --------------------------------------------------------
     public function board()
     {

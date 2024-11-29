@@ -27,15 +27,16 @@ class Board extends Model
         ]);
 
         $rowsData = [
-            ['index' => 0, 'houses' => 10, 'pool_indexes' => [2, 6, 7]],
-            ['index' => 1, 'houses' => 11, 'pool_indexes' => [0, 3, 7]],
-            ['index' => 2, 'houses' => 12, 'pool_indexes' => [1, 6, 10]],
+            ['index' => 0, 'houses' => 10, 'pool_indexes' => [2, 6, 7], 'landscape_values' => [0, 2, 4, 10]],
+            ['index' => 1, 'houses' => 11, 'pool_indexes' => [0, 3, 7], 'landscape_values' => [0, 2, 4, 6, 14]],
+            ['index' => 2, 'houses' => 12, 'pool_indexes' => [1, 6, 10], 'landscape_values' => [0, 2, 4, 6, 8, 18]],
         ];
 
         foreach ($rowsData as $rowData) {
             $row = $board->rows()->create([
                 'board_id' => $board->id,
                 'index' => $rowData['index'],
+                'landscape_values' => $rowData['landscape_values'],
             ]);
 
             // Create Houses
