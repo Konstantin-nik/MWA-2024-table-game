@@ -97,7 +97,7 @@ class GameController extends Controller
 
             $house->update(['number' => $validatedData['number']]);
 
-            if ($validatedData['action'] == 1) {
+            if ($validatedData['action'] == 1) { // Fence 
                 if (! $validatedData['fenceId']) {
                     abort(403, 'No fence selected');
                 }
@@ -107,15 +107,19 @@ class GameController extends Controller
                     abort(403, 'This fence has already been constructed.');
                 }
                 $fence->update(['is_constructed' => true]);
-            } elseif ($validatedData['action'] == 2) {
+            } elseif ($validatedData['action'] == 2) { // Estate
 
-            } elseif ($validatedData['action'] == 3) {
+            } elseif ($validatedData['action'] == 3) { // Landscape
 
-            } elseif ($validatedData['action'] == 4) {
+            } elseif ($validatedData['action'] == 4) { // Pool
+                if (! $house->has_pool) {
+                    abort(403, 'This house have no pool');
+                }
 
-            } elseif ($validatedData['action'] == 5) {
+                $house->update(['is_pool_constructed' => true]);
+            } elseif ($validatedData['action'] == 5) { // Agency
 
-            } elseif ($validatedData['action'] == 6) {
+            } elseif ($validatedData['action'] == 6) { // Bis
 
             } else {
                 abort(403, 'Invalid action');

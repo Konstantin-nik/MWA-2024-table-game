@@ -52,6 +52,7 @@
                                     class="mb-1 w-12 h-5 pb-2 bg-blue-500 rounded"
                                     :class="{
                                         'border-4 border-black': isSelectedHouse({{ $house->id }}) && selectedAction === '4',
+                                        'border-4 border-black': {{ $house->is_pool_constructed ? 'true' : 'false' }},
                                     }"
                                 ></div>
                             @endif
@@ -171,10 +172,10 @@
 
                         return true;
                     case "6": // Bis
-                        if (this.selectedHouses.length > 0)
+                        if (this.selectedHouses.length > 1)
                             return false;
 
-                        return true; // Replace with logic for selecting two houses
+                        return true; 
                     default:
                         return false;
                 }

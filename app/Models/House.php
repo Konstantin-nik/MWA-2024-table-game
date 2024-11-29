@@ -8,6 +8,11 @@ class House extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'is_pool_constructed' => 'boolean',
+        'has_pool' => 'boolean',
+    ];
+
     // Model Relations --------------------------------------------------------
     public function row()
     {
