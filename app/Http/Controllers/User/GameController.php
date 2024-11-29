@@ -84,33 +84,31 @@ class GameController extends Controller
 
         $isValidTurn = true;
         if (! $isValidTurn) {
-            abort(400, 'Invalid turn.');
+            abort(403, 'Invalid turn.');
         }
 
-        DB::transaction(function () use ($room, $currentRound, $participation, $validatedData, $gameData) {
-            $house = House::findOrFail($validatedData['selectedHouses'][0]);
+        DB::transaction(function () use ($room, $currentRound, $participation, $validatedData) {
+            $houseId = $validatedData['selectedHouses'][0];
+            $house = House::findOrFail($houseId);
 
             if ($house->number) {
-                abort(400, 'This house has already been numbered.');
+                abort(403, 'This house has already been numbered.');
             }
+
             $house->update(['number' => $validatedData['number']]);
 
-            if ($validatedData['fenceId']) {
+            if ($validatedData['action'] == 1) {
+                if (! $validatedData['fenceId']) {
+                    abort(403, 'No fence selected');
+                }
                 $fence = Fence::findOrFail($validatedData['fenceId']);
 
                 if ($fence->is_constructed) {
-                    abort(400, 'This fence has already been constructed.');
+                    abort(403, 'This fence has already been constructed.');
                 }
                 $fence->update(['is_constructed' => true]);
-            }
+            } elseif ($validatedData['action'] == 2) {
 
-            // Check if all participants have taken their actions for the round
-            $totalParticipations = $room->participations()->count();
-            $totalActions = $currentRound->actions()->count();
-
-            // if ($totalActions >= $totalParticipations) {
-            if (true) {
-                $this->endRound($currentRound, $room);
             }
 
             $currentRound->actions()->create([
@@ -125,6 +123,15 @@ class GameController extends Controller
                 ]),
             ]);
         });
+
+        // Check if all participants have taken their actions for the round
+        $totalParticipations = $room->participations()->count();
+        $totalActions = $currentRound->actions()->count();
+
+        // if ($totalActions >= $totalParticipations) {
+        if (true) {
+            $this->endRound($currentRound, $room);
+        }
 
         return redirect()->route('user.game')->with('success', 'Turn done successfully.');
     }
