@@ -11,6 +11,7 @@ class Board extends Model
     protected $casts = [
         'pool_values' => 'array',
         'bis_values' => 'array',
+        'skip_penalties' => 'array',
         'estates_values' => 'array',
     ];
 
@@ -32,6 +33,7 @@ class Board extends Model
             'participation_id' => $participation->id,
             'pool_values' => [0, 3, 6, 9, 13, 17, 21, 26, 31, 36],
             'bis_values' => [0, 1, 3, 6, 9, 12, 16, 20, 24, 28],
+            'skip_penalties' => [0, 0, 3, 5],
             'estates_values' => [
                 0 => [
                     'values' => [1, 3],

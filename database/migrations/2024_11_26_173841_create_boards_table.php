@@ -26,6 +26,9 @@ return new class extends Migration
             $table->json('bis_values');
             $table->integer('number_of_bises')->default(0);
 
+            $table->json('skip_penalties');
+            $table->integer('number_of_skips')->default(0);
+
             $table->timestamps();
         });
     }

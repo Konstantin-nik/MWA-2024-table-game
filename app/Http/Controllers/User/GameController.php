@@ -219,6 +219,61 @@ class GameController extends Controller
         return redirect()->route('user.game')->with('success', 'Turn done successfully.');
     }
 
+    public function skip(Request $request) 
+    {
+        $user = auth()->user();
+        $room = $user->getCurrentGame();
+
+        if (! $room) {
+            abort(403, 'You are not in an active game.');
+        }
+
+        $participation = $room->participations()->where('user_id', $user->id)->where('room_id', $room->id)->first();
+        if (! $participation) {
+            abort(403, 'You are not a participant in this game.');
+        }
+
+        $currentRound = $room->rounds()->latest('index')->first();
+        if (! $currentRound || $currentRound->finished_at) {
+            abort(403, 'No active round available.');
+        }
+
+        if ($currentRound->actions()->where('participation_id', $participation->id)->exists()) {
+            abort(403, 'You have already taken your turn for this round.');
+        }
+
+        DB::transaction(function () use ($currentRound, $participation) {
+
+            // Skip action
+            $currentRound->actions()->create([
+                'round_id' => $currentRound->id,
+                'participation_id' => $participation->id,
+                'chosen_deck' => -1,
+                'chosen_action' => -1,
+                'chosen_number' => -1,
+                'action_details' => 'skip',
+            ]);
+
+            $board = $participation->board()->firstOrFail();
+            if ($board->number_of_skips >= count($board->skip_penalties) - 1) {
+                abort(403, 'You cannot skip any more turns. It should be end of the game.');
+            }
+
+            $board->update(['number_of_skips' => $board->number_of_skips + 1]);
+        });
+        
+        // Check if all participants have taken their actions for the round
+        $totalParticipations = $room->participations()->count();
+        $totalActions = $currentRound->actions()->count();
+
+        // if ($totalActions >= $totalParticipations) {
+        if (true) {
+            $this->endRound($currentRound, $room);
+        }
+
+        return redirect()->route('user.game');
+    }
+
     private function endRound(Round $round, Room $room)
     {
         $round->update(['finished_at' => now()]);

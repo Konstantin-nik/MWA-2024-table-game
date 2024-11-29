@@ -22,6 +22,7 @@ Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::post('user/rooms/{id}/start', [\App\Http\Controllers\User\RoomController::class, 'start'])->name('rooms.start');
     Route::get('user/game', [GameController::class, 'show'])->name('game');
     Route::post('user/game/action', [GameController::class, 'action'])->name('game.action');
+    Route::post('user/game/skip', [GameController::class, 'skip'])->name('game.skip');
 });
 
 Route::get('/dashboard', function () {

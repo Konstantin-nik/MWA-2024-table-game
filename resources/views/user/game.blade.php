@@ -126,6 +126,14 @@
                         >
                             Cancel
                         </button>
+                        <!-- Skip Turn Button -->
+                        <button 
+                            type="submit" 
+                            formaction="{{ route('user.game.skip') }}" 
+                            class="px-4 py-2 bg-gray-500 text-white rounded shadow"
+                        >
+                            Skip Turn
+                        </button>
                     </div>
                 </form>
 
@@ -178,6 +186,20 @@
                                     <div class="px-2 py-1 bg-red-400 text-center rounded border">{{ $bisValue }}</div>
                                 @else
                                     <div class="px-2 py-1 bg-red-100 text-center rounded border">{{ $bisValue }}</div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Display Skiped Turns Penalty -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold">Skip Turn Penalty</h3>
+                        <div class="grid grid-cols-5 gap-2">
+                            @foreach ($board->skip_penalties as $index => $skipPenalty)
+                                @if ($board->number_of_skips == $index)
+                                    <div class="px-2 py-1 bg-red-400 text-center rounded border">{{ $skipPenalty }}</div>
+                                @else
+                                    <div class="px-2 py-1 bg-red-100 text-center rounded border">{{ $skipPenalty }}</div>
                                 @endif
                             @endforeach
                         </div>
