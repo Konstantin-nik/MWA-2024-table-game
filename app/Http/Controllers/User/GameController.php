@@ -91,6 +91,11 @@ class GameController extends Controller
         DB::transaction(function () use ($currentRound, $participation, $validatedData) {
             $houseId = $validatedData['selectedHouses'][0];
             $house = House::findOrFail($houseId);
+            $board = $house->row->board;
+
+            if ($board->participation->user_id != auth()->user()->id) {
+                abort(403);
+            }
 
             if ($house->number) {
                 abort(403, 'This house has already been numbered.');
@@ -113,6 +118,7 @@ class GameController extends Controller
             } elseif ($validatedData['action'] == 3) { // Landscape
                 $row = Row::findOrFail($house->row_id);
                 $currentIndex = $row->current_landscape_index;
+
                 if ($currentIndex < count($row->landscape_values) - 1) {
                     $row->update(['current_landscape_index' => $currentIndex + 1]);
                 }
@@ -120,10 +126,10 @@ class GameController extends Controller
                 if (! $house->has_pool) {
                     abort(403, 'This house have no pool');
                 }
-
                 $house->update(['is_pool_constructed' => true]);
+                $board->update(['number_of_pools' => $board->number_of_pools + 1]);
             } elseif ($validatedData['action'] == 5) { // Agency
-                
+                $board->update(['number_of_agencies' => $board->number_of_agencies + 1]);
             } elseif ($validatedData['action'] == 6) { // Bis
                 if (count($validatedData['selectedHouses']) != 2) {
                     abort(403, 'Wrong number of houses selected');
@@ -131,6 +137,10 @@ class GameController extends Controller
 
                 $houseBId = $validatedData['selectedHouses'][1];
                 $houseB = House::findOrFail($houseBId);
+
+                if ($houseB->row->board->participation->user_id != auth()->user()->id) {
+                    abort(403);
+                }
 
                 if ($houseB->number) {
                     abort(403, 'This houseB has already been numbered.');
@@ -147,8 +157,8 @@ class GameController extends Controller
                 if (! $houseBNeighbour) {
                     abort(403, 'No valid neighboring house found for Bis action.');
                 }
-
                 $houseB->update(['number' => $houseBNeighbour->number]);
+                $board->update(['number_of_bises' => $board->number_of_bises + 1]);
             } else {
                 abort(403, 'Invalid action');
             }

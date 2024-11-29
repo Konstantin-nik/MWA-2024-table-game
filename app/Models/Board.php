@@ -6,7 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Board extends Model
 {
-    protected $fillable = ['participation_id'];
+    protected $guarded = [];
+
+    protected $casts = [
+        'pool_values' => 'array',
+        'bis_values' => 'array',
+        'estates_values' => 'array',
+    ];
 
     // Model Relations --------------------------------------------------------
     public function rows()
@@ -24,6 +30,34 @@ class Board extends Model
     {
         $board = Board::create([
             'participation_id' => $participation->id,
+            'pool_values' => [0, 3, 6, 9, 13, 17, 21, 26, 31, 36],
+            'bis_values' => [0, 1, 3, 6, 9, 12, 16, 20, 24, 28],
+            'estates_values' => [
+                'estate_one' => [
+                    'values' => [1, 2],
+                    'index' => 0
+                ],
+                'estate_two' => [
+                    'values' => [2, 3, 4],
+                    'index' => 0
+                ],
+                'estate_three' => [
+                    'values' => [3, 4, 5, 6],
+                    'index' => 0
+                ],
+                'estate_four' => [
+                    'values' => [4, 5, 6, 7, 8],
+                    'index' => 0
+                ],
+                'estate_five' => [
+                    'values' => [5, 6, 7, 8, 10],
+                    'index' => 0
+                ],
+                'estate_six' => [
+                    'values' => [6, 7, 8, 10, 12],
+                    'index' => 0
+                ],
+            ],
         ]);
 
         $rowsData = [
