@@ -91,7 +91,7 @@ class GameController extends Controller
 
         DB::transaction(function () use ($currentRound, $participation, $validatedData) {
             $houseId = $validatedData['selectedHouses'][0];
-            $house = House::findOrFail($houseId);
+            $house = House::with('row')->findOrFail($houseId);
             $board = $house->row->board;
 
             if ($board->participation->user_id != auth()->user()->id) {
@@ -100,6 +100,22 @@ class GameController extends Controller
 
             if ($house->number) {
                 abort(403, 'This house has already been numbered.');
+            }
+
+            $leftHouse = $house->row->houses()
+                ->where('position', '<', $house->position)
+                ->whereNotNull('number')
+                ->orderByDesc('position')
+                ->first();
+
+            $rightHouse = $house->row->houses()
+                ->where('position', '>', $house->position)
+                ->whereNotNull('number')
+                ->orderBy('position')
+                ->first();
+
+            if (($leftHouse && $leftHouse->number >= $validatedData['number']) || ($rightHouse && $rightHouse->number <= $validatedData['number'])) {
+                abort(403, 'House numbers must be in ascending order.');
             }
 
             $house->update(['number' => $validatedData['number']]);
