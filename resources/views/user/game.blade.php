@@ -149,9 +149,15 @@
                     <div class="mb-6">
                         <h3 class="text-lg font-semibold">Estates Values</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            @foreach ($board->estates_values as $estateName => $estate)
-                                <div class="p-4 bg-gray-100 rounded border">
-                                    <h4 class="font-semibold">{{ ucfirst(str_replace('_', ' ', $estateName)) }}</h4>
+                            @foreach ($board->estates_values as $estateIndex => $estate)
+                                <div 
+                                    class="p-4 bg-gray-100 rounded border"
+                                    :class="{
+                                        'border-4 border-black': isSelectedEstate({{ $estateIndex }}),
+                                    }"
+                                    @click="selectEstate({{ $estateIndex }})"
+                                >
+                                    <h4 class="font-semibold">Estate {{ $estateIndex }}</h4>
                                     <p class="text-sm">Index: {{ $estate['index'] }}</p>
                                     <p class="text-sm">Values: 
                                         @foreach ($estate['values'] as $value)
@@ -220,6 +226,7 @@
             selectedAction: null,
             selectedNumber: null,
             selectedFenceId: null,
+            selectedEstateNumber: null,
             selectAgency: false,
             selectedHouses: [],
             miniFieldPosition: { top: 0, left: 0 },
@@ -231,6 +238,7 @@
                 this.selectedAction = pair.actionCard; 
                 this.selectedNumber = pair.numberCard;
                 this.selectedFenceId = null;
+                this.selectedEstateNumber = null;
                 this.selectAgency = false;
                 this.selectedHouses = [];
 
@@ -355,6 +363,11 @@
             },
 
             selectAgencyNumber(number) {
+                if (this.selectedAction != 5) {
+                    console.log("Wrong action");
+                    return;
+                }
+
                 if (!this.selectedHouses.length) {
                     console.log("No house selected.");
                     return;
@@ -365,10 +378,39 @@
                 console.log(`Selected number: ${this.selectedNumber}`);
             },
 
+            isSelectableEstate(estate) {
+                if (estate.index >= estate.values.length) {
+                    return false;
+                }
+
+                return true;
+            },
+
+            isSelectedEstate(number) {
+                return this.selectedEstateNumber === number;
+            },
+
+            selectEstate(number) {
+                if (this.isSelectedEstate(number)) {
+                    this.selectedEstateNumber = null;
+                    console.log("Unselected estate");
+                    return;
+                }
+
+                if (this.selectedAction != 2) {
+                    console.log("Wrong action");
+                    return;
+                }
+
+                this.selectedEstateNumber = number;
+                console.log(`Selected estate: ${this.selectedEstateNumber}`);
+            },
+
             prepareEndTurn() {
                 const gameData = {
                     selectedPairIndex: this.selectedPairIndex,
                     selectedHouses: this.selectedHouses,
+                    estateIndex: this.selectedEstateNumber,
                     fenceId: this.selectedFenceId,
                     action: this.selectedAction,
                     number: this.selectedNumber,
@@ -382,6 +424,7 @@
                 this.selectedAction = null;
                 this.selectedNumber = null;
                 this.selectedFenceId = null;
+                this.selectedEstateNumber = null;
                 this.selectAgency = false;
                 this.selectedHouses = [];
                 console.log('Turn cancelled.');

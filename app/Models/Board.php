@@ -33,29 +33,29 @@ class Board extends Model
             'pool_values' => [0, 3, 6, 9, 13, 17, 21, 26, 31, 36],
             'bis_values' => [0, 1, 3, 6, 9, 12, 16, 20, 24, 28],
             'estates_values' => [
-                'estate_one' => [
-                    'values' => [1, 2],
-                    'index' => 0
+                0 => [
+                    'values' => [1, 3],
+                    'index' => 0,
                 ],
-                'estate_two' => [
+                1 => [
                     'values' => [2, 3, 4],
-                    'index' => 0
+                    'index' => 0,
                 ],
-                'estate_three' => [
+                2 => [
                     'values' => [3, 4, 5, 6],
-                    'index' => 0
+                    'index' => 0,
                 ],
-                'estate_four' => [
+                3 => [
                     'values' => [4, 5, 6, 7, 8],
-                    'index' => 0
+                    'index' => 0,
                 ],
-                'estate_five' => [
+                4 => [
                     'values' => [5, 6, 7, 8, 10],
-                    'index' => 0
+                    'index' => 0,
                 ],
-                'estate_six' => [
+                5 => [
                     'values' => [6, 7, 8, 10, 12],
-                    'index' => 0
+                    'index' => 0,
                 ],
             ],
         ]);

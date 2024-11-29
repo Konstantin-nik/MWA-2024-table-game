@@ -57,6 +57,7 @@ class GameController extends Controller
             'selectedPairIndex' => 'required|integer|min:0|max:2',
             'selectedHouses' => 'required|array|min:1|max:2',
             'selectedHouses.*' => 'integer|exists:houses,id',
+            'estateIndex' => 'nullable|integer',
             'fenceId' => 'nullable|integer|exists:fences,id',
             'action' => 'required|integer',
             'number' => 'required|integer',
@@ -104,7 +105,7 @@ class GameController extends Controller
             $house->update(['number' => $validatedData['number']]);
 
             if ($validatedData['action'] == 1) { // Fence
-                if (! $validatedData['fenceId']) {
+                if ($validatedData['fenceId'] === null) {
                     abort(403, 'No fence selected');
                 }
                 $fence = Fence::findOrFail($validatedData['fenceId']);
@@ -114,7 +115,21 @@ class GameController extends Controller
                 }
                 $fence->update(['is_constructed' => true]);
             } elseif ($validatedData['action'] == 2) { // Estate
+                if ($validatedData['estateIndex'] === null) {
+                    abort(403, 'No Estate selected.');
+                }
+                $estates = $board->estates_values;
+                if (! isset($estates[$validatedData['estateIndex']])) {
+                    abort(403, 'No such Estate.');
+                }
 
+                if ($estates[$validatedData['estateIndex']]['index'] >= count($estates[$validatedData['estateIndex']]['values']) - 1) {
+                    abort(403, 'This estate connot be increased more.');
+                }
+
+                $estates[$validatedData['estateIndex']]['index'] += 1;
+                $board->estates_values = $estates;
+                $board->save();
             } elseif ($validatedData['action'] == 3) { // Landscape
                 $row = Row::findOrFail($house->row_id);
                 $currentIndex = $row->current_landscape_index;

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('number_of_pools')->default(0);
 
             $table->integer('number_of_agencies')->default(0);
-            
+
             $table->json('estates_values');
 
             $table->json('bis_values');
