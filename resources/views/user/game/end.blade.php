@@ -5,7 +5,6 @@
             <table class="w-full table-auto border-collapse border border-gray-300">
                 <thead class="bg-gray-100">
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2 text-left text-sm font-medium text-gray-700">#</th>
                         <th class="border border-gray-300 px-4 py-2 text-left text-sm font-medium text-gray-700">Player</th>
                         <th class="border border-gray-300 px-4 py-2 text-left text-sm font-medium text-gray-700">Score</th>
                     </tr>
@@ -13,7 +12,6 @@
                 <tbody>
                     @foreach ($participations as $index => $participation)
                         <tr class="{{ $index % 2 === 0 ? 'bg-white' : 'bg-gray-50' }}">
-                            <td class="border border-gray-300 px-4 py-2 text-sm text-gray-700">{{ $index + 1 }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-sm text-gray-700">{{ $participation->user->name }}</td>
                             <td class="border border-gray-300 px-4 py-2 text-sm text-gray-700">{{ $participation->score }}</td>
                         </tr>

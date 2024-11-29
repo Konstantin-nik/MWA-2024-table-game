@@ -266,7 +266,7 @@ class GameController extends Controller
         $board = $participation->board()->firstOrFail();
         if ($board->number_of_skips >= count($board->skip_penalties) - 1) {
             $this->countFinalScores($room);
-
+            $room->update(['finished_at' => now()]);
             return redirect()->route('user.game.end', $room)->with('room_id', $room);
         }
         // Check if all participants have taken their actions for the round
