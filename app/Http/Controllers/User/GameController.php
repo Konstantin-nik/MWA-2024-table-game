@@ -87,7 +87,7 @@ class GameController extends Controller
             abort(403, 'Invalid turn.');
         }
 
-        DB::transaction(function () use ($room, $currentRound, $participation, $validatedData) {
+        DB::transaction(function () use ($currentRound, $participation, $validatedData) {
             $houseId = $validatedData['selectedHouses'][0];
             $house = House::findOrFail($houseId);
 
@@ -109,6 +109,16 @@ class GameController extends Controller
                 $fence->update(['is_constructed' => true]);
             } elseif ($validatedData['action'] == 2) {
 
+            } elseif ($validatedData['action'] == 3) {
+
+            } elseif ($validatedData['action'] == 4) {
+
+            } elseif ($validatedData['action'] == 5) {
+
+            } elseif ($validatedData['action'] == 6) {
+
+            } else {
+                abort(403, 'Invalid action');
             }
 
             $currentRound->actions()->create([
