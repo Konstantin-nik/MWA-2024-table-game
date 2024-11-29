@@ -222,7 +222,7 @@
                             <button type="button" @click="selectAgencyNumber(-1)" class="px-4 py-2 bg-blue-500 text-white rounded">
                                 -1
                             </button>
-                            <button type="button" @click="selectAgencyNumber()" class="px-4 py-2 bg-blue-500 text-white rounded">
+                            <button type="button" @click="selectAgencyNumber(0)" class="px-4 py-2 bg-blue-500 text-white rounded">
                                 0
                             </button>
                             <button type="button" @click="selectAgencyNumber(1)" class="px-4 py-2 bg-blue-500 text-white rounded">
@@ -395,7 +395,7 @@
                     return;
                 }
 
-                this.selectedNumber += number;
+                this.selectedNumber += Number(number);
                 this.selectAgency = false;
                 console.log(`Selected number: ${this.selectedNumber}`);
             },
