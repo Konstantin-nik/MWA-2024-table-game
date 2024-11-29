@@ -125,7 +125,30 @@ class GameController extends Controller
             } elseif ($validatedData['action'] == 5) { // Agency
 
             } elseif ($validatedData['action'] == 6) { // Bis
+                if (count($validatedData['selectedHouses']) != 2) {
+                    abort(403, 'Wrong number of houses selected');
+                }
 
+                $houseBId = $validatedData['selectedHouses'][1];
+                $houseB = House::findOrFail($houseBId);
+
+                if ($houseB->number) {
+                    abort(403, 'This houseB has already been numbered.');
+                }
+
+                $houseBNeighbour = House::where('row_id', $houseB->row_id)
+                    ->whereNotNull('number')
+                    ->where(function ($query) use ($houseB) {
+                        $query->where('position', $houseB->position - 1)
+                            ->orWhere('position', $houseB->position + 1);
+                    })
+                    ->first();
+
+                if (! $houseBNeighbour) {
+                    abort(403, 'No valid neighboring house found for Bis action.');
+                }
+
+                $houseB->update(['number' => $houseBNeighbour->number]);
             } else {
                 abort(403, 'Invalid action');
             }
