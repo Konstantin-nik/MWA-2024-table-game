@@ -35,9 +35,10 @@
             <!-- Boards Section -->
             <h2 class="text-xl font-semibold mb-4">Your Board</h2>
             @if ($board)
+                <!-- Rows Section (Houses and Fences) -->
                 @foreach ($board->rows as $rowIndex => $row)
                     <!-- Row Wrapper -->
-                    <div class="mb-2 p-2">
+                    <div class="mb-4 border-b-2 border-gray-300 pb-4 p-2">
                         <!-- Landscape Values -->
                         <div class="pb-1 landscape-values flex flex-row gap-2 mb-2 justify-end ml-auto">
                             @foreach ($row->landscape_values as $index => $value)
@@ -54,58 +55,128 @@
                         <!-- Houses and Fences -->
                         <div class="flex items-end gap-2 mb-4 cursor-pointer justify-end ml-auto">
                             @foreach ($row->houses as $index => $house)
-                            <!-- House -->
-                            <div 
-                                x-ref="house_{{ $house->id }}" 
-                                class="flex flex-col items-center"
-                                :class="{
-                                    'cursor-not-allowed opacity-50': !isSelectableHouse({{ $house }})
-                                }"
-                                @click="selectHouse({{ $house }})"
-                            >
-                                <!-- Pool Above the House -->
-                                @if ($house->has_pool)
+                                <!-- House -->
+                                <div 
+                                    x-ref="house_{{ $house->id }}" 
+                                    class="flex flex-col items-center"
+                                    :class="{
+                                        'cursor-not-allowed opacity-50': !isSelectableHouse({{ $house }})
+                                    }"
+                                    @click="selectHouse({{ $house }})"
+                                >
+                                    <!-- Pool Above the House -->
+                                    @if ($house->has_pool)
+                                        <div 
+                                            class="mb-1 w-12 h-5 pb-2 bg-blue-500 rounded"
+                                            :class="{
+                                                'border-4 border-black': isSelectedHouse({{ $house->id }}) && selectedAction === '4',
+                                                'border-4 border-black': {{ $house->is_pool_constructed ? 'true' : 'false' }},
+                                            }"
+                                        ></div>
+                                    @endif
+
+                                    <!-- House Below -->
                                     <div 
-                                        class="mb-1 w-12 h-5 pb-2 bg-blue-500 rounded"
+                                        class="flex items-center justify-center w-16 h-16 rounded border border-gray-400 bg-gray-200 text-lg font-bold"
                                         :class="{
-                                            'border-4 border-black': isSelectedHouse({{ $house->id }}) && selectedAction === '4',
-                                            'border-4 border-black': {{ $house->is_pool_constructed ? 'true' : 'false' }},
+                                            'border-4 border-black': isSelectedHouse({{ $house->id }}),
                                         }"
+                                    >
+                                        <span>{{ $house->number }}</span>
+                                    </div>
+                                </div>
+                                <!-- Fence -->
+                                @if ($index < count($row->houses) - 1)
+                                    @php
+                                        $fence = $row->fences->firstWhere('position', $index);
+                                    @endphp
+                                    <div 
+                                        class="fence w-2 h-16 cursor-pointer" 
+                                        :class="{
+                                            'border-4 border-black': isSelectedFence({{ $fence->id }}),
+                                            'bg-gray-500': {{ $fence->is_constructed ? 'true' : 'false'}},
+                                            'bg-gray-200': {{ $fence->is_constructed ? 'false' : 'true'}},
+                                        }"
+                                        @click="selectFence({{ $fence }})"
                                     ></div>
                                 @endif
-
-                                <!-- House Below -->
-                                <div 
-                                    class="flex items-center justify-center w-16 h-16 rounded border border-gray-400 bg-gray-200 text-lg font-bold"
-                                    :class="{
-                                        'border-4 border-black': isSelectedHouse({{ $house->id }}),
-                                    }"
-                                >
-                                    <span>{{ $house->number }}</span>
-                                </div>
-                            </div>
-                            <!-- Fence -->
-                            @if ($index < count($row->houses) - 1)
-                                @php
-                                    $fence = $row->fences->firstWhere('position', $index);
-                                @endphp
-                                <div 
-                                    class="fence w-2 h-16 cursor-pointer" 
-                                    :class="{
-                                        'border-4 border-black': isSelectedFence({{ $fence->id }}),
-                                        'bg-gray-500': {{ $fence->is_constructed ? 'true' : 'false'}},
-                                        'bg-gray-200': {{ $fence->is_constructed ? 'false' : 'true'}},
-                                    }"
-                                    @click="selectFence({{ $fence }})"
-                                ></div>
-                            @endif
                             @endforeach
                         </div>
-                    </div> 
-                    @if ($rowIndex < count($board->rows) - 1)
-                        <hr class="border-gray-300 mb-4">
-                    @endif
+                    </div>
                 @endforeach
+
+                <!-- Buttons -->
+                <form action="{{ route('user.game.action') }}" method="POST" id="end_turn_form">
+                    @csrf
+                    <textarea name="game_data" id="game_data" hidden></textarea>
+                    <div class="flex justify-end mt-4 space-x-4">
+                        <button 
+                            id="end_turn_button"
+                            type="button"
+                            class="px-4 py-2 bg-green-500 text-white rounded shadow" 
+                            @click="prepareEndTurn"
+                            :disabled="!canEndTurn"
+                        >
+                            End Turn
+                        </button>
+                        <button 
+                            type="button"
+                            class="px-4 py-2 bg-red-500 text-white rounded shadow" 
+                            @click="cancelTurn"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Current Board state -->
+                <div>
+                    <!-- Display Pool Values -->
+                    <div class="mt-20 mb-6">
+                        <h3 class="text-lg font-semibold">Pool Values</h3>
+                        <div class="grid grid-cols-5 gap-2">
+                            @foreach ($board->pool_values as $index => $poolValue)
+                                @if ($board->number_of_pools == $index)
+                                    <div class="px-2 py-1 bg-blue-400 text-center rounded border">{{ $poolValue }}</div>
+                                @else
+                                    <div class="px-2 py-1 bg-blue-100 text-center rounded border">{{ $poolValue }}</div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Display Estates Values -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold">Estates Values</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach ($board->estates_values as $estateName => $estate)
+                                <div class="p-4 bg-gray-100 rounded border">
+                                    <h4 class="font-semibold">{{ ucfirst(str_replace('_', ' ', $estateName)) }}</h4>
+                                    <p class="text-sm">Index: {{ $estate['index'] }}</p>
+                                    <p class="text-sm">Values: 
+                                        @foreach ($estate['values'] as $value)
+                                            {{ $value }}@if (!$loop->last), @endif
+                                        @endforeach
+                                    </p>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Display Bis Values -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold">Bis Values</h3>
+                        <div class="grid grid-cols-5 gap-2">
+                            @foreach ($board->bis_values as $index => $bisValue)
+                                @if ($board->number_of_bises == $index)
+                                    <div class="px-2 py-1 bg-red-400 text-center rounded border">{{ $bisValue }}</div>
+                                @else
+                                    <div class="px-2 py-1 bg-red-100 text-center rounded border">{{ $bisValue }}</div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
                 <!-- Agency Number Selection Mini-Field -->
                 <div 
                     x-show="selectAgency" 
@@ -138,30 +209,6 @@
             @else
                 <p class="text-gray-600">No board found for your participation.</p>
             @endif
-
-            <!-- Buttons -->
-            <form action="{{ route('user.game.action') }}" method="POST" id="end_turn_form">
-                @csrf
-                <textarea name="game_data" id="game_data" hidden></textarea>
-                <div class="flex justify-end mt-4 space-x-4">
-                    <button 
-                        id="end_turn_button"
-                        type="button"
-                        class="px-4 py-2 bg-green-500 text-white rounded shadow" 
-                        @click="prepareEndTurn"
-                        :disabled="!canEndTurn"
-                    >
-                        End Turn
-                    </button>
-                    <button 
-                        type="button"
-                        class="px-4 py-2 bg-red-500 text-white rounded shadow" 
-                        @click="cancelTurn"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </form>
         </div>
     @endif
 </x-main-layout>
