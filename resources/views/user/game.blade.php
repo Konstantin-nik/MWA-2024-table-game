@@ -44,7 +44,7 @@
                             :class="{
                                 'cursor-not-allowed opacity-50': !isSelectableHouse({{ $house }})
                             }"
-                            @click="selectHouse({{ $house->id }}, {{ $house }})"
+                            @click="selectHouse({{ $house }})"
                         >
                             <!-- Pool Above the House -->
                             @if ($house->has_pool)
@@ -69,15 +69,16 @@
                         <!-- Fence -->
                         @if ($index < count($row->houses) - 1)
                             @php
-                                $fenceExists = $row->fences->contains('position', $index);
+                                $fence = $row->fences->firstWhere('position', $index);
                             @endphp
                             <div 
                                 class="fence w-2 h-16 cursor-pointer" 
                                 :class="{
-                                    'bg-gray-500': {{ $fenceExists ? 'true' : 'false'}},
-                                    'bg-gray-200': {{ $fenceExists ? 'false' : 'true'}},
+                                    'border-4 border-black': isSelectedFence({{ $fence->id }}),
+                                    'bg-gray-500': {{ $fence->is_constructed ? 'true' : 'false'}},
+                                    'bg-gray-200': {{ $fence->is_constructed ? 'false' : 'true'}},
                                 }"
-                                @click="placeFence({{ $row->id }}, {{ $index }})"
+                                @click="selectFence({{ $fence }})"
                             ></div>
                         @endif
                         @endforeach
@@ -120,6 +121,7 @@
             selectedPairIndex: null,
             selectedAction: null,
             selectedNumber: null,
+            selectedFenceId: null,
             selectedHouses: [],
             cardPairs,
 
@@ -128,6 +130,7 @@
                 const pair = this.cardPairs[index];
                 this.selectedAction = pair.actionCard; 
                 this.selectedNumber = pair.numberCard;
+                this.selectedFenceId = null;
                 this.selectedHouses = [];
 
                 console.log(`Selected Pair: ${index}, Action: ${this.selectedAction}, Number: ${this.selectedNumber}`);
@@ -181,13 +184,13 @@
                 return this.selectedHouses.includes(houseId);
             },
 
-            selectHouse(houseId, house) {
-                if (this.selectedHouses.includes(houseId)) {
-                    this.selectedHouses = this.selectedHouses.filter(id => id !== houseId);
-                    console.log(`Unselected House: ${houseId}`);
+            selectHouse(house) {
+                if (this.selectedHouses.includes(house.id)) {
+                    this.selectedHouses = this.selectedHouses.filter(id => id !== house.id);
+                    console.log(`Unselected House: ${house.id}`);
                 } else {
                     if (!this.isSelectableHouse(house)) {
-                        console.log(`House ${houseId} is not selectable.`);
+                        console.log(`House ${house.id} is not selectable.`);
                         return;
                     }
 
@@ -196,22 +199,43 @@
                         return;
                     }
 
-                    this.selectedHouses.push(houseId);
+                    this.selectedHouses.push(house.id);
                     console.log(`Selected Houses: ${this.selectedHouses}`);
                 }
             },
 
-            placeFence(rowId, position) {
+            isSelectableFence(fence) {
+                if (fence.is_constructed) {
+                    return false;
+                }
+
+                return true;
+            },
+
+            isSelectedFence(fenceId) {
+                return this.selectedFenceId === fenceId;
+            },
+
+            selectFence(fence) {
                 if (this.selectedAction !== "1") {
                     console.log("You must select the 'Fence' action first.");
                     return;
                 }
 
-                // Add or remove the fence logic here
-                console.log(`Placing fence in row ${rowId}, position ${position}.`);
+                if (! this.isSelectableFence(fence)) {
+                    console.log("This fence cannot be selected.");
+                    return;
+                }
 
-                // Add to game data for the server
-                this.selectedHouses = [{ rowId, position }];
+                if (this.isSelectedFence(fence.id)) {
+                    console.log(`Unselecting fence ${fence.id}.`);
+                    this.selectedFenceId = null;
+                    return;
+                }
+
+                console.log(`Placing fence ${fence.id}.`);
+
+                this.selectedFenceId = fence.id;
             },
 
             get canEndTurn() {
@@ -222,6 +246,7 @@
                 const gameData = {
                     selectedPairIndex: this.selectedPairIndex,
                     selectedHouses: this.selectedHouses,
+                    fenceId: this.selectedFenceId,
                     action: this.selectedAction,
                     number: this.selectedNumber,
                 };
@@ -233,6 +258,7 @@
                 this.selectedPairIndex = null;
                 this.selectedAction = null;
                 this.selectedNumber = null;
+                this.selectedFenceId = null;
                 this.selectedHouses = [];
                 console.log('Turn cancelled.');
             },

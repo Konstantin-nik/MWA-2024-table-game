@@ -38,10 +38,19 @@ class Board extends Model
                 'index' => $rowData['index'],
             ]);
 
+            // Create Houses
             for ($i = 0; $i < $rowData['houses']; $i++) {
                 $row->houses()->create([
                     'position' => $i,
                     'has_pool' => in_array($i, $rowData['pool_indexes']),
+                ]);
+            }
+
+            // Create Fences between houses
+            for ($i = 0; $i < $rowData['houses'] - 1; $i++) {
+                $row->fences()->create([
+                    'position' => $i,
+                    'is_constructed' => false,
                 ]);
             }
         }

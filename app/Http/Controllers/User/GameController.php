@@ -5,9 +5,11 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Board;
 use App\Models\Deck;
+use App\Models\Fence;
 use App\Models\House;
 use App\Models\Room;
 use App\Models\Round;
+use DB;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -54,6 +56,7 @@ class GameController extends Controller
             'selectedPairIndex' => 'required|integer|min:0|max:2',
             'selectedHouses' => 'required|array|min:1|max:2',
             'selectedHouses.*' => 'integer|exists:houses,id',
+            'fenceId' => 'nullable|integer|exists:fences,id',
             'action' => 'required|integer',
             'number' => 'required|integer',
         ])->validate();
@@ -84,28 +87,43 @@ class GameController extends Controller
             abort(400, 'Invalid turn.');
         }
 
-        $action = $currentRound->actions()->create([
-            'round_id' => $currentRound->id,
-            'participation_id' => $participation->id,
-            'chosen_deck' => $validatedData['selectedPairIndex'],  // Probably here will be issue, check show method and pass deck index to view
-            'chosen_action' => $validatedData['action'],
-            'chosen_number' => $validatedData['number'],
-            'action_details' => json_encode([
-                'houses' => $validatedData['selectedHouses'],
-            ]),
-        ]);
+        DB::transaction(function () use ($room, $currentRound, $participation, $validatedData, $gameData) {
+            $action = $currentRound->actions()->create([
+                'round_id' => $currentRound->id,
+                'participation_id' => $participation->id,
+                'chosen_deck' => $validatedData['selectedPairIndex'],  // Probably here will be issue, check show method and pass deck index to view
+                'chosen_action' => $validatedData['action'],
+                'chosen_number' => $validatedData['number'],
+                'action_details' => json_encode([
+                    'houses' => $validatedData['selectedHouses'],
+                ]),
+            ]);
 
-        $house = House::findOrFail($validatedData['selectedHouses'][0]);
-        $house->update(['number' => $validatedData['number']]);
+            $house = House::findOrFail($validatedData['selectedHouses'][0]);
 
-        // Check if all participants have taken their actions for the round
-        $totalParticipations = $room->participations()->count();
-        $totalActions = $currentRound->actions()->count();
+            if ($house->number) {
+                abort(400, 'This house has already been numbered.');
+            }
+            $house->update(['number' => $validatedData['number']]);
 
-        // if ($totalActions >= $totalParticipations) {
-        if (true) {
-            $this->endRound($currentRound, $room);
-        }
+            if ($gameData['fenceId']) {
+                $fence = Fence::findOrFail($gameData['fenceId']);
+
+                if ($fence->is_constructed) {
+                    abort(400, 'This fence has already been constructed.');
+                }
+                $fence->update(['is_constructed' => true]);
+            }
+
+            // Check if all participants have taken their actions for the round
+            $totalParticipations = $room->participations()->count();
+            $totalActions = $currentRound->actions()->count();
+
+            // if ($totalActions >= $totalParticipations) {
+            if (true) {
+                $this->endRound($currentRound, $room);
+            }
+        });
 
         return redirect()->route('user.game')->with('success', 'Turn done successfully.');
     }

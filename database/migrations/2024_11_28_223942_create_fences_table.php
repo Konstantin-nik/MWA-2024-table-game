@@ -16,6 +16,7 @@ return new class extends Migration
 
             $table->foreignId('row_id')->constrained()->onDelete('cascade');
             $table->integer('position'); // Position between houses (1 for between house 1 and 2)
+            $table->boolean('is_constructed')->default(false);
 
             $table->timestamps();
         });

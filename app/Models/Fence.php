@@ -8,6 +8,10 @@ class Fence extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'is_constructed' => 'boolean',
+    ];
+
     // Model Relations --------------------------------------------------------
     public function row()
     {
