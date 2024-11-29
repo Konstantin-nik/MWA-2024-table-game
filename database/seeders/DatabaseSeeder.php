@@ -56,8 +56,6 @@ class DatabaseSeeder extends Seeder
         Participation::create([
             'user_id' => 1,
             'room_id' => $room->id,
-            'score' => 80,
-            'rank' => 1,
         ]);
     }
 }

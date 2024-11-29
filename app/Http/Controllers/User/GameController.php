@@ -7,6 +7,7 @@ use App\Models\Board;
 use App\Models\Deck;
 use App\Models\Fence;
 use App\Models\House;
+use App\Models\Participation;
 use App\Models\Room;
 use App\Models\Round;
 use App\Models\Row;
@@ -219,7 +220,7 @@ class GameController extends Controller
         return redirect()->route('user.game')->with('success', 'Turn done successfully.');
     }
 
-    public function skip(Request $request) 
+    public function skip(Request $request)
     {
         $user = auth()->user();
         $room = $user->getCurrentGame();
@@ -261,7 +262,13 @@ class GameController extends Controller
 
             $board->update(['number_of_skips' => $board->number_of_skips + 1]);
         });
-        
+
+        $board = $participation->board()->firstOrFail();
+        if ($board->number_of_skips >= count($board->skip_penalties) - 1) {
+            $this->countFinalScores($room);
+
+            return redirect()->route('user.game.end', $room)->with('room_id', $room);
+        }
         // Check if all participants have taken their actions for the round
         $totalParticipations = $room->participations()->count();
         $totalActions = $currentRound->actions()->count();
@@ -274,6 +281,15 @@ class GameController extends Controller
         return redirect()->route('user.game');
     }
 
+    public function end(string $room_id)
+    {
+        $room = Room::findOrFail($room_id);
+
+        $participations = $room->participations()->with('user')->get()->sortByDesc('score');
+
+        return view('user.game.end', compact('participations'));
+    }
+
     private function endRound(Round $round, Room $room)
     {
         $round->update(['finished_at' => now()]);
@@ -282,5 +298,56 @@ class GameController extends Controller
         $room->rounds()->create([
             'index' => $newRoundIndex,
         ]);
+    }
+
+    private function countFinalScores(Room $room)
+    {
+        $participations = $room->participations()->with('board.rows')->get();
+
+        $scores = $participations->map(function ($participation) {
+            $board = $participation->board;
+            if (! $board) {
+                return null;
+            }
+
+            $number_of_pools = $board->number_of_pools;
+            $number_of_bises = $board->number_of_bises;
+            $number_of_skips = $board->number_of_skips;
+
+            $pool_score = $board->pool_values[$number_of_pools] ?? 0;
+            $agency_bonus = 7;
+            $bis_penalty = $board->bis_values[$number_of_bises] ?? 0;
+            $skip_penalty = $board->skip_penalties[$number_of_skips] ?? 0;
+
+            $landscape_score = $board->rows->sum(function ($row) {
+                return $row->landscape_values[$row->current_landscape_index] ?? 0;
+            });
+
+            return [
+                'participation' => $participation->id,
+                'score' => $pool_score + $agency_bonus - $bis_penalty + $landscape_score - $skip_penalty,
+                'number_of_agencies' => $board->number_of_agencies,
+            ];
+        });
+
+        $max_agencies = $scores->max('number_of_agencies');
+        $scores = $scores->map(function ($score) use ($max_agencies) {
+            if ($score['number_of_agencies'] !== $max_agencies) {
+                $score['score'] -= 7;
+            }
+
+            return $score;
+        });
+
+        $scores = $scores->sortByDesc('score')->values();
+        foreach ($scores as $index => $data) {
+            $participation = Participation::find($data['participation']);
+            if ($participation) {
+                $participation->update([
+                    'score' => $data['score'],
+                    'rank' => $index,
+                ]);
+            }
+        }
     }
 }

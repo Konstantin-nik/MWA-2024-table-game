@@ -23,6 +23,7 @@ Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('user/game', [GameController::class, 'show'])->name('game');
     Route::post('user/game/action', [GameController::class, 'action'])->name('game.action');
     Route::post('user/game/skip', [GameController::class, 'skip'])->name('game.skip');
+    Route::get('user/game/end/{room_id}', [GameController::class, 'end'])->name('game.end');
 });
 
 Route::get('/dashboard', function () {

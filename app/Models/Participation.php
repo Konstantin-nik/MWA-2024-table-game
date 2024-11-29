@@ -10,7 +10,7 @@ class Participation extends Model
     /** @use HasFactory<\Database\Factories\ParticipationFactory> */
     use HasFactory;
 
-    protected $fillable = ['user_id', 'room_id'];
+    protected $guarded;
 
     // Model Relations ------------------------------------------------------
     public function user()
