@@ -2,6 +2,7 @@
 
 namespace App\View\Components\User;
 
+use App\Models\Participation;
 use App\Models\User;
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -12,9 +13,8 @@ class Player extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct(public User $user)
+    public function __construct(public Participation $participation) 
     {
-        //
     }
 
     /**

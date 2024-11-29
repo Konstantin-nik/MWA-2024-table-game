@@ -12,7 +12,7 @@ class PlayerList extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct(public Collection $users)
+    public function __construct(public Collection $participations)
     {
         //
     }

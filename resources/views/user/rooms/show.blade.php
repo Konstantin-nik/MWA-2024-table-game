@@ -63,7 +63,7 @@
         <x-panel>
             <!-- Players List -->
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Players</h2>
-            <x-user.player-list :users="$room->users" />
+            <x-user.player-list :participations="$room->participations" />
 
             <!-- Join/Leave button -->
             @if (auth()->user()->canJoinRoom($room))
