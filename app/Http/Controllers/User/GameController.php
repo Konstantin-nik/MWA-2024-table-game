@@ -252,7 +252,7 @@ class GameController extends Controller
                 'chosen_deck' => -1,
                 'chosen_action' => -1,
                 'chosen_number' => -1,
-                'action_details' => 'skip',
+                'action_details' => json_encode(['skip']),
             ]);
 
             $board = $participation->board()->firstOrFail();
