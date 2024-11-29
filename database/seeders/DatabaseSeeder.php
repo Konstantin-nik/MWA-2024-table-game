@@ -26,8 +26,13 @@ class DatabaseSeeder extends Seeder
         }
 
         $user = User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'Simple Guy',
             'email' => 'test@example.com',
+        ]);
+
+        User::factory()->create([
+            'name' => 'Friend Petya',
+            'email' => 'petya@example.com',
         ]);
 
         Room::create([
