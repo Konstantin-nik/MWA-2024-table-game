@@ -212,8 +212,8 @@ class GameController extends Controller
         $totalParticipations = $room->participations()->count();
         $totalActions = $currentRound->actions()->count();
 
-        if ($totalActions >= $totalParticipations) {
-        // if (true) {
+        // if ($totalActions >= $totalParticipations) {
+        if (true) {
             $this->endRound($currentRound, $room);
         }
 
@@ -274,8 +274,8 @@ class GameController extends Controller
         $totalParticipations = $room->participations()->count();
         $totalActions = $currentRound->actions()->count();
 
-        if ($totalActions >= $totalParticipations) {
-        // if (true) {
+        // if ($totalActions >= $totalParticipations) {
+        if (true) {
             $this->endRound($currentRound, $room);
         }
 
@@ -316,9 +316,43 @@ class GameController extends Controller
             $number_of_skips = $board->number_of_skips;
 
             $pool_score = $board->pool_values[$number_of_pools] ?? 0;
-            $agency_bonus = 7;
             $bis_penalty = $board->bis_values[$number_of_bises] ?? 0;
             $skip_penalty = $board->skip_penalties[$number_of_skips] ?? 0;
+            $agency_bonus = 7;
+
+            $estates_count = [0, 0, 0, 0, 0, 0];
+            foreach ($board->rows as $row) {
+                $index = -1;
+                $houses = $row->houses()->orderBy('position')->get();
+                $fences = $row->fences()->orderBy('position')->get();
+
+                while ($index < count($houses) - 1) {
+                    $estate_size = 0;
+                    $increment = 1;
+                    while ($index < count($houses) - 1) {
+                        $index++;
+
+                        if ($houses->get($index)->number !== null) {
+                            $estate_size++;
+                        } else {
+                            $increment = 0;
+                        }
+
+                        if ($fences->get($index) !== null && $fences->get($index)->is_constructed) {
+                            break;
+                        }
+                    }
+                    if ($estate_size > 0 && $estate_size < 7) {
+                        $estates_count[$estate_size - 1] += $increment;
+                    }
+                }
+            }
+
+            $estate_score = 0;
+            foreach ($estates_count as $index => $estate_count) {
+                $estate = $board->estates_values[$index];
+                $estate_score += $estate['values'][$estate['index']] * $estate_count;
+            }
 
             $landscape_score = $board->rows->sum(function ($row) {
                 return $row->landscape_values[$row->current_landscape_index] ?? 0;
@@ -326,7 +360,7 @@ class GameController extends Controller
 
             return [
                 'participation' => $participation->id,
-                'score' => $pool_score + $agency_bonus - $bis_penalty + $landscape_score - $skip_penalty,
+                'score' => $pool_score + $agency_bonus + $landscape_score + $estate_score - $bis_penalty - $skip_penalty,
                 'number_of_agencies' => $board->number_of_agencies,
             ];
         });
