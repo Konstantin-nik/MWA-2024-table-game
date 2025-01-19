@@ -212,8 +212,8 @@ class GameController extends Controller
         $totalParticipations = $room->participations()->count();
         $totalActions = $currentRound->actions()->count();
 
-        // if ($totalActions >= $totalParticipations) {
-        if (true) {
+        if ($totalActions >= $totalParticipations) {
+        // if (true) {
             $this->endRound($currentRound, $room);
         }
 
