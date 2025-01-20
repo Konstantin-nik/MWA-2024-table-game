@@ -78,7 +78,7 @@ class GameController extends Controller
 
         $cardPairs = $this->getCardPairsByRoundIndex($room, $currentRound->index);
         $noPairMatched = $cardPairs->every(function ($pair) use ($validatedData) {
-            return !($validatedData['action'] == $pair['actionCard'] && $validatedData['number'] == $pair['numberCard']);
+            return ! ($validatedData['action'] == $pair['actionCard'] && $validatedData['number'] == $pair['numberCard']);
         });
         if ($noPairMatched) {
             abort(403, 'Invalid card.');
@@ -273,7 +273,7 @@ class GameController extends Controller
         $totalActions = $currentRound->actions()->count();
 
         if ($totalActions >= $totalParticipations) {
-        // if (true) {
+            // if (true) {
             $this->endRound($currentRound, $room);
         }
 
@@ -289,7 +289,7 @@ class GameController extends Controller
         return view('user.game.end', compact('participations'));
     }
 
-    // Private functions 
+    // Private functions
 
     private function endRound(Round $round, Room $room)
     {
