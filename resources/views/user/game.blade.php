@@ -165,7 +165,7 @@
                                     }"
                                     @click="selectEstate({{ $estateIndex }})"
                                 >
-                                    <h4 class="font-semibold">Estate {{ $estateIndex }}</h4>
+                                    <h4 class="font-semibold">Estate {{ $estateIndex + 1 }}</h4>
                                     <p class="text-sm">Index: {{ $estate['index'] }}</p>
                                     <p class="text-sm">Values: 
                                         @foreach ($estate['values'] as $value)
