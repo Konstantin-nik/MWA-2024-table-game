@@ -24,20 +24,11 @@ class GameController extends Controller
         if ($room) {
             $participation = $room->participations()->where('user_id', auth()->user()->id)->first();
             $board = Board::with(['rows.houses', 'rows.fences'])->where('participation_id', $participation->id)->first();
-            $decks = Deck::with('cards')->where('room_id', $room->id)->get();
 
             // Prepare three pairs of cards
-            $currentRoundIndex = $room->rounds->last()?->index ?? 0;
+            $currentRoundIndex = $room->rounds->last()->index;
 
-            $cardPairs = $decks->map(function ($deck) use ($currentRoundIndex) {
-                $actionCard = $deck->cards[$currentRoundIndex] ?? null;
-                $numberCard = $deck->cards[$currentRoundIndex + 1] ?? null;
-
-                return [
-                    'numberCard' => $numberCard ? $numberCard->number : null,
-                    'actionCard' => $actionCard ? $actionCard->action : null,
-                ];
-            })->take(3);
+            $cardPairs = $this->getCardPairsByRoundIndex($room, $currentRoundIndex);
 
             return view('user.game', [
                 'room' => $room,
@@ -83,6 +74,14 @@ class GameController extends Controller
 
         if ($currentRound->actions()->where('participation_id', $participation->id)->exists()) {
             abort(403, 'You have already taken your turn for this round.');
+        }
+
+        $cardPairs = $this->getCardPairsByRoundIndex($room, $currentRound->index);
+        $noPairMatched = $cardPairs->every(function ($pair) use ($validatedData) {
+            return !($validatedData['action'] == $pair['actionCard'] && $validatedData['number'] == $pair['numberCard']);
+        });
+        if ($noPairMatched) {
+            abort(403, 'Invalid card.');
         }
 
         $isValidTurn = true;
@@ -213,7 +212,6 @@ class GameController extends Controller
         $totalActions = $currentRound->actions()->count();
 
         if ($totalActions >= $totalParticipations) {
-        // if (true) {
             $this->endRound($currentRound, $room);
         }
 
@@ -290,6 +288,8 @@ class GameController extends Controller
 
         return view('user.game.end', compact('participations'));
     }
+
+    // Private functions 
 
     private function endRound(Round $round, Room $room)
     {
@@ -384,5 +384,20 @@ class GameController extends Controller
                 ]);
             }
         }
+    }
+
+    private function getCardPairsByRoundIndex(Room $room, $currentRoundIndex)
+    {
+        $decks = Deck::with('cards')->where('room_id', $room->id)->get();
+
+        return $decks->map(function ($deck) use ($currentRoundIndex) {
+            $actionCard = $deck->cards[$currentRoundIndex] ?? null;
+            $numberCard = $deck->cards[$currentRoundIndex + 1] ?? null;
+
+            return [
+                'numberCard' => $numberCard ? $numberCard->number : null,
+                'actionCard' => $actionCard ? $actionCard->action : null,
+            ];
+        })->take(3);
     }
 }
