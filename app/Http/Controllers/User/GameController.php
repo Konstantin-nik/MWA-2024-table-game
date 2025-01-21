@@ -50,7 +50,7 @@ class GameController extends Controller
             'selectedPairIndex' => 'required|integer|min:0|max:2',
             'selectedHouses' => 'required|array|min:1|max:2',
             'selectedHouses.*' => 'integer|exists:houses,id',
-            'agencyNumber' => 'integer|min:-2|max:2',
+            'agencyNumber' => 'nullable|integer|min:-2|max:2',
             'estateIndex' => 'nullable|integer',
             'fenceId' => 'nullable|integer|exists:fences,id',
             'action' => 'required|integer',
