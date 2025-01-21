@@ -50,6 +50,7 @@ class GameController extends Controller
             'selectedPairIndex' => 'required|integer|min:0|max:2',
             'selectedHouses' => 'required|array|min:1|max:2',
             'selectedHouses.*' => 'integer|exists:houses,id',
+            'agencyNumber' => 'integer|min:-2|max:2',
             'estateIndex' => 'nullable|integer',
             'fenceId' => 'nullable|integer|exists:fences,id',
             'action' => 'required|integer',
@@ -103,6 +104,12 @@ class GameController extends Controller
                 abort(403, 'This house has already been numbered.');
             }
 
+            if ($validatedData['action'] == 5) {
+                $houseNumber = $validatedData['number'] + $validatedData['agencyNumber'];
+            } else {
+                $houseNumber = $validatedData['number'];
+            }
+
             $leftHouse = $house->row->houses()
                 ->where('position', '<', $house->position)
                 ->whereNotNull('number')
@@ -115,11 +122,11 @@ class GameController extends Controller
                 ->orderBy('position')
                 ->first();
 
-            if (($leftHouse && $leftHouse->number >= $validatedData['number']) || ($rightHouse && $rightHouse->number <= $validatedData['number'])) {
+            if (($leftHouse && $leftHouse->number >= $houseNumber) || ($rightHouse && $rightHouse->number <= $houseNumber)) {
                 abort(403, 'House numbers must be in ascending order.');
             }
 
-            $house->update(['number' => $validatedData['number']]);
+            $house->update(['number' => $houseNumber]);
 
             if ($validatedData['action'] == 1) { // Fence
                 if ($validatedData['fenceId'] === null) {
@@ -200,7 +207,7 @@ class GameController extends Controller
                 'participation_id' => $participation->id,
                 'chosen_deck' => $validatedData['selectedPairIndex'],  // Probably here will be issue, check show method and pass deck index to view
                 'chosen_action' => $validatedData['action'],
-                'chosen_number' => $validatedData['number'],
+                'chosen_number' => $houseNumber,
                 'action_details' => json_encode([
                     'houses' => $validatedData['selectedHouses'],
                     'fence' => $validatedData['fenceId'],

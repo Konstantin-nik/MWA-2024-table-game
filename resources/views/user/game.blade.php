@@ -250,6 +250,7 @@
             selectedFenceId: null,
             selectedEstateNumber: null,
             selectAgency: false,
+            selectedAgencyNumber: null,
             selectedHouses: [],
             miniFieldPosition: { top: 0, left: 0 },
             cardPairs,
@@ -262,6 +263,7 @@
                 this.selectedFenceId = null;
                 this.selectedEstateNumber = null;
                 this.selectAgency = false;
+                this.selectedAgencyNumber = null;
                 this.selectedHouses = [];
 
                 console.log(`Selected Pair: ${index}, Action: ${this.selectedAction}, Number: ${this.selectedNumber}`);
@@ -395,9 +397,9 @@
                     return;
                 }
 
-                this.selectedNumber += Number(number);
+                this.selectedAgencyNumber = Number(number);
                 this.selectAgency = false;
-                console.log(`Selected number: ${this.selectedNumber}`);
+                console.log(`Selected number: ${this.selectedNumber + this.selectedAgencyNumber}`);
             },
 
             isSelectableEstate(estate) {
@@ -433,6 +435,7 @@
                     selectedPairIndex: this.selectedPairIndex,
                     selectedHouses: this.selectedHouses,
                     estateIndex: this.selectedEstateNumber,
+                    agencyNumber: this.selectedAgencyNumber,
                     fenceId: this.selectedFenceId,
                     action: this.selectedAction,
                     number: this.selectedNumber,
@@ -448,6 +451,7 @@
                 this.selectedFenceId = null;
                 this.selectedEstateNumber = null;
                 this.selectAgency = false;
+                this.selectedAgencyNumber = null;
                 this.selectedHouses = [];
                 console.log('Turn cancelled.');
             },
