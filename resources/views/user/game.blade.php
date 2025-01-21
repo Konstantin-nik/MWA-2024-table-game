@@ -165,13 +165,21 @@
                                     }"
                                     @click="selectEstate({{ $estateIndex }})"
                                 >
-                                    <h4 class="font-semibold">Estate {{ $estateIndex + 1 }}</h4>
-                                    <p class="text-sm">Index: {{ $estate['index'] }}</p>
-                                    <p class="text-sm">Values: 
-                                        @foreach ($estate['values'] as $value)
-                                            {{ $value }}@if (!$loop->last), @endif
+                                    <h4 class="text-sm font-semibold mb-2">Estate {{ $estateIndex + 1 }}</h4>
+                                    <div class="flex gap-2">
+                                        @foreach ($estate['values'] as $valueIndex => $value)
+                                            <div 
+                                                class="px-2 py-1 text-sm text-center rounded border cursor-pointer"
+                                                :class="{
+                                                    'bg-gray-300': {{ $estate['index'] }} === {{ $valueIndex }},
+                                                    'bg-gray-100': {{ $estate['index'] }} !== {{ $valueIndex }},
+                                                }"
+                                                @click="selectEstate({{ $estateIndex }}, {{ $valueIndex }})"
+                                            >
+                                                {{ $value }}
+                                            </div>
                                         @endforeach
-                                    </p>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
