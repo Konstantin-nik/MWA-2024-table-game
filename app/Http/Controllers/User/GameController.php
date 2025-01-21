@@ -394,6 +394,12 @@ class GameController extends Controller
         }
     }
 
+    /**
+     * Get card pairs and generate new deck if needed.
+     *
+     * @param  mixed  $currentRoundIndex
+     * @return mixed
+     */
     private function getCardPairsByRoundIndex(Room $room, $currentRoundIndex)
     {
         $cards = Card::with('deck')
@@ -408,6 +414,11 @@ class GameController extends Controller
 
         $pairs = collect();
         $maxPairs = min($actionCards->count(), $numberCards->count());
+        if ($maxPairs == 0) {
+            $this->generateNewDeck($room, $currentRoundIndex);
+
+            return $this->getCardPairsByRoundIndex($room, $currentRoundIndex);
+        }
 
         for ($i = 0; $i < $maxPairs; $i++) {
             $actionCard = $actionCards->values()->get($i);
@@ -420,5 +431,18 @@ class GameController extends Controller
         }
 
         return $pairs;
+    }
+
+    /**
+     * Will generate new Decks for this room.
+     *
+     * @param  mixed  $currentRoundIndex
+     * @return void
+     */
+    private function generateNewDeck(Room $room, $currentRoundIndex)
+    {
+        $lastDeckIndex = $room->decks->last()->index;
+        $stack = ($lastDeckIndex + 1) / 3;
+        Deck::createDecksForRoom($room->id, $stack);
     }
 }

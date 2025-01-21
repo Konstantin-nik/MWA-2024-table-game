@@ -144,7 +144,6 @@ class RoomController extends Controller
         DB::transaction(function () use ($room) {
             // 6 Decks creation
             Deck::createDecksForRoom($room->id, 0);
-            Deck::createDecksForRoom($room->id, 1);
 
             // Initializing Boards for each player
             foreach ($room->participations as $participation) {
