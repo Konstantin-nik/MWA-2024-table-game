@@ -20,7 +20,7 @@ class Deck extends Model
     }
 
     // Model static functions -------------------------------------------------
-    public static function createDecksForRoom($room_id)
+    public static function createDecksForRoom($room_id, $stack = 0)
     {
         $allCards = Card::createCardsForDeck();
 
@@ -30,13 +30,13 @@ class Deck extends Model
         foreach ($cardChunks as $index => $chunk) {
             $deck = Deck::create([
                 'room_id' => $room_id,
-                'index' => $index,
+                'index' => $index + $stack * 3,
             ]);
 
             foreach ($chunk->values() as $index2 => $cardData) {
                 Card::create(array_merge($cardData, [
                     'deck_id' => $deck->id,
-                    'position' => $index2,
+                    'position' => $index2 + $stack * 27,
                 ]));
             }
         }

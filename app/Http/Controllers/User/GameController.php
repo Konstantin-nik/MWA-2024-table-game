@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Board;
+use App\Models\Card;
 use App\Models\Deck;
 use App\Models\Fence;
 use App\Models\House;
@@ -388,16 +389,29 @@ class GameController extends Controller
 
     private function getCardPairsByRoundIndex(Room $room, $currentRoundIndex)
     {
-        $decks = Deck::with('cards')->where('room_id', $room->id)->get();
+        $cards = Card::with('deck')
+            ->whereHas('deck', function ($query) use ($room) {
+                $query->where('room_id', $room->id);
+            })
+            ->whereIn('position', [$currentRoundIndex, $currentRoundIndex + 1])
+            ->get();
 
-        return $decks->map(function ($deck) use ($currentRoundIndex) {
-            $actionCard = $deck->cards[$currentRoundIndex] ?? null;
-            $numberCard = $deck->cards[$currentRoundIndex + 1] ?? null;
+        $actionCards = $cards->where('position', $currentRoundIndex);
+        $numberCards = $cards->where('position', $currentRoundIndex + 1);
 
-            return [
+        $pairs = collect();
+        $maxPairs = min($actionCards->count(), $numberCards->count());
+
+        for ($i = 0; $i < $maxPairs; $i++) {
+            $actionCard = $actionCards->values()->get($i);
+            $numberCard = $numberCards->values()->get($i);
+
+            $pairs->push([
                 'numberCard' => $numberCard ? $numberCard->number : null,
                 'actionCard' => $actionCard ? $actionCard->action : null,
-            ];
-        })->take(3);
+            ]);
+        }
+
+        return $pairs;
     }
 }
