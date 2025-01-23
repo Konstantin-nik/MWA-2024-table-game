@@ -318,14 +318,18 @@ class GameController extends Controller
         }
     }
 
-    private function isGameEnd(Room $room) : bool {
-        $user = auth()->user();
-        $participation = $room->participations()->where('user_id', $user->id)->where('room_id', $room->id)->firstOrFail();
-        $board = $participation->board()->firstOrFail();
-        if ($board->number_of_skips >= count($board->skip_penalties) - 1) {
-            return true;
-        }
+    private function isGameEnd(Room $room): bool
+    {
+        $participations = $room->participations()->with('board')->get();
 
+        foreach ($participations as $participation) {
+            $board = $participation->board;
+    
+            if ($board && $board->number_of_skips >= count($board->skip_penalties) - 1) {
+                return true;
+            }
+        }
+    
         return false;
     }
 
