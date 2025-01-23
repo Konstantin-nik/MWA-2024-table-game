@@ -223,8 +223,6 @@ class GameController extends Controller
         if ($totalActions >= $totalParticipations) {
             $this->endRound($currentRound, $room);
         }
-
-        return redirect()->route('user.game')->with('success', 'Turn done successfully.');
     }
 
     public function skip(Request $request)
@@ -278,8 +276,6 @@ class GameController extends Controller
             // if (true) {
             $this->endRound($currentRound, $room);
         }
-
-        return redirect()->route('user.game');
     }
 
     public function end(string $room_id)
