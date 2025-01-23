@@ -139,7 +139,7 @@
 
                 <!-- Current Board state -->
                 <div>
-                    <div class="mt-20"></div>
+                    <div class="mt-10"></div>
 
                     <!-- Display Estates Values -->
                     <div class="mb-6">
@@ -173,31 +173,33 @@
                         </div>
                     </div>
 
-                    <!-- Display Pool Values -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold">Pool Values</h3>
-                        <div class="grid grid-cols-5 gap-2">
-                            @foreach ($board->pool_values as $index => $poolValue)
-                                @if ($board->number_of_pools == $index)
-                                    <div class="px-2 py-1 bg-blue-400 text-center rounded border">{{ $poolValue }}</div>
-                                @else
-                                    <div class="px-2 py-1 bg-blue-100 text-center rounded border">{{ $poolValue }}</div>
-                                @endif
-                            @endforeach
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Display Pool Values -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold">Pool Values</h3>
+                            <div class="grid grid-cols-5 gap-2">
+                                @foreach ($board->pool_values as $index => $poolValue)
+                                    @if ($board->number_of_pools == $index)
+                                        <div class="px-2 py-1 bg-blue-400 text-center rounded border">{{ $poolValue }}</div>
+                                    @else
+                                        <div class="px-2 py-1 bg-blue-100 text-center rounded border">{{ $poolValue }}</div>
+                                    @endif
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Display Bis Values -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold">Bis Values</h3>
-                        <div class="grid grid-cols-5 gap-2">
-                            @foreach ($board->bis_values as $index => $bisValue)
-                                @if ($board->number_of_bises == $index)
-                                    <div class="px-2 py-1 bg-red-400 text-center rounded border">{{ $bisValue }}</div>
-                                @else
-                                    <div class="px-2 py-1 bg-red-100 text-center rounded border">{{ $bisValue }}</div>
-                                @endif
-                            @endforeach
+                        <!-- Display Bis Values -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold">Bis Values</h3>
+                            <div class="grid grid-cols-5 gap-2">
+                                @foreach ($board->bis_values as $index => $bisValue)
+                                    @if ($board->number_of_bises == $index)
+                                        <div class="px-2 py-1 bg-red-400 text-center rounded border">{{ $bisValue }}</div>
+                                    @else
+                                        <div class="px-2 py-1 bg-red-100 text-center rounded border">{{ $bisValue }}</div>
+                                    @endif
+                                @endforeach
+                            </div>
                         </div>
                     </div>
 
