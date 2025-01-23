@@ -139,19 +139,7 @@
 
                 <!-- Current Board state -->
                 <div>
-                    <!-- Display Pool Values -->
-                    <div class="mt-20 mb-6">
-                        <h3 class="text-lg font-semibold">Pool Values</h3>
-                        <div class="grid grid-cols-5 gap-2">
-                            @foreach ($board->pool_values as $index => $poolValue)
-                                @if ($board->number_of_pools == $index)
-                                    <div class="px-2 py-1 bg-blue-400 text-center rounded border">{{ $poolValue }}</div>
-                                @else
-                                    <div class="px-2 py-1 bg-blue-100 text-center rounded border">{{ $poolValue }}</div>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
+                    <div class="mt-20"></div>
 
                     <!-- Display Estates Values -->
                     <div class="mb-6">
@@ -181,6 +169,20 @@
                                         @endforeach
                                     </div>
                                 </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Display Pool Values -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold">Pool Values</h3>
+                        <div class="grid grid-cols-5 gap-2">
+                            @foreach ($board->pool_values as $index => $poolValue)
+                                @if ($board->number_of_pools == $index)
+                                    <div class="px-2 py-1 bg-blue-400 text-center rounded border">{{ $poolValue }}</div>
+                                @else
+                                    <div class="px-2 py-1 bg-blue-100 text-center rounded border">{{ $poolValue }}</div>
+                                @endif
                             @endforeach
                         </div>
                     </div>
