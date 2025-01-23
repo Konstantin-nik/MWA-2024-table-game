@@ -270,13 +270,6 @@ class GameController extends Controller
             $board->update(['number_of_skips' => $board->number_of_skips + 1]);
         });
 
-        $board = $participation->board()->firstOrFail();
-        if ($board->number_of_skips >= count($board->skip_penalties) - 1) {
-            $this->countFinalScores($room);
-            $room->update(['finished_at' => now()]);
-
-            return redirect()->route('user.game.end', $room)->with('room_id', $room);
-        }
         // Check if all participants have taken their actions for the round
         $totalParticipations = $room->participations()->count();
         $totalActions = $currentRound->actions()->count();
@@ -300,6 +293,12 @@ class GameController extends Controller
 
     // Private functions
 
+    /**
+     * Function called on round end.
+     * @param \App\Models\Round $round
+     * @param \App\Models\Room $room
+     * @return void
+     */
     private function endRound(Round $round, Room $room)
     {
         $round->update(['finished_at' => now()]);
@@ -309,7 +308,30 @@ class GameController extends Controller
             'index' => $newRoundIndex,
         ]);
 
-        broadcast(new RoundEnded($room->id))->toOthers();
+        if ($this->isGameEnd($room)) {
+            $this->endGame($room);
+        } else {
+            broadcast(new RoundEnded($room->id))->toOthers();
+        }
+    }
+
+    private function isGameEnd(Room $room) : bool {
+        $user = auth()->user();
+        $participation = $room->participations()->where('user_id', $user->id)->where('room_id', $room->id)->firstOrFail();
+        $board = $participation->board()->firstOrFail();
+        if ($board->number_of_skips >= count($board->skip_penalties) - 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function endGame(Room $room)
+    {
+        $this->countFinalScores($room);
+        $room->update(['finished_at' => now()]);
+
+        broadcast(new RoundEnded($room->id))->toOthers();;
     }
 
     private function countFinalScores(Room $room)

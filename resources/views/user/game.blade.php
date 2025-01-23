@@ -470,15 +470,24 @@
 
             init() {
                 this.listenForRoundEnd();
+                this.listenForGameEnd();
             },
             
             listenForRoundEnd() {
+                console.log('Room {{ $room->id }}');
                 window.Echo.channel('game.{{ $room->id }}')
                     .listen('.round.ended', (data) => {
                         console.log('Round ended');
                         window.location.reload();
                     });
             },
+
+            listenForGameEnd() {
+                window.Echo.channel('game.{{ $room->id }}')
+                    .listen('.game.ended', () =>{
+                        window.location.href = "{{ route('user.game.end', $room) }}";
+                    });
+            }
         };
     }
 
