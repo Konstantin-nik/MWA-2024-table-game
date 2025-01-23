@@ -309,7 +309,7 @@ class GameController extends Controller
             'index' => $newRoundIndex,
         ]);
 
-        broadcast(new RoundEnded($room))->toOthers();
+        broadcast(new RoundEnded($room->id))->toOthers();
     }
 
     private function countFinalScores(Room $room)

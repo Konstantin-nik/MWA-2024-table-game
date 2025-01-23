@@ -469,10 +469,9 @@
             },
             
             listenForRoundEnd() {
-                console.log('Subscribing to channel:', 'game.{{ $room->id }}');
                 window.Echo.channel('game.{{ $room->id }}')
                     .listen('.round.ended', (data) => {
-                        console.log('Round ended:', data);
+                        console.log('Round ended');
                         window.location.reload();
                     });
             },

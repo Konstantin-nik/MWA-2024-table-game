@@ -12,14 +12,14 @@ class RoundEnded implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $room;
+    public $room_id;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($room)
+    public function __construct($room_id)
     {
-        $this->room = $room;
+        $this->room_id = $room_id;
     }
 
     /**
@@ -27,19 +27,11 @@ class RoundEnded implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('game.'.$this->room->id);
+        return new Channel('game.'.$this->room_id);
     }
 
     public function broadcastAs()
     {
         return 'round.ended';
-    }
-
-    public function broadcastWith()
-    {
-        return [
-            'room' => $this->room,
-            'message' => 'Round ended!',
-        ];
     }
 }
