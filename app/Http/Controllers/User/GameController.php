@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Events\RoundEnded;
 use App\Http\Controllers\Controller;
 use App\Models\Board;
 use App\Models\Card;
@@ -307,6 +308,8 @@ class GameController extends Controller
         $room->rounds()->create([
             'index' => $newRoundIndex,
         ]);
+
+        broadcast(new RoundEnded($room))->toOthers();
     }
 
     private function countFinalScores(Room $room)

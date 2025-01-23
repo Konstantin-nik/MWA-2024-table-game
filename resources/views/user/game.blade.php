@@ -463,6 +463,23 @@
                 this.selectedHouses = [];
                 console.log('Turn cancelled.');
             },
+
+            init() {
+                this.listenForRoundEnd();
+            },
+            
+            listenForRoundEnd() {
+                console.log('Subscribing to channel:', 'game.{{ $room->id }}');
+                window.Echo.channel('game.{{ $room->id }}')
+                    .listen('.round.ended', (data) => {
+                        console.log('Round ended:', data);
+                        window.location.reload();
+                    });
+            },
         };
     }
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('gameLogic', gameLogic);
+    });
 </script>
