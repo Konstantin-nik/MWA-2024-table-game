@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Events\GameEnded;
 use App\Events\RoundEnded;
 use App\Http\Controllers\Controller;
 use App\Models\Board;
@@ -221,7 +222,10 @@ class GameController extends Controller
         $totalActions = $currentRound->actions()->count();
 
         if ($totalActions >= $totalParticipations) {
-            $this->endRound($currentRound, $room);
+            // if (true) {
+            return $this->endRound($currentRound, $room);
+        } else {
+            return redirect()->route('user.game');
         }
     }
 
@@ -274,7 +278,9 @@ class GameController extends Controller
 
         if ($totalActions >= $totalParticipations) {
             // if (true) {
-            $this->endRound($currentRound, $room);
+            return $this->endRound($currentRound, $room);
+        } else {
+            return redirect()->route('user.game');
         }
     }
 
@@ -305,9 +311,10 @@ class GameController extends Controller
         ]);
 
         if ($this->isGameEnd($room)) {
-            $this->endGame($room);
+            return $this->endGame($room);
         } else {
             broadcast(new RoundEnded($room->id))->toOthers();
+            return redirect()->route('user.game');
         }
     }
 
@@ -327,7 +334,9 @@ class GameController extends Controller
         $this->countFinalScores($room);
         $room->update(['finished_at' => now()]);
 
-        broadcast(new RoundEnded($room->id))->toOthers();;
+        broadcast(new GameEnded($room->id))->toOthers();
+
+        return redirect()->route('user.game.end', $room);
     }
 
     private function countFinalScores(Room $room)
