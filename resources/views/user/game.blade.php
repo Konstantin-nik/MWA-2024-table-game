@@ -179,11 +179,12 @@
                             <h3 class="text-lg font-semibold">Pool Values</h3>
                             <div class="grid grid-cols-5 gap-2">
                                 @foreach ($board->pool_values as $index => $poolValue)
-                                    @if ($board->number_of_pools == $index)
-                                        <div class="px-2 py-1 bg-blue-400 text-center rounded border">{{ $poolValue }}</div>
-                                    @else
-                                        <div class="px-2 py-1 bg-blue-100 text-center rounded border">{{ $poolValue }}</div>
-                                    @endif
+                                    <x-selectable-value 
+                                        :value="$poolValue" 
+                                        :isSelected="$board->number_of_pools == $index" 
+                                        selectedColor="bg-blue-400" 
+                                        unselectedColor="bg-blue-100" 
+                                    />
                                 @endforeach
                             </div>
                         </div>
@@ -193,27 +194,62 @@
                             <h3 class="text-lg font-semibold">Bis Values</h3>
                             <div class="grid grid-cols-5 gap-2">
                                 @foreach ($board->bis_values as $index => $bisValue)
-                                    @if ($board->number_of_bises == $index)
-                                        <div class="px-2 py-1 bg-red-400 text-center rounded border">{{ $bisValue }}</div>
-                                    @else
-                                        <div class="px-2 py-1 bg-red-100 text-center rounded border">{{ $bisValue }}</div>
-                                    @endif
+                                    <x-selectable-value 
+                                        :value="$bisValue" 
+                                        :isSelected="$board->number_of_bises == $index" 
+                                        selectedColor="bg-red-400" 
+                                        unselectedColor="bg-red-100" 
+                                    />
                                 @endforeach
                             </div>
                         </div>
                     </div>
 
-                    <!-- Display Skiped Turns Penalty -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold">Skip Turn Penalty</h3>
-                        <div class="grid grid-cols-5 gap-2">
-                            @foreach ($board->skip_penalties as $index => $skipPenalty)
-                                @if ($board->number_of_skips == $index)
-                                    <div class="px-2 py-1 bg-red-400 text-center rounded border">{{ $skipPenalty }}</div>
-                                @else
-                                    <div class="px-2 py-1 bg-red-100 text-center rounded border">{{ $skipPenalty }}</div>
-                                @endif
-                            @endforeach
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Display Number of Agents -->
+                        <div class="mb-6">
+                            <p class="text-lg font-semibold">Number of Agents: <span class="text-blue-600">{{ $numberOfAgents }}</span></p>
+                            <div class="grid grid-cols-5 gap-2">
+                                <x-selectable-value 
+                                    :value="0" 
+                                    :isSelected="$agentsRank > 3" 
+                                    selectedColor="bg-green-400"
+                                    unselectedColor="bg-green-100" 
+                                />
+                                <x-selectable-value 
+                                    :value="1" 
+                                    :isSelected="$agentsRank == 3" 
+                                    selectedColor="bg-green-400"
+                                    unselectedColor="bg-green-100" 
+                                />
+                                <x-selectable-value 
+                                    :value="4" 
+                                    :isSelected="$agentsRank == 2" 
+                                    selectedColor="bg-green-400"
+                                    unselectedColor="bg-green-100" 
+                                />
+                                <x-selectable-value 
+                                    :value="7" 
+                                    :isSelected="$agentsRank == 1" 
+                                    selectedColor="bg-green-400"
+                                    unselectedColor="bg-green-100" 
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Display Skiped Turns Penalty -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold">Skip Turn Penalty</h3>
+                            <div class="grid grid-cols-5 gap-2">
+                                @foreach ($board->skip_penalties as $index => $skipPenalty)
+                                    <x-selectable-value 
+                                        :value="$skipPenalty" 
+                                        :isSelected="$board->number_of_skips == $index" 
+                                        selectedColor="bg-red-400" 
+                                        unselectedColor="bg-red-100" 
+                                    />
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -253,6 +289,8 @@
     @endif
 </x-main-layout>
 
+@if ($room === null)
+@else
 <script>
     function gameLogic(cardPairs) {
         return {
@@ -495,3 +533,4 @@
         Alpine.data('gameLogic', gameLogic);
     });
 </script>
+@endif

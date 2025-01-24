@@ -32,12 +32,16 @@ class GameController extends Controller
             $currentRoundIndex = $room->rounds->last()->index;
 
             $cardPairs = $this->getCardPairsByRoundIndex($room, $currentRoundIndex);
+            $numberOfAgents = $participation->actions()->where('chosen_action', 5)->count();
+            $agentsRank = $this->calculateAgentsRank($room, $numberOfAgents);
 
             return view('user.game', [
                 'room' => $room,
                 'participation' => $participation,
                 'board' => $board,
                 'cardPairs' => $cardPairs,
+                'numberOfAgents' => $numberOfAgents,
+                'agentsRank' => $agentsRank,
             ]);
         } else {
             return view('user.game', compact('room'));
@@ -305,14 +309,14 @@ class GameController extends Controller
     {
         $round->update(['finished_at' => now()]);
 
-        $newRoundIndex = $round->index + 1;
-        $room->rounds()->create([
-            'index' => $newRoundIndex,
-        ]);
-
         if ($this->isGameEnd($room)) {
             return $this->endGame($room);
         } else {
+            $newRoundIndex = $round->index + 1;
+            $room->rounds()->create([
+                'index' => $newRoundIndex,
+            ]);
+
             broadcast(new RoundEnded($room->id))->toOthers();
             return redirect()->route('user.game');
         }
@@ -347,7 +351,7 @@ class GameController extends Controller
     {
         $participations = $room->participations()->with('board.rows')->get();
 
-        $scores = $participations->map(function ($participation) {
+        $scores = $participations->map(function (Participation $participation) use ($room) {
             $board = $participation->board;
             if (! $board) {
                 return null;
@@ -400,20 +404,12 @@ class GameController extends Controller
                 return $row->landscape_values[$row->current_landscape_index] ?? 0;
             });
 
+            $agency_bonus = $this->calculateAgencyBonus($room, $participation);
+
             return [
                 'participation' => $participation->id,
                 'score' => $pool_score + $agency_bonus + $landscape_score + $estate_score - $bis_penalty - $skip_penalty,
-                'number_of_agencies' => $board->number_of_agencies,
             ];
-        });
-
-        $max_agencies = $scores->max('number_of_agencies');
-        $scores = $scores->map(function ($score) use ($max_agencies) {
-            if ($score['number_of_agencies'] !== $max_agencies) {
-                $score['score'] -= 7;
-            }
-
-            return $score;
         });
 
         $scores = $scores->sortByDesc('score')->values();
@@ -434,7 +430,7 @@ class GameController extends Controller
      * @param  mixed  $currentRoundIndex
      * @return mixed
      */
-    private function getCardPairsByRoundIndex(Room $room, $currentRoundIndex)
+    private function getCardPairsByRoundIndex(Room $room, int $currentRoundIndex)
     {
         $cards = Card::with('deck')
             ->whereHas('deck', function ($query) use ($room) {
@@ -449,7 +445,7 @@ class GameController extends Controller
         $pairs = collect();
         $maxPairs = min($actionCards->count(), $numberCards->count());
         if ($maxPairs == 0) {
-            $this->generateNewDeck($room, $currentRoundIndex);
+            $this->generateNewDeck($room);
 
             return $this->getCardPairsByRoundIndex($room, $currentRoundIndex);
         }
@@ -468,12 +464,56 @@ class GameController extends Controller
     }
 
     /**
+     * Посчитает ранг игрока по количеству агентов.
+     * @param mixed $numberOfAgents количество агентов игрока
+     */
+    private function calculateAgencyBonus(Room $room, Participation $participation)
+    {
+        $numberOfAgents = $participation->actions()->where('chosen_action', 5)->count();
+        $rank = $this->calculateAgentsRank($room, $numberOfAgents);
+
+        $bonus = 0;
+        if ($rank == 1) {
+            $bonus = 7;
+        } elseif ($rank == 2) {
+            $bonus = 4;
+        } elseif ($rank == 3) {
+            $bonus = 1;
+        }
+        
+        return $bonus;
+    }
+
+    /**
+     * Посчитает ранг игрока по количеству агентов.
+     * @param mixed $numberOfAgents количество агентов игрока
+     */
+    private function calculateAgentsRank(Room $room, int $numberOfAgents)
+    {
+        $participations = $room->participations()->with('actions')->get();
+        $agentsCounts = $participations->map(function ($participation) {
+            return $participation->actions()->where('chosen_action', 5)->count();
+        })->sortDesc()->values();
+
+        $rank = 1;
+        foreach ($agentsCounts as $count) {
+            if ($count > $numberOfAgents) {
+                $rank++;
+            } elseif ($count <= $numberOfAgents){
+                break;
+            }
+        }
+
+        return $rank;
+    }
+
+    /**
      * Will generate new Decks for this room.
      *
      * @param  mixed  $currentRoundIndex
      * @return void
      */
-    private function generateNewDeck(Room $room, $currentRoundIndex)
+    private function generateNewDeck(Room $room)
     {
         $lastDeckIndex = $room->decks->last()->index;
         $stack = ($lastDeckIndex + 1) / 3;
