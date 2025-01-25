@@ -49,7 +49,7 @@
   </header>
 
   <!-- Main Content -->
-  <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <main class="flex-grow container mx-auto px-4 sm:px-2 lg:px-8 py-8">
     {{ $slot }}
   </main>
 

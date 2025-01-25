@@ -15,7 +15,7 @@
             <h1 class="text-2xl font-bold mb-4">Card & House Game</h1>
 
             <!-- Decks Section -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4 mb-6">
                 @foreach ($cardPairs as $index => $pair)
                     <!-- Card Pair -->
                     <div 
@@ -53,7 +53,8 @@
                             @endforeach
                         </div>
                         <!-- Houses and Fences -->
-                        <div class="flex items-end gap-2 mb-4 cursor-pointer justify-end ml-auto">
+                        <div class="flex items-end gap-2 mb-4 cursor-pointer ml-auto overflow-x-auto">
+                            <div class="ml-auto"></div>
                             @foreach ($row->houses as $index => $house)
                                 <!-- House -->
                                 <div 
@@ -91,7 +92,7 @@
                                         $fence = $row->fences->firstWhere('position', $index);
                                     @endphp
                                     <div 
-                                        class="fence w-2 h-16 cursor-pointer" 
+                                        class="flex items-center w-2 h-16 cursor-pointer flex-shrink-0" 
                                         :class="{
                                             'border-4 border-black': isSelectedFence({{ $fence->id }}),
                                             'bg-gray-500': {{ $fence->is_constructed ? 'true' : 'false'}},
