@@ -5,4 +5,7 @@ namespace App\Constants;
 class AppConstants
 {
     const AGENT_REWARDS = [null, 7, 4, 1];
+
+    const MAX_ESTATE_SIZE = 6;
+    const MIN_ESTATE_SIZE = 1;
 }
