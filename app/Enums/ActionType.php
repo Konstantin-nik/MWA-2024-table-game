@@ -10,4 +10,5 @@ enum ActionType
     case POOL = 4;
     case AGENCY = 5;
     case BIS = 6;
+    case SKIP = 7;
 }
