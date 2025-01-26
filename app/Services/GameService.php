@@ -45,6 +45,27 @@ class GameService
     }
 
     /**
+     * Checks if the game should end based on skip penalties.
+     *
+     * @param Room $room The room to check.
+     * @return bool True if the game should end, false otherwise.
+     */
+    public function shouldEndGame(Room $room): bool
+    {
+        $participations = $room->participations()->with('board')->get();
+
+        foreach ($participations as $participation) {
+            $board = $participation->board;
+
+            if ($board && $board->number_of_skips >= count($board->skip_penalties) - 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Ends the game for a given room by calculating final scores and updating the room's status.
      *
      * @param Room $room The room to end the game for.
@@ -57,6 +78,7 @@ class GameService
         try {
             $this->countFinalScores($room);
             $room->update(['finished_at' => now()]);
+            broadcast(new GameEnded($room->id))->toOthers();
 
             Log::info('Game ended successfully for room', ['room_id' => $room->id]);
         } catch (\Exception $e) {
