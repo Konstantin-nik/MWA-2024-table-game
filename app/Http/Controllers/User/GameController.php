@@ -2,38 +2,59 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Events\GameEnded;
-use App\Events\RoundEnded;
+use App\Enums\ActionType;
 use App\Http\Controllers\Controller;
-use App\Models\Board;
 use App\Models\Card;
 use App\Models\Deck;
-use App\Models\Fence;
-use App\Models\House;
-use App\Models\Participation;
 use App\Models\Room;
-use App\Models\Round;
-use App\Models\Row;
-use DB;
+use App\Services\ActionService;
+use App\Services\GameOrchestrator;
+use App\Services\GameService;
+use App\Services\RoundService;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Validator;
 
 class GameController extends Controller
 {
+    protected $gameService;
+
+    protected $roundService;
+
+    protected $actionService;
+
+    protected $gameOrchestrator;
+
+    public function __construct(
+        GameService $gameService,
+        RoundService $roundService,
+        ActionService $actionService,
+        GameOrchestrator $gameOrchestrator
+    ) {
+        $this->gameService = $gameService;
+        $this->roundService = $roundService;
+        $this->actionService = $actionService;
+        $this->gameOrchestrator = $gameOrchestrator;
+    }
+
+    /**
+     * Displays the game view.
+     *
+     * @return \Illuminate\View\View
+     */
     public function show()
     {
         $room = auth()->user()->getCurrentGame();
 
         if ($room) {
-            $participation = $room->participations()->where('user_id', auth()->user()->id)->first();
-            $board = Board::with(['rows.houses', 'rows.fences'])->where('participation_id', $participation->id)->first();
+            $participation = $this->gameService->getParticipationForUser($room, auth()->user()->id);
+            $board = $participation->board()->with(['rows.houses', 'rows.fences'])->first();
 
-            // Prepare three pairs of cards
-            $currentRoundIndex = $room->rounds->last()->index;
+            $currentRound = $this->gameService->getCurrentRound($room);
+            $cardPairs = $this->getCardPairsByRoundIndex($room, $currentRound->index);
 
-            $cardPairs = $this->getCardPairsByRoundIndex($room, $currentRoundIndex);
-            $numberOfAgents = $participation->actions()->where('chosen_action', 5)->count();
-            $agentsRank = $this->calculateAgentsRank($room, $numberOfAgents);
+            $numberOfAgents = $participation->actions()->where('chosen_action', ActionType::AGENT->value)->count();
+            $agentsRank = $this->gameService->calculateAgentsRank($room, $numberOfAgents);
 
             return view('user.game', [
                 'room' => $room,
@@ -43,11 +64,17 @@ class GameController extends Controller
                 'numberOfAgents' => $numberOfAgents,
                 'agentsRank' => $agentsRank,
             ]);
-        } else {
-            return view('user.game', compact('room'));
         }
+
+        return view('user.game', compact('room'));
     }
 
+    /**
+     * Handles a player action.
+     *
+     * @param  Request  $request  The incoming request.
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function action(Request $request)
     {
         $gameData = json_decode($request->input('game_data'), true);
@@ -56,7 +83,7 @@ class GameController extends Controller
             'selectedPairIndex' => 'required|integer|min:0|max:2',
             'selectedHouses' => 'required|array|min:1|max:2',
             'selectedHouses.*' => 'integer|exists:houses,id',
-            'agencyNumber' => 'nullable|integer|min:-2|max:2',
+            'agentNumber' => 'nullable|integer|min:-2|max:2',
             'estateIndex' => 'nullable|integer',
             'fenceId' => 'nullable|integer|exists:fences,id',
             'action' => 'required|integer',
@@ -70,169 +97,26 @@ class GameController extends Controller
             abort(403, 'You are not in an active game.');
         }
 
-        $participation = $room->participations()->where('user_id', $user->id)->where('room_id', $room->id)->first();
-        if (! $participation) {
-            abort(403, 'You are not a participant in this game.');
+        $participation = $this->gameService->getParticipationForUser($room, $user->id);
+        $currentRound = $this->gameService->getCurrentRound($room);
+
+        $this->actionService->handleAction($validatedData, $user->id, $currentRound, $participation);
+
+        $result = $this->gameOrchestrator->handleActionEnd($currentRound, $room);
+
+        if ($result === 'game_ended') {
+            return redirect()->route('user.game.end', $room->id);
         }
 
-        $currentRound = $room->rounds()->latest('index')->first();
-        if (! $currentRound || $currentRound->finished_at) {
-            abort(403, 'No active round available.');
-        }
-
-        if ($currentRound->actions()->where('participation_id', $participation->id)->exists()) {
-            abort(403, 'You have already taken your turn for this round.');
-        }
-
-        $cardPairs = $this->getCardPairsByRoundIndex($room, $currentRound->index);
-        $noPairMatched = $cardPairs->every(function ($pair) use ($validatedData) {
-            return ! ($validatedData['action'] == $pair['actionCard'] && $validatedData['number'] == $pair['numberCard']);
-        });
-        if ($noPairMatched) {
-            abort(403, 'Invalid card.');
-        }
-
-        $isValidTurn = true;
-        if (! $isValidTurn) {
-            abort(403, 'Invalid turn.');
-        }
-
-        DB::transaction(function () use ($currentRound, $participation, $validatedData) {
-            $houseId = $validatedData['selectedHouses'][0];
-            $house = House::with('row')->findOrFail($houseId);
-            $board = $house->row->board;
-
-            if ($board->participation->user_id != auth()->user()->id) {
-                abort(403);
-            }
-
-            if ($house->number) {
-                abort(403, 'This house has already been numbered.');
-            }
-
-            if ($validatedData['action'] == 5) {
-                $houseNumber = $validatedData['number'] + $validatedData['agencyNumber'];
-            } else {
-                $houseNumber = $validatedData['number'];
-            }
-
-            $leftHouse = $house->row->houses()
-                ->where('position', '<', $house->position)
-                ->whereNotNull('number')
-                ->orderByDesc('position')
-                ->first();
-
-            $rightHouse = $house->row->houses()
-                ->where('position', '>', $house->position)
-                ->whereNotNull('number')
-                ->orderBy('position')
-                ->first();
-
-            if (($leftHouse && $leftHouse->number >= $houseNumber) || ($rightHouse && $rightHouse->number <= $houseNumber)) {
-                abort(403, 'House numbers must be in ascending order.');
-            }
-
-            $house->update(['number' => $houseNumber]);
-
-            if ($validatedData['action'] == 1) { // Fence
-                if ($validatedData['fenceId'] === null) {
-                    abort(403, 'No fence selected');
-                }
-                $fence = Fence::findOrFail($validatedData['fenceId']);
-
-                if ($fence->is_constructed) {
-                    abort(403, 'This fence has already been constructed.');
-                }
-                $fence->update(['is_constructed' => true]);
-            } elseif ($validatedData['action'] == 2) { // Estate
-                if ($validatedData['estateIndex'] === null) {
-                    abort(403, 'No Estate selected.');
-                }
-                $estates = $board->estates_values;
-                if (! isset($estates[$validatedData['estateIndex']])) {
-                    abort(403, 'No such Estate.');
-                }
-
-                if ($estates[$validatedData['estateIndex']]['index'] >= count($estates[$validatedData['estateIndex']]['values']) - 1) {
-                    abort(403, 'This estate connot be increased more.');
-                }
-
-                $estates[$validatedData['estateIndex']]['index'] += 1;
-                $board->estates_values = $estates;
-                $board->save();
-            } elseif ($validatedData['action'] == 3) { // Landscape
-                $row = Row::findOrFail($house->row_id);
-                $currentIndex = $row->current_landscape_index;
-
-                if ($currentIndex < count($row->landscape_values) - 1) {
-                    $row->update(['current_landscape_index' => $currentIndex + 1]);
-                }
-            } elseif ($validatedData['action'] == 4) { // Pool
-                if (! $house->has_pool) {
-                    abort(403, 'This house have no pool');
-                }
-                $house->update(['is_pool_constructed' => true]);
-                $board->update(['number_of_pools' => $board->number_of_pools + 1]);
-            } elseif ($validatedData['action'] == 5) { // Agency
-                $board->update(['number_of_agencies' => $board->number_of_agencies + 1]);
-            } elseif ($validatedData['action'] == 6) { // Bis
-                if (count($validatedData['selectedHouses']) != 2) {
-                    abort(403, 'Wrong number of houses selected');
-                }
-
-                $houseBId = $validatedData['selectedHouses'][1];
-                $houseB = House::findOrFail($houseBId);
-
-                if ($houseB->row->board->participation->user_id != auth()->user()->id) {
-                    abort(403);
-                }
-
-                if ($houseB->number) {
-                    abort(403, 'This houseB has already been numbered.');
-                }
-
-                $houseBNeighbour = House::where('row_id', $houseB->row_id)
-                    ->whereNotNull('number')
-                    ->where(function ($query) use ($houseB) {
-                        $query->where('position', $houseB->position - 1)
-                            ->orWhere('position', $houseB->position + 1);
-                    })
-                    ->first();
-
-                if (! $houseBNeighbour) {
-                    abort(403, 'No valid neighboring house found for Bis action.');
-                }
-                $houseB->update(['number' => $houseBNeighbour->number]);
-                $board->update(['number_of_bises' => $board->number_of_bises + 1]);
-            } else {
-                abort(403, 'Invalid action');
-            }
-
-            $currentRound->actions()->create([
-                'round_id' => $currentRound->id,
-                'participation_id' => $participation->id,
-                'chosen_deck' => $validatedData['selectedPairIndex'],  // Probably here will be issue, check show method and pass deck index to view
-                'chosen_action' => $validatedData['action'],
-                'chosen_number' => $houseNumber,
-                'action_details' => json_encode([
-                    'houses' => $validatedData['selectedHouses'],
-                    'fence' => $validatedData['fenceId'],
-                ]),
-            ]);
-        });
-
-        // Check if all participants have taken their actions for the round
-        $totalParticipations = $room->participations()->count();
-        $totalActions = $currentRound->actions()->count();
-
-        if ($totalActions >= $totalParticipations) {
-            // if (true) {
-            return $this->endRound($currentRound, $room);
-        } else {
-            return redirect()->route('user.game');
-        }
+        return redirect()->route('user.game');
     }
 
+    /**
+     * Handles a player skipping their turn.
+     *
+     * @param  Request  $request  The incoming request.
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function skip(Request $request)
     {
         $user = auth()->user();
@@ -242,186 +126,32 @@ class GameController extends Controller
             abort(403, 'You are not in an active game.');
         }
 
-        $participation = $room->participations()->where('user_id', $user->id)->where('room_id', $room->id)->first();
-        if (! $participation) {
-            abort(403, 'You are not a participant in this game.');
+        $participation = $this->gameService->getParticipationForUser($room, $user->id);
+        $currentRound = $this->gameService->getCurrentRound($room);
+
+        $this->actionService->handleSkip($currentRound, $participation);
+
+        $result = $this->gameOrchestrator->handleActionEnd($currentRound, $room);
+
+        if ($result === 'game_ended') {
+            return redirect()->route('user.game.end', $room->id);
         }
 
-        $currentRound = $room->rounds()->latest('index')->first();
-        if (! $currentRound || $currentRound->finished_at) {
-            abort(403, 'No active round available.');
-        }
-
-        if ($currentRound->actions()->where('participation_id', $participation->id)->exists()) {
-            abort(403, 'You have already taken your turn for this round.');
-        }
-
-        DB::transaction(function () use ($currentRound, $participation) {
-
-            // Skip action
-            $currentRound->actions()->create([
-                'round_id' => $currentRound->id,
-                'participation_id' => $participation->id,
-                'chosen_deck' => -1,
-                'chosen_action' => -1,
-                'chosen_number' => -1,
-                'action_details' => json_encode(['skip']),
-            ]);
-
-            $board = $participation->board()->firstOrFail();
-            if ($board->number_of_skips >= count($board->skip_penalties) - 1) {
-                abort(403, 'You cannot skip any more turns. It should be end of the game.');
-            }
-
-            $board->update(['number_of_skips' => $board->number_of_skips + 1]);
-        });
-
-        // Check if all participants have taken their actions for the round
-        $totalParticipations = $room->participations()->count();
-        $totalActions = $currentRound->actions()->count();
-
-        if ($totalActions >= $totalParticipations) {
-            // if (true) {
-            return $this->endRound($currentRound, $room);
-        } else {
-            return redirect()->route('user.game');
-        }
+        return redirect()->route('user.game');
     }
 
+    /**
+     * Displays the game end view.
+     *
+     * @param  string  $room_id  The ID of the room.
+     * @return \Illuminate\View\View
+     */
     public function end(string $room_id)
     {
         $room = Room::findOrFail($room_id);
-
         $participations = $room->participations()->with('user')->get()->sortByDesc('score');
 
         return view('user.game.end', compact('participations'));
-    }
-
-    // Private functions
-
-    /**
-     * Function called on round end.
-     * @param \App\Models\Round $round
-     * @param \App\Models\Room $room
-     * @return void
-     */
-    private function endRound(Round $round, Room $room)
-    {
-        $round->update(['finished_at' => now()]);
-
-        if ($this->isGameEnd($room)) {
-            return $this->endGame($room);
-        } else {
-            $newRoundIndex = $round->index + 1;
-            $room->rounds()->create([
-                'index' => $newRoundIndex,
-            ]);
-
-            broadcast(new RoundEnded($room->id))->toOthers();
-            return redirect()->route('user.game');
-        }
-    }
-
-    private function isGameEnd(Room $room): bool
-    {
-        $participations = $room->participations()->with('board')->get();
-
-        foreach ($participations as $participation) {
-            $board = $participation->board;
-    
-            if ($board && $board->number_of_skips >= count($board->skip_penalties) - 1) {
-                return true;
-            }
-        }
-    
-        return false;
-    }
-
-    private function endGame(Room $room)
-    {
-        $this->countFinalScores($room);
-        $room->update(['finished_at' => now()]);
-
-        broadcast(new GameEnded($room->id))->toOthers();
-
-        return redirect()->route('user.game.end', $room);
-    }
-
-    private function countFinalScores(Room $room)
-    {
-        $participations = $room->participations()->with('board.rows')->get();
-
-        $scores = $participations->map(function (Participation $participation) use ($room) {
-            $board = $participation->board;
-            if (! $board) {
-                return null;
-            }
-
-            $number_of_pools = $board->number_of_pools;
-            $number_of_bises = $board->number_of_bises;
-            $number_of_skips = $board->number_of_skips;
-
-            $pool_score = $board->pool_values[$number_of_pools] ?? 0;
-            $bis_penalty = $board->bis_values[$number_of_bises] ?? 0;
-            $skip_penalty = $board->skip_penalties[$number_of_skips] ?? 0;
-            $agency_bonus = 7;
-
-            $estates_count = [0, 0, 0, 0, 0, 0];
-            foreach ($board->rows as $row) {
-                $index = -1;
-                $houses = $row->houses()->orderBy('position')->get();
-                $fences = $row->fences()->orderBy('position')->get();
-
-                while ($index < count($houses) - 1) {
-                    $estate_size = 0;
-                    $increment = 1;
-                    while ($index < count($houses) - 1) {
-                        $index++;
-
-                        if ($houses->get($index)->number !== null) {
-                            $estate_size++;
-                        } else {
-                            $increment = 0;
-                        }
-
-                        if ($fences->get($index) !== null && $fences->get($index)->is_constructed) {
-                            break;
-                        }
-                    }
-                    if ($estate_size > 0 && $estate_size < 7) {
-                        $estates_count[$estate_size - 1] += $increment;
-                    }
-                }
-            }
-
-            $estate_score = 0;
-            foreach ($estates_count as $index => $estate_count) {
-                $estate = $board->estates_values[$index];
-                $estate_score += $estate['values'][$estate['index']] * $estate_count;
-            }
-
-            $landscape_score = $board->rows->sum(function ($row) {
-                return $row->landscape_values[$row->current_landscape_index] ?? 0;
-            });
-
-            $agency_bonus = $this->calculateAgencyBonus($room, $participation);
-
-            return [
-                'participation' => $participation->id,
-                'score' => $pool_score + $agency_bonus + $landscape_score + $estate_score - $bis_penalty - $skip_penalty,
-            ];
-        });
-
-        $scores = $scores->sortByDesc('score')->values();
-        foreach ($scores as $index => $data) {
-            $participation = Participation::find($data['participation']);
-            if ($participation) {
-                $participation->update([
-                    'score' => $data['score'],
-                    'rank' => $index,
-                ]);
-            }
-        }
     }
 
     /**
@@ -461,50 +191,6 @@ class GameController extends Controller
         }
 
         return $pairs;
-    }
-
-    /**
-     * Посчитает ранг игрока по количеству агентов.
-     * @param mixed $numberOfAgents количество агентов игрока
-     */
-    private function calculateAgencyBonus(Room $room, Participation $participation)
-    {
-        $numberOfAgents = $participation->actions()->where('chosen_action', 5)->count();
-        $rank = $this->calculateAgentsRank($room, $numberOfAgents);
-
-        $bonus = 0;
-        if ($rank == 1) {
-            $bonus = 7;
-        } elseif ($rank == 2) {
-            $bonus = 4;
-        } elseif ($rank == 3) {
-            $bonus = 1;
-        }
-        
-        return $bonus;
-    }
-
-    /**
-     * Посчитает ранг игрока по количеству агентов.
-     * @param mixed $numberOfAgents количество агентов игрока
-     */
-    private function calculateAgentsRank(Room $room, int $numberOfAgents)
-    {
-        $participations = $room->participations()->with('actions')->get();
-        $agentsCounts = $participations->map(function ($participation) {
-            return $participation->actions()->where('chosen_action', 5)->count();
-        })->sortDesc()->values();
-
-        $rank = 1;
-        foreach ($agentsCounts as $count) {
-            if ($count > $numberOfAgents) {
-                $rank++;
-            } elseif ($count <= $numberOfAgents){
-                break;
-            }
-        }
-
-        return $rank;
     }
 
     /**

@@ -25,6 +25,10 @@ class ActionService
      */
     public function handleAction(array $validatedData, int $userId, Round $round, Participation $participation)
     {
+        if ($round->actions()->where('participation_id', $participation->id)->exists()) {
+            abort(403, 'You have already taken your turn for this round.');
+        }
+
         DB::transaction(function () use ($validatedData, $userId, $round, $participation) {
             $houseId = $validatedData['selectedHouses'][0];
             $house = House::with('row')->findOrFail($houseId);
@@ -80,8 +84,8 @@ class ActionService
      */
     private function calculateHouseNumber(array $validatedData): int
     {
-        return $validatedData['action'] == ActionType::AGENT
-            ? $validatedData['number'] + $validatedData['agencyNumber']
+        return $validatedData['action'] == ActionType::AGENT->value
+            ? $validatedData['number'] + $validatedData['agentNumber']
             : $validatedData['number'];
     }
 
@@ -121,7 +125,9 @@ class ActionService
      */
     private function handleSpecificAction(array $validatedData, House|Collection $house, Board $board)
     {
-        switch ((int) $validatedData['action']) {
+        $action = ActionType::from($validatedData['action']);
+
+        switch ($action) {
             case ActionType::FENCE:
                 $this->handleFenceAction($validatedData);
                 break;
@@ -135,7 +141,7 @@ class ActionService
                 $this->handlePoolAction($house, $board);
                 break;
             case ActionType::AGENT:
-                $this->handleAgencyAction($board);
+                $this->handleAgentAction($board);
                 break;
             case ActionType::BIS:
                 $this->handleBisAction($validatedData, $board);
@@ -222,12 +228,12 @@ class ActionService
     }
 
     /**
-     * Handles the agency action.
+     * Handles the agent action.
      *
      * @param  Board  $board  The board to update.
      * @return void
      */
-    private function handleAgencyAction(Board $board)
+    private function handleAgentAction(Board $board)
     {
         $board->update(['number_of_agencies' => $board->number_of_agencies + 1]);
     }
@@ -304,6 +310,10 @@ class ActionService
      */
     public function handleSkip(Round $round, Participation $participation)
     {
+        if ($round->actions()->where('participation_id', $participation->id)->exists()) {
+            abort(403, 'You have already taken your turn for this round.');
+        }
+
         DB::transaction(function () use ($round, $participation) {
             // Create a skip action record
             $round->actions()->create([

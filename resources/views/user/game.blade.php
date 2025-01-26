@@ -254,30 +254,30 @@
                         </div>
                     </div>
                 </div>
-                <!-- Agency Number Selection Mini-Field -->
+                <!-- Agent Number Selection Mini-Field -->
                 <div 
-                    x-show="selectAgency" 
+                    x-show="selectAgent" 
                     x-transition
                     class="absolute flex justify-center items-center z-50"
                     :style="{ top: miniFieldPosition.top + 'px', left: miniFieldPosition.left + 'px' }"
-                    @click.away="selectAgency = false"
+                    @click.away="selectAgent = false"
                 >
                     <div class="bg-white p-4 rounded shadow-lg">
                         <h3 class="text-lg font-bold mb-4">Select Number</h3>
                         <div class="flex gap-4">
-                            <button type="button" @click="selectAgencyNumber(-2)" class="px-4 py-2 bg-blue-500 text-white rounded">
+                            <button type="button" @click="selectAgentNumber(-2)" class="px-4 py-2 bg-blue-500 text-white rounded">
                                 -2
                             </button>
-                            <button type="button" @click="selectAgencyNumber(-1)" class="px-4 py-2 bg-blue-500 text-white rounded">
+                            <button type="button" @click="selectAgentNumber(-1)" class="px-4 py-2 bg-blue-500 text-white rounded">
                                 -1
                             </button>
-                            <button type="button" @click="selectAgencyNumber(0)" class="px-4 py-2 bg-blue-500 text-white rounded">
+                            <button type="button" @click="selectAgentNumber(0)" class="px-4 py-2 bg-blue-500 text-white rounded">
                                 0
                             </button>
-                            <button type="button" @click="selectAgencyNumber(1)" class="px-4 py-2 bg-blue-500 text-white rounded">
+                            <button type="button" @click="selectAgentNumber(1)" class="px-4 py-2 bg-blue-500 text-white rounded">
                                 +1
                             </button>
-                            <button type="button" @click="selectAgencyNumber(2)" class="px-4 py-2 bg-blue-500 text-white rounded">
+                            <button type="button" @click="selectAgentNumber(2)" class="px-4 py-2 bg-blue-500 text-white rounded">
                                 +2
                             </button>
                         </div>
@@ -300,8 +300,8 @@
             selectedNumber: null,
             selectedFenceId: null,
             selectedEstateNumber: null,
-            selectAgency: false,
-            selectedAgencyNumber: null,
+            selectAgent: false,
+            selectedAgentNumber: null,
             selectedHouses: [],
             miniFieldPosition: { top: 0, left: 0 },
             cardPairs,
@@ -313,8 +313,8 @@
                 this.selectedNumber = pair.numberCard;
                 this.selectedFenceId = null;
                 this.selectedEstateNumber = null;
-                this.selectAgency = false;
-                this.selectedAgencyNumber = null;
+                this.selectAgent = false;
+                this.selectedAgentNumber = null;
                 this.selectedHouses = [];
 
                 console.log(`Selected Pair: ${index}, Action: ${this.selectedAction}, Number: ${this.selectedNumber}`);
@@ -349,7 +349,7 @@
                             return false; 
 
                         return true
-                    case "5": // Agency
+                    case "5": // Agent
                         if (this.selectedHouses.length > 0)
                             return false;
 
@@ -390,8 +390,8 @@
                     };
 
                     this.selectedHouses.push(house.id);
-                    this.selectAgency = true;
-                    console.log(`House ${house.id} selected for Agency. Please select a number.`);
+                    this.selectAgent = true;
+                    console.log(`House ${house.id} selected for Agent. Please select a number.`);
                     return;
                 }
 
@@ -437,7 +437,7 @@
                 return this.selectedHouses.length > 0 && this.selectedAction !== null;
             },
 
-            selectAgencyNumber(number) {
+            selectAgentNumber(number) {
                 if (this.selectedAction != 5) {
                     console.log("Wrong action");
                     return;
@@ -448,9 +448,9 @@
                     return;
                 }
 
-                this.selectedAgencyNumber = Number(number);
-                this.selectAgency = false;
-                console.log(`Selected number: ${this.selectedNumber + this.selectedAgencyNumber}`);
+                this.selectedAgentNumber = Number(number);
+                this.selectAgent = false;
+                console.log(`Selected number: ${this.selectedNumber + this.selectedAgentNumber}`);
             },
 
             isSelectableEstate(estate) {
@@ -486,7 +486,7 @@
                     selectedPairIndex: this.selectedPairIndex,
                     selectedHouses: this.selectedHouses,
                     estateIndex: this.selectedEstateNumber,
-                    agencyNumber: this.selectedAgencyNumber,
+                    agentNumber: this.selectedAgentNumber,
                     fenceId: this.selectedFenceId,
                     action: this.selectedAction,
                     number: this.selectedNumber,
@@ -501,8 +501,8 @@
                 this.selectedNumber = null;
                 this.selectedFenceId = null;
                 this.selectedEstateNumber = null;
-                this.selectAgency = false;
-                this.selectedAgencyNumber = null;
+                this.selectAgent = false;
+                this.selectedAgentNumber = null;
                 this.selectedHouses = [];
                 console.log('Turn cancelled.');
             },

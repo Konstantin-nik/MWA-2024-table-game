@@ -73,7 +73,7 @@ class GameService
      * @param  Room  $room  The room to end the game for.
      * @return void
      */
-    private function endGame(Room $room)
+    public function endGame(Room $room)
     {
         Log::info('Ending game for room', ['room_id' => $room->id]);
 
@@ -139,7 +139,7 @@ class GameService
             'skipPenalty' => $this->calculateSkipPenalty($board),
             'estateScore' => $this->calculateEstateScore($board),
             'landscapeScore' => $this->calculateLandscapeScore($board),
-            'agencyBonus' => $this->calculateAgencyBonus($room, $participation),
+            'agentBonus' => $this->calculateAgentBonus($room, $participation),
         ];
 
         Log::debug('Calculated scores for participation', [
@@ -263,15 +263,15 @@ class GameService
     }
 
     /**
-     * Calculates the agency bonus for a given participation.
+     * Calculates the agent bonus for a given participation.
      *
      * @param  Room  $room  The room the participation belongs to.
      * @param  Participation  $participation  The participation to calculate the bonus for.
-     * @return int The calculated agency bonus.
+     * @return int The calculated agent bonus.
      */
-    private function calculateAgencyBonus(Room $room, Participation $participation)
+    private function calculateAgentBonus(Room $room, Participation $participation)
     {
-        $numberOfAgents = $participation->actions()->where('chosen_action', ActionType::AGENT)->count();
+        $numberOfAgents = $participation->actions()->where('chosen_action', ActionType::AGENT->value)->count();
         $rank = $this->calculateAgentsRank($room, $numberOfAgents);
 
         return AppConstants::AGENT_REWARDS[$rank] ?? 0;
@@ -288,7 +288,7 @@ class GameService
     {
         $participations = $room->participations()->with('actions')->get();
         $agentsCounts = $participations->map(function ($participation) {
-            return $participation->actions()->where('chosen_action', ActionType::AGENT)->count();
+            return $participation->actions()->where('chosen_action', ActionType::AGENT->value)->count();
         })->sortDesc()->values();
 
         $rank = 1;
@@ -312,7 +312,7 @@ class GameService
      */
     private function updateParticipationScores(Participation $participation, array $scores)
     {
-        $totalScore = $scores['poolScore'] + $scores['agencyBonus'] + $scores['landscapeScore']
+        $totalScore = $scores['poolScore'] + $scores['agentBonus'] + $scores['landscapeScore']
             + $scores['estateScore'] - $scores['bisPenalty'] - $scores['skipPenalty'];
 
         if ($participation) {
