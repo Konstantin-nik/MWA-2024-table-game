@@ -17,10 +17,10 @@ class ActionService
     /**
      * Handles a player action and creates an action record.
      *
-     * @param array $validatedData The validated action data.
-     * @param int $userId The ID of the user performing the action.
-     * @param Round $round The current round.
-     * @param Participation $participation The participation performing the action.
+     * @param  array  $validatedData  The validated action data.
+     * @param  int  $userId  The ID of the user performing the action.
+     * @param  Round  $round  The current round.
+     * @param  Participation  $participation  The participation performing the action.
      * @return void
      */
     public function handleAction(array $validatedData, int $userId, Round $round, Participation $participation)
@@ -48,8 +48,8 @@ class ActionService
     /**
      * Validates that the user owns the board.
      *
-     * @param Board $board The board to validate.
-     * @param int $userId The ID of the user.
+     * @param  Board  $board  The board to validate.
+     * @param  int  $userId  The ID of the user.
      * @return void
      */
     private function validateOwnership(Board $board, int $userId)
@@ -62,7 +62,7 @@ class ActionService
     /**
      * Validates that the house is in a valid state for numbering.
      *
-     * @param House $house The house to validate.
+     * @param  House  $house  The house to validate.
      * @return void
      */
     private function validateHouseState(House|Collection $house)
@@ -75,7 +75,7 @@ class ActionService
     /**
      * Calculates the house number based on the action.
      *
-     * @param array $validatedData The validated action data.
+     * @param  array  $validatedData  The validated action data.
      * @return int The calculated house number.
      */
     private function calculateHouseNumber(array $validatedData): int
@@ -88,8 +88,8 @@ class ActionService
     /**
      * Validates that the house number can be placed in the row.
      *
-     * @param House $house The house to validate.
-     * @param int $houseNumber The proposed house number.
+     * @param  House  $house  The house to validate.
+     * @param  int  $houseNumber  The proposed house number.
      * @return void
      */
     private function validateHouseNumberPlacement(House|Collection $house, int $houseNumber)
@@ -114,14 +114,14 @@ class ActionService
     /**
      * Handles action-specific logic.
      *
-     * @param array $validatedData The validated action data.
-     * @param House $house The house being acted upon.
-     * @param Board $board The board being updated.
+     * @param  array  $validatedData  The validated action data.
+     * @param  House  $house  The house being acted upon.
+     * @param  Board  $board  The board being updated.
      * @return void
      */
     private function handleSpecificAction(array $validatedData, House|Collection $house, Board $board)
     {
-        switch ($validatedData['action']) {
+        switch ((int) $validatedData['action']) {
             case ActionType::FENCE:
                 $this->handleFenceAction($validatedData);
                 break;
@@ -148,7 +148,7 @@ class ActionService
     /**
      * Handles the fence action.
      *
-     * @param array $validatedData The validated action data.
+     * @param  array  $validatedData  The validated action data.
      * @return void
      */
     private function handleFenceAction(array $validatedData)
@@ -167,8 +167,8 @@ class ActionService
     /**
      * Handles the estate action.
      *
-     * @param array $validatedData The validated action data.
-     * @param Board $board The board to update.
+     * @param  array  $validatedData  The validated action data.
+     * @param  Board  $board  The board to update.
      * @return void
      */
     private function handleEstateAction(array $validatedData, Board $board)
@@ -177,7 +177,7 @@ class ActionService
             abort(403, 'No estate selected.');
         }
         $estates = $board->estates_values;
-        if (!isset($estates[$validatedData['estateIndex']])) {
+        if (! isset($estates[$validatedData['estateIndex']])) {
             abort(403, 'No such estate.');
         }
 
@@ -193,7 +193,7 @@ class ActionService
     /**
      * Handles the landscape action.
      *
-     * @param Row $row The row to update.
+     * @param  Row  $row  The row to update.
      * @return void
      */
     private function handleLandscapeAction(Row $row)
@@ -208,13 +208,13 @@ class ActionService
     /**
      * Handles the pool action.
      *
-     * @param House $house The house to update.
-     * @param Board $board The board to update.
+     * @param  House  $house  The house to update.
+     * @param  Board  $board  The board to update.
      * @return void
      */
     private function handlePoolAction(House $house, Board $board)
     {
-        if (!$house->has_pool) {
+        if (! $house->has_pool) {
             abort(403, 'This house has no pool.');
         }
         $house->update(['is_pool_constructed' => true]);
@@ -224,7 +224,7 @@ class ActionService
     /**
      * Handles the agency action.
      *
-     * @param Board $board The board to update.
+     * @param  Board  $board  The board to update.
      * @return void
      */
     private function handleAgencyAction(Board $board)
@@ -235,8 +235,8 @@ class ActionService
     /**
      * Handles the bis action.
      *
-     * @param array $validatedData The validated action data.
-     * @param Board $board The board to update.
+     * @param  array  $validatedData  The validated action data.
+     * @param  Board  $board  The board to update.
      * @return void
      */
     private function handleBisAction(array $validatedData, Board $board)
@@ -264,7 +264,7 @@ class ActionService
             })
             ->first();
 
-        if (!$houseBNeighbour) {
+        if (! $houseBNeighbour) {
             abort(403, 'No valid neighboring house found for Bis action.');
         }
         $houseB->update(['number' => $houseBNeighbour->number]);
@@ -274,10 +274,10 @@ class ActionService
     /**
      * Creates an action record in the database.
      *
-     * @param Round $round The current round.
-     * @param Participation $participation The participation performing the action.
-     * @param array $validatedData The validated action data.
-     * @param int $houseNumber The house number assigned during the action.
+     * @param  Round  $round  The current round.
+     * @param  Participation  $participation  The participation performing the action.
+     * @param  array  $validatedData  The validated action data.
+     * @param  int  $houseNumber  The house number assigned during the action.
      * @return void
      */
     private function createActionRecord(Round $round, Participation $participation, array $validatedData, int $houseNumber)
@@ -298,8 +298,8 @@ class ActionService
     /**
      * Handles a player skipping their turn.
      *
-     * @param Round $round The current round.
-     * @param Participation $participation The participation skipping the turn.
+     * @param  Round  $round  The current round.
+     * @param  Participation  $participation  The participation skipping the turn.
      * @return void
      */
     public function handleSkip(Round $round, Participation $participation)

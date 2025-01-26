@@ -8,6 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 class MakeEnumCommand extends Command
 {
     protected $signature = 'make:enum {name}';
+
     protected $description = 'Create a new Enum class';
 
     protected $files;
@@ -17,6 +18,7 @@ class MakeEnumCommand extends Command
         parent::__construct();
         $this->files = $files;
     }
+
     /**
      * Execute the console command.
      */
@@ -26,7 +28,8 @@ class MakeEnumCommand extends Command
         $path = $this->getPath($name);
 
         if ($this->files->exists($path)) {
-            $this->error("Enum class already exists!");
+            $this->error('Enum class already exists!');
+
             return;
         }
 
@@ -43,7 +46,7 @@ class MakeEnumCommand extends Command
 
     protected function makeDirectory($path)
     {
-        if (!$this->files->isDirectory(dirname($path))) {
+        if (! $this->files->isDirectory(dirname($path))) {
             $this->files->makeDirectory(dirname($path), 0755, true);
         }
     }

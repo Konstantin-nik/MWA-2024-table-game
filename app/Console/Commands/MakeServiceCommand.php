@@ -38,7 +38,8 @@ class MakeServiceCommand extends Command
         $path = $this->getPath($name);
 
         if ($this->files->exists($path)) {
-            $this->error("Service class already exists!");
+            $this->error('Service class already exists!');
+
             return;
         }
 
@@ -55,7 +56,7 @@ class MakeServiceCommand extends Command
 
     protected function makeDirectory($path)
     {
-        if (!$this->files->isDirectory(dirname($path))) {
+        if (! $this->files->isDirectory(dirname($path))) {
             $this->files->makeDirectory(dirname($path), 0755, true);
         }
     }

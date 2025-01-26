@@ -9,7 +9,7 @@ class Participation extends Model
 {
     /** @use HasFactory<\Database\Factories\ParticipationFactory> */
     use HasFactory;
- 
+
     protected $guarded;
 
     protected $casts = [

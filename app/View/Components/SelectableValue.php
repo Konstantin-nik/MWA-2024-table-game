@@ -9,8 +9,11 @@ use Illuminate\View\Component;
 class SelectableValue extends Component
 {
     public $value;
+
     public $isSelected;
+
     public $selectedColor;
+
     public $unselectedColor;
 
     /**

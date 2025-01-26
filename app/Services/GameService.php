@@ -22,8 +22,9 @@ class GameService
     /**
      * Retrieves the current round for a given room.
      *
-     * @param Room $room The room to retrieve the current round for.
+     * @param  Room  $room  The room to retrieve the current round for.
      * @return Round The latest round for the room.
+     *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If no round is found.
      */
     public function getCurrentRound(Room $room): Round
@@ -34,9 +35,10 @@ class GameService
     /**
      * Retrieves the participation for a specific user in a given room.
      *
-     * @param Room $room The room to search for the participation.
-     * @param int $userId The ID of the user.
+     * @param  Room  $room  The room to search for the participation.
+     * @param  int  $userId  The ID of the user.
      * @return Participation The participation record for the user.
+     *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If no participation is found.
      */
     public function getParticipationForUser(Room $room, int $userId): Participation
@@ -47,7 +49,7 @@ class GameService
     /**
      * Checks if the game should end based on skip penalties.
      *
-     * @param Room $room The room to check.
+     * @param  Room  $room  The room to check.
      * @return bool True if the game should end, false otherwise.
      */
     public function shouldEndGame(Room $room): bool
@@ -68,7 +70,7 @@ class GameService
     /**
      * Ends the game for a given room by calculating final scores and updating the room's status.
      *
-     * @param Room $room The room to end the game for.
+     * @param  Room  $room  The room to end the game for.
      * @return void
      */
     private function endGame(Room $room)
@@ -94,7 +96,7 @@ class GameService
     /**
      * Calculates final scores for all participations in a room and updates their ranks.
      *
-     * @param Room $room The room to calculate scores for.
+     * @param  Room  $room  The room to calculate scores for.
      * @return void
      */
     private function countFinalScores(Room $room)
@@ -107,7 +109,7 @@ class GameService
             $scores = $this->calculateParticipationScores($participation, $room);
             $this->updateParticipationScores($participation, $scores);
         });
-        
+
         $this->updateRanks($room);
 
         Log::info('Final scores calculated and ranks updated for room', ['room_id' => $room->id]);
@@ -116,21 +118,22 @@ class GameService
     /**
      * Calculates the scores for a specific participation.
      *
-     * @param Participation $participation The participation to calculate scores for.
-     * @param Room $room The room the participation belongs to.
+     * @param  Participation  $participation  The participation to calculate scores for.
+     * @param  Room  $room  The room the participation belongs to.
      * @return array|null An associative array of scores, or null if no board is found.
      */
     private function calculateParticipationScores(Participation $participation, Room $room): ?array
     {
         $board = $participation->board;
-        if (!$board) {
+        if (! $board) {
             Log::warning('No board found for participation', ['participation_id' => $participation->id]);
+
             return null;
         }
 
         Log::info('Calculating scores for participation', ['participation_id' => $participation->id]);
 
-        $scores = [ 
+        $scores = [
             'poolScore' => $this->calculatePoolScore($board),
             'bisPenalty' => $this->calculateBisPenalty($board),
             'skipPenalty' => $this->calculateSkipPenalty($board),
@@ -138,7 +141,7 @@ class GameService
             'landscapeScore' => $this->calculateLandscapeScore($board),
             'agencyBonus' => $this->calculateAgencyBonus($room, $participation),
         ];
-        
+
         Log::debug('Calculated scores for participation', [
             'participation_id' => $participation->id,
             'scores' => $scores,
@@ -150,43 +153,46 @@ class GameService
     /**
      * Calculates the pool score for a given board.
      *
-     * @param Board $board The board to calculate the score for.
+     * @param  Board  $board  The board to calculate the score for.
      * @return int The calculated pool score.
      */
     private function calculatePoolScore(Board $board): int
     {
         $numberOfPools = $board->number_of_pools;
+
         return $board->pool_values[$numberOfPools] ?? 0;
     }
 
     /**
      * Calculates the Bis penalty for a given board.
      *
-     * @param Board $board The board to calculate the penalty for.
+     * @param  Board  $board  The board to calculate the penalty for.
      * @return int The calculated Bis penalty.
      */
     private function calculateBisPenalty(Board $board): int
     {
         $numberOfBises = $board->number_of_bises;
+
         return $board->bis_values[$numberOfBises] ?? 0;
     }
 
     /**
      * Calculates the skip penalty for a given board.
      *
-     * @param Board $board The board to calculate the penalty for.
+     * @param  Board  $board  The board to calculate the penalty for.
      * @return int The calculated skip penalty.
      */
     private function calculateSkipPenalty(Board $board): int
     {
         $numberOfSkips = $board->number_of_skips;
+
         return $board->skip_penalties[$numberOfSkips] ?? 0;
     }
 
     /**
      * Calculates the estate score for a given board.
      *
-     * @param Board $board The board to calculate the score for.
+     * @param  Board  $board  The board to calculate the score for.
      * @return int The calculated estate score.
      */
     private function calculateEstateScore(Board $board): int
@@ -205,7 +211,7 @@ class GameService
     /**
      * Counts the number of estates of each size for a given board.
      *
-     * @param Board $board The board to count estates for.
+     * @param  Board  $board  The board to count estates for.
      * @return array An array where the index represents the estate size minus one,
      *               and the value represents the count of estates of that size.
      */
@@ -246,7 +252,7 @@ class GameService
     /**
      * Calculates the landscape score for a given board.
      *
-     * @param Board $board The board to calculate the score for.
+     * @param  Board  $board  The board to calculate the score for.
      * @return int The calculated landscape score.
      */
     private function calculateLandscapeScore(Board $board): int
@@ -259,8 +265,8 @@ class GameService
     /**
      * Calculates the agency bonus for a given participation.
      *
-     * @param Room $room The room the participation belongs to.
-     * @param Participation $participation The participation to calculate the bonus for.
+     * @param  Room  $room  The room the participation belongs to.
+     * @param  Participation  $participation  The participation to calculate the bonus for.
      * @return int The calculated agency bonus.
      */
     private function calculateAgencyBonus(Room $room, Participation $participation)
@@ -271,15 +277,14 @@ class GameService
         return AppConstants::AGENT_REWARDS[$rank] ?? 0;
     }
 
-
     /**
      * Calculates the rank of a player based on the number of agents they have.
      *
-     * @param Room $room The room to calculate the rank for.
-     * @param int $numberOfAgents The number of agents the player has.
+     * @param  Room  $room  The room to calculate the rank for.
+     * @param  int  $numberOfAgents  The number of agents the player has.
      * @return int The calculated rank.
      */
-    private function calculateAgentsRank(Room $room, int $numberOfAgents)
+    public function calculateAgentsRank(Room $room, int $numberOfAgents)
     {
         $participations = $room->participations()->with('actions')->get();
         $agentsCounts = $participations->map(function ($participation) {
@@ -290,7 +295,7 @@ class GameService
         foreach ($agentsCounts as $count) {
             if ($count > $numberOfAgents) {
                 $rank++;
-            } elseif ($count <= $numberOfAgents){
+            } elseif ($count <= $numberOfAgents) {
                 break;
             }
         }
@@ -301,13 +306,13 @@ class GameService
     /**
      * Updates the scores for a given participation.
      *
-     * @param Participation $participation The participation to update.
-     * @param array $scores An associative array of scores.
+     * @param  Participation  $participation  The participation to update.
+     * @param  array  $scores  An associative array of scores.
      * @return void
      */
     private function updateParticipationScores(Participation $participation, array $scores)
     {
-        $totalScore = $scores['poolScore'] + $scores['agencyBonus'] + $scores['landscapeScore'] 
+        $totalScore = $scores['poolScore'] + $scores['agencyBonus'] + $scores['landscapeScore']
             + $scores['estateScore'] - $scores['bisPenalty'] - $scores['skipPenalty'];
 
         if ($participation) {
@@ -326,7 +331,7 @@ class GameService
     /**
      * Updates the ranks for all participations in a room based on their scores.
      *
-     * @param Room $room The room to update ranks for.
+     * @param  Room  $room  The room to update ranks for.
      * @return void
      */
     private function updateRanks(Room $room)
@@ -340,6 +345,7 @@ class GameService
 
         if ($participations->isEmpty()) {
             Log::warning('No participations with valid scores found for room', ['room_id' => $room->id]);
+
             return;
         }
 

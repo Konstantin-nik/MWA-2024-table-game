@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ActionType
+enum ActionType: int
 {
     case FENCE = 1;
     case ESTATE = 2;

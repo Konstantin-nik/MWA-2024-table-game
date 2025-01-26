@@ -12,7 +12,7 @@ class RoundService
     /**
      * Checks if the round has ended (all players have taken their actions).
      *
-     * @param Round $round The round to check.
+     * @param  Round  $round  The round to check.
      * @return bool True if the round has ended, false otherwise.
      */
     public function isRoundEnd(Round $round): bool
@@ -23,10 +23,10 @@ class RoundService
         return $totalActions >= $totalParticipations;
     }
 
-     /**
+    /**
      * Ends the current round.
      *
-     * @param Round $round The round to end.
+     * @param  Round  $round  The round to end.
      * @return void
      */
     public function endRound(Round $round)
@@ -50,7 +50,7 @@ class RoundService
     /**
      * Starts a new round in the room.
      *
-     * @param Room $room The room to start the new round in.
+     * @param  Room  $room  The room to start the new round in.
      * @return void
      */
     public function startNewRound(Room $room)
