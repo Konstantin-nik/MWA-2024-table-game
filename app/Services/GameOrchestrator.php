@@ -23,7 +23,7 @@ class GameOrchestrator
      * @param Room $room The room the round belongs to.
      * @return string The result of the turn (e.g., 'turn_ended', 'round_ended', 'game_ended').
      */
-    public function handleTurnEnd(Round $round, Room $room): string
+    public function handleActionEnd(Round $round, Room $room): string
     {
         if ($this->roundService->isRoundEnd($round)) {
             $this->roundService->endRound($round);
@@ -37,6 +37,6 @@ class GameOrchestrator
             return 'round_ended';
         }
 
-        return 'turn_ended';
+        return 'action_ended';
     }
 }
