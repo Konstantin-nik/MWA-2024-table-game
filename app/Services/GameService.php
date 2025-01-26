@@ -265,7 +265,7 @@ class GameService
      */
     private function calculateAgencyBonus(Room $room, Participation $participation)
     {
-        $numberOfAgents = $participation->actions()->where('chosen_action', ActionType::AGENCY)->count();
+        $numberOfAgents = $participation->actions()->where('chosen_action', ActionType::AGENT)->count();
         $rank = $this->calculateAgentsRank($room, $numberOfAgents);
 
         return AppConstants::AGENT_REWARDS[$rank] ?? 0;
@@ -283,7 +283,7 @@ class GameService
     {
         $participations = $room->participations()->with('actions')->get();
         $agentsCounts = $participations->map(function ($participation) {
-            return $participation->actions()->where('chosen_action', ActionType::AGENCY)->count();
+            return $participation->actions()->where('chosen_action', ActionType::AGENT)->count();
         })->sortDesc()->values();
 
         $rank = 1;

@@ -8,7 +8,7 @@ enum ActionType
     case ESTATE = 2;
     case LANDSCAPE = 3;
     case POOL = 4;
-    case AGENCY = 5;
+    case AGENT = 5;
     case BIS = 6;
     case SKIP = 7;
 }

@@ -80,7 +80,7 @@ class ActionService
      */
     private function calculateHouseNumber(array $validatedData): int
     {
-        return $validatedData['action'] == ActionType::AGENCY
+        return $validatedData['action'] == ActionType::AGENT
             ? $validatedData['number'] + $validatedData['agencyNumber']
             : $validatedData['number'];
     }
@@ -134,7 +134,7 @@ class ActionService
             case ActionType::POOL:
                 $this->handlePoolAction($house, $board);
                 break;
-            case ActionType::AGENCY:
+            case ActionType::AGENT:
                 $this->handleAgencyAction($board);
                 break;
             case ActionType::BIS:
