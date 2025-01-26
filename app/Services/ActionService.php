@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class ActionService
 {
     /**
-     * Handles a player action.
+     * Handles a player action and creates an action record.
      *
      * @param array $validatedData The validated action data.
      * @param int $userId The ID of the user performing the action.
@@ -26,57 +26,23 @@ class ActionService
     public function handleAction(array $validatedData, int $userId, Round $round, Participation $participation)
     {
         DB::transaction(function () use ($validatedData, $userId, $round, $participation) {
-            $actionType = ActionType::from($validatedData['action']);
+            $houseId = $validatedData['selectedHouses'][0];
+            $house = House::with('row')->findOrFail($houseId);
+            $board = $house->row->board;
 
-            if ($actionType === ActionType::SKIP) {
-                $this->handleSkip($participation);
-            } else {
-                $this->handleRegularAction($validatedData, $userId);
-            }
+            $this->validateOwnership($board, $userId);
+            $this->validateHouseState($house);
 
-            $this->createActionRecord($round, $participation, $validatedData, $actionType);
+            $houseNumber = $this->calculateHouseNumber($validatedData);
+
+            $this->validateHouseNumberPlacement($house, $houseNumber);
+
+            $house->update(['number' => $houseNumber]);
+
+            $this->handleSpecificAction($validatedData, $house, $board);
+
+            $this->createActionRecord($round, $participation, $validatedData, $houseNumber);
         });
-    }
-
-    /**
-     * Handles the skip action.
-     *
-     * @param Participation $participation The participation performing the action.
-     * @return void
-     */
-    private function handleSkip(Participation $participation)
-    {
-        $board = $participation->board()->firstOrFail();
-        if ($board->number_of_skips >= count($board->skip_penalties) - 1) {
-            abort(403, 'You cannot skip any more turns. It should be the end of the game.');
-        }
-
-        $board->update(['number_of_skips' => $board->number_of_skips + 1]);
-    }
-
-    /**
-     * Handles a regular action (not skip).
-     *
-     * @param array $validatedData The validated action data.
-     * @param int $userId The ID of the user performing the action.
-     * @return void
-     */
-    private function handleRegularAction(array $validatedData, int $userId)
-    {
-        $houseId = $validatedData['selectedHouses'][0];
-        $house = House::with('row')->findOrFail($houseId);
-        $board = $house->row->board;
-
-        $this->validateOwnership($board, $userId);
-        $this->validateHouseState($house);
-
-        $houseNumber = $this->calculateHouseNumber($validatedData);
-
-        $this->validateHouseNumberPlacement($house, $houseNumber);
-
-        $house->update(['number' => $houseNumber]);
-
-        $this->handleSpecificAction($validatedData, $house, $board);
     }
 
     /**
@@ -306,24 +272,50 @@ class ActionService
     }
 
     /**
-     * Handles the skip action.
+     * Creates an action record in the database.
      *
-     * @param Participation $participation The participation performing the action.
      * @param Round $round The current round.
+     * @param Participation $participation The participation performing the action.
+     * @param array $validatedData The validated action data.
+     * @param int $houseNumber The house number assigned during the action.
      * @return void
      */
-    public function handleSkipAction(Participation $participation, Round $round)
+    private function createActionRecord(Round $round, Participation $participation, array $validatedData, int $houseNumber)
     {
-        DB::transaction(function () use ($participation, $round) {
+        $round->actions()->create([
+            'round_id' => $round->id,
+            'participation_id' => $participation->id,
+            'chosen_deck' => $validatedData['selectedPairIndex'],
+            'chosen_action' => $validatedData['action'],
+            'chosen_number' => $houseNumber,
+            'action_details' => json_encode([
+                'houses' => $validatedData['selectedHouses'],
+                'fence' => $validatedData['fenceId'],
+            ]),
+        ]);
+    }
+
+    /**
+     * Handles a player skipping their turn.
+     *
+     * @param Round $round The current round.
+     * @param Participation $participation The participation skipping the turn.
+     * @return void
+     */
+    public function handleSkip(Round $round, Participation $participation)
+    {
+        DB::transaction(function () use ($round, $participation) {
+            // Create a skip action record
             $round->actions()->create([
                 'round_id' => $round->id,
                 'participation_id' => $participation->id,
                 'chosen_deck' => -1,
-                'chosen_action' => ActionType::SKIP->value,
+                'chosen_action' => -1,
                 'chosen_number' => -1,
                 'action_details' => json_encode(['skip']),
             ]);
 
+            // Increment the skip count on the board
             $board = $participation->board()->firstOrFail();
             if ($board->number_of_skips >= count($board->skip_penalties) - 1) {
                 abort(403, 'You cannot skip any more turns. It should be the end of the game.');
@@ -331,30 +323,5 @@ class ActionService
 
             $board->update(['number_of_skips' => $board->number_of_skips + 1]);
         });
-    }
-
-    private function createActionRecord(Round $round, Participation $participation, array $validatedData, ActionType $actionType)
-    {
-        $actionDetails = [];
-
-        if ($actionType === ActionType::SKIP) {
-            $actionDetails = [
-                'skip'
-            ];
-        } else {
-            $actionDetails = [
-                'houses' => $validatedData['selectedHouses'],
-                'fence' => $validatedData['fenceId'],
-            ];
-        }
-
-        $round->actions()->create([
-            'round_id' => $round->id,
-            'participation_id' => $participation->id,
-            'chosen_deck' => $validatedData['selectedPairIndex'],
-            'chosen_action' => $actionType->value,
-            'chosen_number' => $actionType === ActionType::SKIP ? -1 : $validatedData['number'],
-            'action_details' => json_encode($actionDetails),
-        ]);
     }
 }
