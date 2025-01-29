@@ -11,7 +11,9 @@ class RoomsList extends Component
     use WithPagination;
 
     public $title;
+
     public $showCreate;
+
     public $emptyStateMessage;
 
     protected $listeners = ['refreshRooms' => '$refresh'];

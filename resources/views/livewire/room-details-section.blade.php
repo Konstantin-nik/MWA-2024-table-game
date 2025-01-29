@@ -1,7 +1,9 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
         <x-room.detail label="Room Size:" :value="$room->capacity . ' players'" />
-        <x-room.detail label="Current Players:" :value="$room->users()->count()" />
+        <div wire:poll.{{ $room->started_at || $room->finished_at ? '' : '3s' }}="loadNumberOfUsers">
+            <x-room.detail label="Current Players:" :value="$room->users()->count()" />
+        </div>
         <x-room.detail label="Type:" :value="$room->is_public ? 'Public' : 'Private'" />
     </div>
     <div>

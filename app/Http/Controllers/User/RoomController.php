@@ -67,9 +67,7 @@ class RoomController extends Controller
      */
     public function show(string $id)
     {
-        $room = Room::with('participations.user')->findOrFail($id);
-
-        return view('user.rooms.show', compact('room'));
+        return view('user.rooms.show', ['roomId' => $id]);
     }
 
     /**
