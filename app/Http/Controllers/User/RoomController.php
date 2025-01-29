@@ -160,7 +160,7 @@ class RoomController extends Controller
 
         broadcast(new GameStarted($room->id));
 
-        return redirect()->route('user.game', $room)->with('success', 'Game started successfully!');
+        return redirect()->route('user.rooms.show', $room)->with('success', 'Game started successfully!');
     }
 
     // Authorization functions ------------------------------------------------
