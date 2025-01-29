@@ -41,7 +41,7 @@
                 <!-- Copied Message -->
                 <x-copied-message :value="$room->invitation_token"/>
             </div>
-            <div wire:poll.5s>
+            <div wire:poll.wire:poll.{{ $room->started_at || $room->finished_at ? '20s' : '3s' }}>
                 @if ($room->finished_at)
                     <span class="text-sm bg-red-100 text-red-700 font-medium px-3 py-1 rounded">Game Finished</span>
                 @elseif ($room->started_at)
