@@ -85,3 +85,18 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+            if (window.Echo) {
+                // Listen for the GameStarted event
+                window.Echo.join(`room.{{ $room->id }}`)
+                    .listen('.game.started', (e) => {
+                        // Redirect to the game route
+                        window.location.href = "{{ route('user.game', $room->id) }}";
+                    });
+            } else {
+                console.error('Echo is not initialized.');
+            }
+        });
+</script>

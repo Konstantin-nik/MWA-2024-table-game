@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Events\GameStarted;
 use App\Http\Controllers\Controller;
 use App\Models\Board;
 use App\Models\Deck;
@@ -140,7 +141,6 @@ class RoomController extends Controller
         $room = Room::findOrFail($id);
         $this->isAuthorizedToStart($room);
         DB::transaction(function () use ($room) {
-            // 6 Decks creation
             Deck::createDecksForRoom($room->id, 0);
 
             // Initializing Boards for each player
@@ -157,6 +157,8 @@ class RoomController extends Controller
                 'started_at' => now(),
             ]);
         });
+
+        broadcast(new GameStarted($room->id));
 
         return redirect()->route('user.game', $room)->with('success', 'Game started successfully!');
     }
