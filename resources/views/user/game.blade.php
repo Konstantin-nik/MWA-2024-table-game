@@ -289,7 +289,7 @@
         </div>
     @endif
 </x-main-layout>
-
+@livewireScripts
 @if ($room === null)
 @else
 <script>
