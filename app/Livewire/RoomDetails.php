@@ -44,11 +44,6 @@ class RoomDetails extends Component
         $this->canLeave = $user->canLeaveRoom($this->room);
     }
 
-    public function loadRoomStatus()
-    {
-        
-    }
-
     public function render()
     {
         return view('livewire.room-details');

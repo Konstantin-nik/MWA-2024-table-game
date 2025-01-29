@@ -41,7 +41,7 @@
                 <!-- Copied Message -->
                 <x-copied-message :value="$room->invitation_token"/>
             </div>
-            <div wire:poll.wire:poll.{{ $room->started_at || $room->finished_at ? '20s' : '3s' }}>
+            <div wire:poll.{{ $room->started_at ? ($room->finished_at ? '' : '20s') : '3s' }}>
                 @if ($room->finished_at)
                     <span class="text-sm bg-red-100 text-red-700 font-medium px-3 py-1 rounded">Game Finished</span>
                 @elseif ($room->started_at)
@@ -63,11 +63,13 @@
             @livewire('players-list', ['roomId' => $room->id])
 
             <!-- Join/Leave button -->
-            @if ($canJoin)
-                <x-form.one-button-form label="Join" redirectTo="{{ route('user.rooms.join', $room) }}" />
-            @elseif ($canLeave)
-                <x-form.one-button-form label="Leave Room" redirectTo="{{ route('user.rooms.leave', $room) }}" />
-            @endif
+            <div wire:poll.{{ $room->started_at || $room->finished_at ? '' : '3s' }}="loadRoom">
+                @if ($canJoin)
+                    <x-form.one-button-form label="Join" redirectTo="{{ route('user.rooms.join', $room) }}" />
+                @elseif ($canLeave)
+                    <x-form.one-button-form label="Leave Room" redirectTo="{{ route('user.rooms.leave', $room) }}" />
+                @endif
+            </div>
         </x-panel>
 
         <!-- Actions -->
@@ -92,7 +94,6 @@
                 // Listen for the GameStarted event
                 window.Echo.join(`room.{{ $room->id }}`)
                     .listen('.game.started', (e) => {
-                        // Redirect to the game route
                         window.location.href = "{{ route('user.game', $room->id) }}";
                     });
             } else {
