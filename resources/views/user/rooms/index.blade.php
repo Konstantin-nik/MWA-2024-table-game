@@ -1,3 +1,7 @@
 <x-main-layout>
-    <x-tiled-rooms-layout title="Available Rooms" showCreate="true" :rooms="$rooms" />
+    @livewire('rooms-list', [
+        'title' => 'Available Rooms',
+        'showCreate' => true,
+        'emptyStateMessage' => null,
+    ])
 </x-main-layout>
