@@ -15,7 +15,7 @@ class ParticipationController extends Controller
         $user = auth()->user();
         $user->load('rooms');
 
-        $rooms = $user->rooms()->orderBy('started_at')->get();
+        $rooms = $user->rooms()->orderByDesc('started_at')->get();
         $rooms->loadCount('users');
 
         return view('participations.index', compact('rooms'));
