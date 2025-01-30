@@ -58,7 +58,9 @@ class RoundService
         Log::info('Starting new round', ['room_id' => $room->id]);
 
         try {
-            $newRoundIndex = $room->rounds()->latest('index')->first()->index + 1;
+            $lastRound = $room->rounds()->latest('index')->first();
+            $newRoundIndex = $lastRound ? $lastRound->index + 1 : 1; 
+
             $room->rounds()->create(['index' => $newRoundIndex]);
 
             Log::info('New round started', ['room_id' => $room->id, 'round_index' => $newRoundIndex]);

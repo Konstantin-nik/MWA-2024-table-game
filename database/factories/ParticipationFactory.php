@@ -2,13 +2,15 @@
 
 namespace Database\Factories;
 
+use App\Models\Participation;
+use App\Models\User;
+use App\Models\Room;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Participation>
- */
 class ParticipationFactory extends Factory
 {
+    protected $model = Participation::class;
+
     /**
      * Define the model's default state.
      *
@@ -17,7 +19,8 @@ class ParticipationFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => User::factory(), 
+            'room_id' => Room::factory(), 
         ];
     }
 }
