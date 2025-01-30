@@ -4,15 +4,12 @@ namespace App\Http\Controllers\User;
 
 use App\Enums\ActionType;
 use App\Http\Controllers\Controller;
-use App\Models\Card;
-use App\Models\Deck;
 use App\Models\Room;
 use App\Services\ActionService;
 use App\Services\GameOrchestrator;
 use App\Services\GameService;
 use App\Services\RoundService;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Validator;
 
 class GameController extends Controller
@@ -51,7 +48,7 @@ class GameController extends Controller
             $board = $participation->board()->with(['rows.houses', 'rows.fences'])->first();
 
             $currentRound = $this->gameService->getCurrentRound($room);
-            $cardPairs = $this->getCardPairsByRoundIndex($room, $currentRound->index);
+            $cardPairs = $this->gameOrchestrator->getCardPairsOrCreate($room, $currentRound->index);
 
             $numberOfAgents = $participation->actions()->where('chosen_action', ActionType::AGENT->value)->count();
             $agentsRank = $this->gameService->calculateAgentsRank($room, $numberOfAgents);
@@ -152,57 +149,5 @@ class GameController extends Controller
         $participations = $room->participations()->with('user')->get()->sortByDesc('score');
 
         return view('user.game.end', compact('participations'));
-    }
-
-    /**
-     * Get card pairs and generate new deck if needed.
-     *
-     * @param  mixed  $currentRoundIndex
-     * @return mixed
-     */
-    private function getCardPairsByRoundIndex(Room $room, int $currentRoundIndex)
-    {
-        $cards = Card::with('deck')
-            ->whereHas('deck', function ($query) use ($room) {
-                $query->where('room_id', $room->id);
-            })
-            ->whereIn('position', [$currentRoundIndex, $currentRoundIndex + 1])
-            ->get();
-
-        $actionCards = $cards->where('position', $currentRoundIndex);
-        $numberCards = $cards->where('position', $currentRoundIndex + 1);
-
-        $pairs = collect();
-        $maxPairs = min($actionCards->count(), $numberCards->count());
-        if ($maxPairs == 0) {
-            $this->generateNewDeck($room);
-
-            return $this->getCardPairsByRoundIndex($room, $currentRoundIndex);
-        }
-
-        for ($i = 0; $i < $maxPairs; $i++) {
-            $actionCard = $actionCards->values()->get($i);
-            $numberCard = $numberCards->values()->get($i);
-
-            $pairs->push([
-                'numberCard' => $numberCard ? $numberCard->number : null,
-                'actionCard' => $actionCard ? $actionCard->action : null,
-            ]);
-        }
-
-        return $pairs;
-    }
-
-    /**
-     * Will generate new Decks for this room.
-     *
-     * @param  mixed  $currentRoundIndex
-     * @return void
-     */
-    private function generateNewDeck(Room $room)
-    {
-        $lastDeckIndex = $room->decks->last()->index;
-        $stack = ($lastDeckIndex + 1) / 3;
-        Deck::createDecksForRoom($room->id, $stack);
     }
 }

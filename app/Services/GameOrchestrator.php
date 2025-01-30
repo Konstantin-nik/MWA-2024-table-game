@@ -7,14 +7,28 @@ use App\Models\Round;
 
 class GameOrchestrator
 {
-    protected $roundService;
+    public function __construct(
+        protected RoundService $roundService,
+        protected GameService $gameService,
+        protected CardService $cardService,
+        protected DeckService $deckService) {}
 
-    protected $gameService;
-
-    public function __construct(RoundService $roundService, GameService $gameService)
+    /**
+     * Get card pairs for the current round, or generate a new deck if no pairs are available.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getCardPairsOrCreate(Room $room, int $currentRoundIndex)
     {
-        $this->roundService = $roundService;
-        $this->gameService = $gameService;
+        $cardPairs = $this->cardService->getCardPairsByRoundIndex($room, $currentRoundIndex);
+
+        if ($cardPairs->isEmpty()) {
+            $this->deckService->generateNewDeck($room);
+
+            return $this->cardService->getCardPairsByRoundIndex($room, $currentRoundIndex);
+        }
+
+        return $cardPairs;
     }
 
     /**
