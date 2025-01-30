@@ -1,0 +1,42 @@
+name: Merge main into deploy branch
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow when changes are pushed to the `main` branch
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for the repository
+
+      # Set up Git configuration
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Merge main into the deploy branch
+      - name: Merge main into deploy branch
+        run: |
+          # Fetch all branches
+          git fetch --all
+
+          # Checkout the deploy branch
+          DEPLOY_BRANCH="deploy"  # Replace with your deploy branch name
+          git checkout "$DEPLOY_BRANCH"
+
+          # Merge main into the deploy branch using --ff-only
+          git merge --ff-only origin/main || {
+            echo "Failed to fast-forward merge into $DEPLOY_BRANCH"
+            exit 1
+          }
+
+          # Push the updated deploy branch
+          git push origin "$DEPLOY_BRANCH"
