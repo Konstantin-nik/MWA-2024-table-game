@@ -11,6 +11,12 @@
                 <div class="p-6 text-gray-900">
                     {{ __("You're logged in!") }}
                 </div>
+                <!-- Add the "Go to Game" button -->
+                <div class="mt-6 mb-6 flex justify-center">
+                    <a href="{{ route('user.rooms.index') }}" class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-md">
+                        Go to Game
+                    </a>
+                </div>
             </div>
         </div>
     </div>

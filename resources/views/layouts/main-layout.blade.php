@@ -19,37 +19,50 @@
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
 
   <!-- Header -->
-  <header class="bg-white shadow">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap justify-between items-center">
-      <!-- Title and Text-Buttons -->
-      <div class="flex items-center space-x-6">
-        <!-- Title -->
-        <a href="{{ route('user.rooms.index') }}" class="text-2xl font-bold text-gray-700 hover:text-blue-500 transition-colors">
-          TableGame
-        </a>
-        <!-- Participation Button -->
-        <a href="{{ route('user.participations') }}" class="text-xl font-medium text-gray-700 hover:text-blue-500 transition-colors">
-          Participations
-        </a>
-        <!-- MyRooms Button -->
-        <a href="{{ route('user.owned_rooms') }}" class="text-xl font-medium text-gray-700 hover:text-blue-500 transition-colors">
-          My Rooms
-        </a>
-        <!-- CurrentGame Button -->
-        <a href="{{ route('user.game') }}" class="text-xl font-medium text-gray-700 hover:text-blue-500 transition-colors">
-          Current Game
-        </a>
-      </div>
+  <header x-data="{ menuOpen: false }" class="bg-white shadow">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      
+      <!-- Logo -->
+      <a href="{{ route('user.rooms.index') }}" class="text-2xl font-bold text-gray-700 hover:text-blue-500 transition-colors">
+        TableGame
+      </a>
 
-      <!-- Navigation -->
-      <nav class="flex flex-wrap items-center space-x-4 mt-2 md:mt-0">
-          @include('components.form.join-by-token-form')
+      <!-- Mobile Menu Button -->
+      <button @click="menuOpen = !menuOpen" class="md:hidden text-gray-700 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center space-x-6">
+        <a href="{{ route('dashboard') }}" class="block text-lg text-gray-700 hover:text-blue-500">Dashboard</a>
+        <a href="{{ route('user.participations') }}" class="text-lg font-medium text-gray-700 hover:text-blue-500 transition-colors">Participations</a>
+        <a href="{{ route('user.owned_rooms') }}" class="text-lg font-medium text-gray-700 hover:text-blue-500 transition-colors">My Rooms</a>
+        <a href="{{ route('user.game') }}" class="text-lg font-medium text-gray-700 hover:text-blue-500 transition-colors">Current Game</a>
       </nav>
+
+      <!-- Join By Token Form (Hidden on Small Screens) -->
+      <div class="hidden md:block">
+        @include('components.form.join-by-token-form')
+      </div>
+    </div>
+
+    <!-- Mobile Menu (Alpine.js Controlled) -->
+    <div x-show="menuOpen" class="md:hidden bg-gray-100">
+      <div class="container mx-auto px-4 py-2 space-y-2">
+        <a href="{{ route('dashboard') }}" class="block text-lg text-gray-700 hover:text-blue-500">Dashboard</a>
+        <a href="{{ route('user.participations') }}" class="block text-lg text-gray-700 hover:text-blue-500">Participations</a>
+        <a href="{{ route('user.owned_rooms') }}" class="block text-lg text-gray-700 hover:text-blue-500">My Rooms</a>
+        <a href="{{ route('user.game') }}" class="block text-lg text-gray-700 hover:text-blue-500">Current Game</a>
+        @include('components.form.join-by-token-form')
+      </div>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="flex-grow container mx-auto px-4 sm:px-2 lg:px-8 py-8">
+  <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {{ $slot }}
   </main>
 
