@@ -12,7 +12,7 @@ Route::name('api.')->middleware(['auth:sanctum'])->group(function () {
 
     // Participations Routes
     Route::get('user/participations', [ParticipationController::class, 'index']);
-    
+
     // Room Join Routes
     Route::post('user/rooms/{id}/join', [\App\Http\Controllers\Api\RoomJoinController::class, 'join'])->name('rooms.join');
     Route::post('user/rooms/join-by-token', [\App\Http\Controllers\Api\RoomJoinController::class, 'joinByToken'])->name('rooms.join-by-token');

@@ -23,7 +23,7 @@ Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::post('user/rooms/{id}/leave', [RoomJoinController::class, 'leave'])->name('rooms.leave');
 
     Route::get('user/participations', [ParticipationController::class, 'index'])->name('participations');
-    
+
     Route::get('user/game', [GameController::class, 'show'])->name('game');
     Route::post('user/game/action', [GameController::class, 'action'])->name('game.action');
     Route::post('user/game/skip', [GameController::class, 'skip'])->name('game.skip');

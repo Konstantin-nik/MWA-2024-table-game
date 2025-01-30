@@ -9,15 +9,18 @@ use App\Services\ActionService;
 use App\Services\GameOrchestrator;
 use App\Services\GameService;
 use App\Services\RoundService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Validator;
 
 class GameController extends Controller
 {
     protected $gameService;
+
     protected $roundService;
+
     protected $actionService;
+
     protected $gameOrchestrator;
 
     public function __construct(
@@ -34,8 +37,6 @@ class GameController extends Controller
 
     /**
      * Get the current game state.
-     *
-     * @return JsonResponse
      */
     public function show(): JsonResponse
     {
@@ -66,9 +67,6 @@ class GameController extends Controller
 
     /**
      * Handle a player action.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function action(Request $request): JsonResponse
     {
@@ -88,7 +86,7 @@ class GameController extends Controller
         $user = auth()->user();
         $room = $user->getCurrentGame();
 
-        if (!$room) {
+        if (! $room) {
             return response()->json(['message' => 'You are not in an active game.'], 403);
         }
 
@@ -108,16 +106,13 @@ class GameController extends Controller
 
     /**
      * Handle a player skipping their turn.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function skip(Request $request): JsonResponse
     {
         $user = auth()->user();
         $room = $user->getCurrentGame();
 
-        if (!$room) {
+        if (! $room) {
             return response()->json(['message' => 'You are not in an active game.'], 403);
         }
 
@@ -137,9 +132,6 @@ class GameController extends Controller
 
     /**
      * Get the game end state.
-     *
-     * @param string $room_id
-     * @return JsonResponse
      */
     public function end(string $room_id): JsonResponse
     {

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Room; // Assuming you have a Room model
 use App\Models\User; // Assuming you have a User model
 

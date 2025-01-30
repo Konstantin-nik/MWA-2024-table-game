@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Room;
 use App\Rules\InvitationTokenIsValid;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class RoomJoinController extends Controller
 {
@@ -21,6 +21,7 @@ class RoomJoinController extends Controller
 
         if ($user->canJoinRoom($room)) {
             $room->users()->attach($user);
+
             return response()->json(['message' => 'Successfully joined the room.'], 200);
         } else {
             return response()->json(['message' => 'Unauthorized to join this room.'], 401);
@@ -56,6 +57,7 @@ class RoomJoinController extends Controller
 
         if ($user->canLeaveRoom($room)) {
             $room->users()->detach($user);
+
             return response()->json(['message' => 'Successfully left the room.'], 200);
         } else {
             return response()->json(['message' => 'Unauthorized to leave this room.'], 401);
