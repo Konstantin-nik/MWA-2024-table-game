@@ -4,7 +4,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\GameController;
 use App\Http\Controllers\User\ParticipationController;
 use App\Http\Controllers\User\RoomJoinController;
-use App\Http\Middleware\EnforceAcceptHeaderIsSet;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
