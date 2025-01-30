@@ -8829,14 +8829,14 @@
             },
             "type": "library",
             "extra": {
-                "laravel": {
-                    "providers": [
-                        "Pest\\Laravel\\PestServiceProvider"
-                    ]
-                },
                 "pest": {
                     "plugins": [
                         "Pest\\Laravel\\Plugin"
+                    ]
+                },
+                "laravel": {
+                    "providers": [
+                        "Pest\\Laravel\\PestServiceProvider"
                     ]
                 }
             },
