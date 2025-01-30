@@ -34,7 +34,7 @@ jobs:
         run: php artisan migrate --env=testing --database=sqlite
 
       - name: Run Tests with Pest
-        run: vendor/bin/pest --verbose
+        run: vendor/bin/pest
 
   merge:
     name: Merge main into deploy
