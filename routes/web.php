@@ -14,12 +14,15 @@ Route::get('/', function () {
 // Private Routes
 Route::name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('user/rooms', \App\Http\Controllers\User\RoomController::class);
+    Route::get('user/owned_rooms', [\App\Http\Controllers\User\RoomController::class, 'ownedRooms'])->name('owned_rooms');
+    Route::post('user/rooms/{id}/start', [\App\Http\Controllers\User\RoomController::class, 'start'])->name('rooms.start');
+
     Route::post('user/rooms/{id}/join', [RoomJoinController::class, 'join'])->name('rooms.join');
     Route::post('user/rooms/join', [RoomJoinController::class, 'joinByToken'])->name('rooms.token.join');
     Route::post('user/rooms/{id}/leave', [RoomJoinController::class, 'leave'])->name('rooms.leave');
+
     Route::get('user/participations', [ParticipationController::class, 'index'])->name('participations');
-    Route::get('user/owned_rooms', [\App\Http\Controllers\User\RoomController::class, 'ownedRooms'])->name('owned_rooms');
-    Route::post('user/rooms/{id}/start', [\App\Http\Controllers\User\RoomController::class, 'start'])->name('rooms.start');
+    
     Route::get('user/game', [GameController::class, 'show'])->name('game');
     Route::post('user/game/action', [GameController::class, 'action'])->name('game.action');
     Route::post('user/game/skip', [GameController::class, 'skip'])->name('game.skip');
