@@ -39,10 +39,6 @@ jobs:
           npm install
           npm run build
 
-      - name: Run tests
-        run: vendor/bin/phpunit
-
-
       - name: Run Tests with Pest
         run: vendor/bin/pest
 
