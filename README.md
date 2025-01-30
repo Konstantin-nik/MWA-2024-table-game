@@ -93,16 +93,62 @@ Start the game for a specific room. Only the room owner can start the game.
 - **POST** `/api/user/rooms/{id}/join` - Join a room by ID.
     
 - **POST** `/api/user/rooms/join-by-token` - Join a room by invitation token.
+    - `invitation_token` (string, required).
     
 - **POST** `/api/user/rooms/{id}/leave` - Leave a room by ID.
 
 
 ### Game
 
-- **GET** `/api/user/game` - Get the current game state.
+**1. Get Current Game State**
+
+Retrieve the current state of the game for the authenticated user.
+
+- **URL**: `/api/user/game`
     
-- **POST** `/api/user/game/action` - Handle a player action.
+- **Method**: `GET`
+
+
+**2. Handle Player Action**
+
+Process a player's action during the game.
+
+- **URL**: `/api/user/game/action`
     
-- **POST** `/api/user/game/skip` - Handle a player skipping their turn.
+- **Method**: `POST`
     
-- **GET** `/api/user/game/{room_id}/end` - Get the game end state.
+- **Request Body**:
+    
+    - `game_data` (JSON, required): A JSON object containing the action details.
+        
+        - `selectedPairIndex` (integer, required): Index of the selected card pair (0-2).
+            
+        - `selectedHouses` (array, required): Array of selected house IDs (1-2 items).
+            
+        - `agentNumber` (integer, optional): Number of agents (-2 to 2).
+            
+        - `estateIndex` (integer, optional): Index of the estate.
+            
+        - `fenceId` (integer, optional): ID of the selected fence.
+            
+        - `action` (integer, required): The action type.
+            
+        - `number` (integer, required): A number associated with the action.
+
+
+**3. Skip Player Turn**
+
+Skip the current player's turn.
+
+- **URL**: `/api/user/game/skip`
+    
+- **Method**: `POST`
+
+
+**4. Get Game End State**
+
+Retrieve the final state of the game after it has ended.
+
+- **URL**: `/api/user/game/{room_id}/end`
+    
+- **Method**: `GET`
