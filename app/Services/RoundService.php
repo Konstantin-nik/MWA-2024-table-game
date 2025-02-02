@@ -59,7 +59,7 @@ class RoundService
 
         try {
             $lastRound = $room->rounds()->latest('index')->first();
-            $newRoundIndex = $lastRound ? $lastRound->index + 1 : 1; 
+            $newRoundIndex = $lastRound ? $lastRound->index + 1 : 1;
 
             $room->rounds()->create(['index' => $newRoundIndex]);
 

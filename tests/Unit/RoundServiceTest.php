@@ -1,8 +1,6 @@
 <?php
 
 use App\Events\RoundEnded;
-use App\Models\Action;
-use App\Models\Participation;
 use App\Models\Room;
 use App\Models\Round;
 use App\Services\RoundService;
@@ -13,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 uses(Tests\TestCase::class, RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->roundService = new RoundService();
+    $this->roundService = new RoundService;
 });
 
 /** @test */

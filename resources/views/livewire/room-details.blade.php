@@ -91,7 +91,6 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
             if (window.Echo) {
-                // Listen for the GameStarted event
                 window.Echo.join(`room.{{ $room->id }}`)
                     .listen('.game.started', (e) => {
                         window.location.href = "{{ route('user.game', $room->id) }}";

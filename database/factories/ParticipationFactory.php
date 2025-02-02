@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Participation;
-use App\Models\User;
 use App\Models\Room;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ParticipationFactory extends Factory
@@ -19,8 +19,8 @@ class ParticipationFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(), 
-            'room_id' => Room::factory(), 
+            'user_id' => User::factory(),
+            'room_id' => Room::factory(),
         ];
     }
 }

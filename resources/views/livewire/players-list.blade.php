@@ -1,6 +1,6 @@
 <div wire:poll.{{ $room->started_at || $room->finished_at ? '' : '3s' }}="loadParticipations">
     @forelse ($participations as $participation)
-        <x-user.player :participation="$participation" />
+        <x-user.player :participation="$participation" wire.key="{{ $participation->id }}"/>
     @empty
         <p class="text-gray-500">No players have joined this room yet.</p>
     @endforelse

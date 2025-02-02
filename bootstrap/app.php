@@ -20,7 +20,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Middleware Groups
         $middleware->appendToGroup('api', [
-            // Authenticate::class,
             EnforceAcceptHeaderIsSet::class,
         ]);
     })
