@@ -80,7 +80,6 @@ class GameService
         try {
             $this->countFinalScores($room);
             $room->update(['finished_at' => now()]);
-            broadcast(new GameEnded($room->id))->toOthers();
 
             Log::info('Game ended successfully for room', ['room_id' => $room->id]);
         } catch (\Exception $e) {
@@ -90,6 +89,11 @@ class GameService
 
             ]);
             throw new \RuntimeException('Failed to end game.');
+        }
+
+        try {
+            broadcast(new GameEnded($room->id))->toOthers();
+        } catch (\Exception $e) {
         }
     }
 

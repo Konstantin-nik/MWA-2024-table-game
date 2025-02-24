@@ -35,8 +35,6 @@ class RoundService
 
         try {
             $round->update(['finished_at' => now()]);
-            broadcast(new RoundEnded($round->room_id))->toOthers();
-
             Log::info('Round ended successfully', ['round_id' => $round->id]);
         } catch (\Exception $e) {
             Log::error('Failed to end round', [
@@ -44,6 +42,11 @@ class RoundService
                 'error' => $e->getMessage(),
             ]);
             throw new \RuntimeException('Failed to end round.');
+        }
+
+        try {
+            broadcast(new RoundEnded($round->room_id))->toOthers();
+        } catch (\Exception $e) {
         }
     }
 

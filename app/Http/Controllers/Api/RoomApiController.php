@@ -134,7 +134,10 @@ class RoomApiController extends Controller
             ]);
         });
 
-        broadcast(new GameStarted($room->id));
+        try {
+            broadcast(new GameStarted($room->id));
+        } catch (\Exception $e) {
+        }
 
         return response()->json(['message' => 'Game started successfully!']);
     }

@@ -158,7 +158,10 @@ class RoomController extends Controller
             ]);
         });
 
-        broadcast(new GameStarted($room->id));
+        try {
+            broadcast(new GameStarted($room->id));
+        } catch (\Exception $e) {
+        }
 
         return redirect()->route('user.rooms.show', $room)->with('success', 'Game started successfully!');
     }
